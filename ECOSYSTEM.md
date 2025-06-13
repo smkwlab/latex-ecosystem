@@ -1,6 +1,6 @@
 # LaTeX Thesis Environment Ecosystem
 
-This document describes the architecture and management strategy for the thesis-environment ecosystem at Kyushu Sangyo University.
+This document describes the architecture and management strategy for the thesis-environment ecosystem at Shimokawa Lab, Faculty of Science and Engineering, Kyushu Sangyo University.
 
 ## Repository Overview
 

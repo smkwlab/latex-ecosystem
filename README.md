@@ -1,6 +1,6 @@
-# LaTeX Thesis Environment Ecosystem
+# LaTeX Ecosystem
 
-This repository contains the management documentation and tools for the LaTeX thesis environment ecosystem at Kyushu Sangyo University.
+Comprehensive ecosystem management for LaTeX thesis templates and tools at Shimokawa Lab, Faculty of Science and Engineering, Kyushu Sangyo University.
 
 ## Repository Structure
 
@@ -26,7 +26,19 @@ thesis-environment/
 
 ## Quick Start
 
-### For Ecosystem Management
+### Initial Setup
+
+```bash
+# One-line setup
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
+
+# Or clone and setup manually
+gh repo clone smkwlab/latex-ecosystem latex-ecosystem-dev
+cd latex-ecosystem-dev
+./setup.sh
+```
+
+### Daily Ecosystem Management
 
 ```bash
 # Check status of all repositories
@@ -61,18 +73,21 @@ Review workflow documentation is available in `thesis-management-tools/docs/`.
 ## Documentation
 
 - **[ECOSYSTEM.md](ECOSYSTEM.md)**: Comprehensive ecosystem architecture and management guide
-- **Individual repositories**: Each has its own README.md and documentation
+- **[SETUP.md](SETUP.md)**: Detailed setup instructions
+- **Individual repositories**: Each has its own README.md and CLAUDE.md documentation
 
 ## Repository Management
 
-### This Repository
+### This Repository (latex-ecosystem)
 
-This management repository tracks only:
-- Ecosystem documentation (ECOSYSTEM.md)
-- Management scripts (ecosystem-manager.sh)
-- Cross-repository coordination files
+This management repository contains:
+- **ECOSYSTEM.md**: Comprehensive ecosystem architecture documentation
+- **SETUP.md**: Setup guide for developers
+- **ecosystem-manager.sh**: Cross-repository management script
+- **setup.sh**: Automated setup script for cloning all repositories
+- **README.md**: This overview file
 
-All subdirectories are independent Git repositories and are **not** included in this repository's version control.
+All subdirectories are independent Git repositories cloned by setup.sh and are **not** included in this repository's version control.
 
 ### Individual Repositories
 
