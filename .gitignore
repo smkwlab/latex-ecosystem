@@ -1,0 +1,20 @@
+# Exclude all subdirectories (repositories)
+*/
+
+# Include management files
+!.gitignore
+!ECOSYSTEM.md
+!ecosystem-manager.sh
+!README.md
+!CLAUDE.md
+!.claude/
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+
+# Editor files
+*.swp
+*.swo
+*~

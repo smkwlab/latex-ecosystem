@@ -1,0 +1,77 @@
+{
+  "project_name": "LaTeX Thesis Environment Ecosystem",
+  "project_type": "multi_repository_management",
+  "description": "Management repository for coordinating multiple independent repositories in the LaTeX thesis environment ecosystem",
+  "repository_structure": "meta_repository",
+  "primary_languages": ["bash", "markdown"],
+  "git_structure": {
+    "type": "meta_repository",
+    "note": "This repository tracks only management files. Subdirectories are independent Git repositories.",
+    "tracked_files": [
+      "ECOSYSTEM.md",
+      "ecosystem-manager.sh", 
+      "README.md",
+      "CLAUDE.md",
+      ".claude/"
+    ],
+    "excluded_patterns": [
+      "*/"
+    ]
+  },
+  "ecosystem_components": [
+    {
+      "name": "texlive-ja-textlint",
+      "type": "docker_base",
+      "description": "Docker images for Japanese LaTeX compilation"
+    },
+    {
+      "name": "latex-environment", 
+      "type": "devcontainer_template",
+      "description": "DevContainer template for LaTeX development"
+    },
+    {
+      "name": "sotsuron-template",
+      "type": "student_template", 
+      "description": "Unified thesis template (undergraduate/graduate)"
+    },
+    {
+      "name": "thesis-management-tools",
+      "type": "management_tools",
+      "description": "Administrative tools and workflows"
+    },
+    {
+      "name": "latex-release-action",
+      "type": "github_action",
+      "description": "GitHub Action for LaTeX compilation"
+    },
+    {
+      "name": "ai-academic-paper-reviewer",
+      "type": "github_action", 
+      "description": "GitHub Action for automated paper review"
+    },
+    {
+      "name": "aldc",
+      "type": "cli_tool",
+      "description": "Command-line tool for adding LaTeX devcontainer"
+    }
+  ],
+  "management_tools": [
+    {
+      "script": "ecosystem-manager.sh",
+      "commands": [
+        "status", "sync", "check", "versions", "deps", "claude-status", "test"
+      ]
+    }
+  ],
+  "workflow_patterns": {
+    "ecosystem_changes": "Work in this meta repository, update ECOSYSTEM.md",
+    "component_changes": "Navigate to specific component repository", 
+    "cross_repository": "Coordinate through ecosystem-manager.sh and issues"
+  },
+  "common_tasks": [
+    "Check status of all repositories",
+    "Coordinate version updates across ecosystem",
+    "Document architectural changes",
+    "Manage cross-repository dependencies"
+  ]
+}
