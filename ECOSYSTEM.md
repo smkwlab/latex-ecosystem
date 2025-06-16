@@ -11,6 +11,7 @@ This document describes the architecture and management strategy for the thesis-
 
 ### Templates & Tools
 - **sotsuron-template**: Unified thesis template (undergraduate 卒業論文 + graduate 修士論文)
+- **ise-report-template**: Information Science Exercise report template with HTML/textlint quality management
 - **wr-template**: Weekly report template
 - **latex-template**: Basic LaTeX template
 - **sotsuron-report-template**: Report template for thesis work
@@ -32,6 +33,7 @@ texlive-ja-textlint (Docker Base)
 latex-environment (DevContainer Template)
     ↓
 ├── sotsuron-template (Student Templates)
+├── ise-report-template (HTML-based quality-focused)
 ├── wr-template
 ├── latex-template
 └── sotsuron-report-template
@@ -89,6 +91,26 @@ Supporting Infrastructure:
 - Automated suggestion workflows
 - Minimal manual intervention required
 
+## Template Specialization
+
+### Document Format Focus
+- **sotsuron-template**: LaTeX-based academic thesis with advanced typesetting
+- **ise-report-template**: HTML-based reports with web accessibility and quality automation
+- **wr-template**: Weekly progress reports with structured formatting
+- **latex-template**: Minimal LaTeX setup for general academic documents
+
+### Quality Management Approaches
+- **ise-report-template**: Comprehensive quality pipeline (HTML5 validation, accessibility checks, textlint for Japanese)
+- **sotsuron-template**: Academic writing standards with citation management
+- **wr-template**: Structured progress tracking with consistent formatting
+- **latex-template**: Basic LaTeX quality assurance
+
+### Target Audiences
+- **ise-report-template**: Information Science Exercise students (HTML proficiency development)
+- **sotsuron-template**: Undergraduate/graduate thesis students (research document preparation)
+- **wr-template**: Research students and faculty (progress tracking)
+- **latex-template**: General academic users (basic LaTeX needs)
+
 ## Cross-Repository Standards
 
 ### File Naming Conventions
@@ -133,6 +155,7 @@ Supporting Infrastructure:
 - **texlive-ja-textlint**: Multi-architecture builds, LaTeX compilation tests
 - **latex-environment**: DevContainer validation, extension loading
 - **Templates**: Sample document compilation, textlint validation
+  - **ise-report-template**: HTML5/CSS quality validation, accessibility checks, Japanese academic writing standards
 - **Actions**: Integration tests with sample repositories
 
 ### Manual Validation
