@@ -49,24 +49,31 @@ Supporting Infrastructure:
 
 | Component | Current Version | Compatible With | Update Frequency |
 |-----------|----------------|-----------------|------------------|
-| texlive-ja-textlint | 2025b | TeXLive 2025 | Annual (TeXLive release) |
-| latex-environment | v0.5.0 | texlive-ja-textlint:2025b | Per texlive update |
-| sotsuron-template | Latest | latex-environment:release | Continuous |
+| texlive-ja-textlint | 2025d | TeXLive 2025 | Annual (TeXLive release) |
+| latex-environment | v0.5.0 | texlive-ja-textlint:2025d | Per texlive update |
+| sotsuron-template | Latest | Auto-updated via aldc | No manual updates needed |
+| latex-template | Latest | Auto-updated via aldc | No manual updates needed |
+| wr-template | Latest | Auto-updated via aldc | No manual updates needed |
+| sotsuron-report-template | Latest | Auto-updated via aldc | No manual updates needed |
 | latex-release-action | v2.2.0 | All templates | Per feature |
-| aldc | Latest | latex-environment:release | Per environment update |
+| aldc | Latest | latex-environment:release | No updates needed |
 
 ## Automated Update Chain
 
 ```
-1. texlive-ja-textlint update (annual)
+1. texlive-ja-textlint update (manual tag creation)
    ↓
-2. latex-environment auto-detects and creates PR
+2. latex-environment auto-detects and creates PR  
    ↓  
-3. latex-environment release branch updated
+3. Manual PR review and merge to main branch
    ↓
-4. aldc automatically uses new environment
+4. Manual latex-environment release branch update
    ↓
-5. New student repositories get updated environment
+5. aldc automatically uses updated release branch
+   ↓
+6. New student repositories automatically get latest environment
+   ↓
+7. Templates require no manual updates (aldc integration)
 ```
 
 ## Management Principles
