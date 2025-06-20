@@ -255,6 +255,16 @@ show_help() {
     cat << EOF
 LaTeX Thesis Environment Ecosystem Manager
 
+Prerequisites:
+    - Git: Version control system
+    - GitHub CLI (gh): For PR/Issue tracking (optional but recommended)
+    - jq: JSON processor for parsing API responses
+    - Bash: Shell interpreter (4.0+)
+
+GitHub CLI Setup:
+    gh auth login    # Authenticate with GitHub
+    gh auth status   # Verify authentication
+
 Usage: $0 [COMMAND] [OPTIONS]
 
 Commands:
