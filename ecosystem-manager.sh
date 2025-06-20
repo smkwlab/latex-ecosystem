@@ -312,9 +312,11 @@ show_status() {
     fi
     echo
     if [ "$LONG_FORMAT" = "true" ]; then
-        printf "%-26s %-27s %-10s %-20s %-25s %-25s\n" "Repository" "Branch" "Changes" "Last Commit" "PRs" "Issues"
-        printf "%-26s %-27s %-10s %-20s %-25s %-25s\n" "----------" "------" "-------" "-----------" "---" "------"
+        # Long format: variable width, no truncation
+        printf "%s\t%s\t%s\t%s\t%s\t%s\n" "Repository" "Branch" "Changes" "Last Commit" "PRs" "Issues"
+        printf "%s\t%s\t%s\t%s\t%s\t%s\n" "----------" "------" "-------" "-----------" "---" "------"
     else
+        # Compact format: fixed width, with truncation
         printf "%-26s %-27s %-8s %-20s %-8s %-8s\n" "Repository" "Branch" "Changes" "Last Commit" "PRs" "Issues"
         printf "%-26s %-27s %-8s %-20s %-8s %-8s\n" "----------" "------" "-------" "-----------" "---" "------"
     fi
@@ -335,9 +337,11 @@ show_status() {
             
             # Truncate repository and branch names for display
             if [ "$LONG_FORMAT" = "true" ]; then
-                repo_display=$(truncate_string "$repo" 24)
-                branch_display=$(truncate_string "$branch" 25)
+                # Long format: no truncation, show full names
+                repo_display="$repo"
+                branch_display="$branch"
             else
+                # Compact format: truncate for fixed-width table
                 repo_display=$(truncate_string "$repo" 24)
                 branch_display=$(truncate_string "$branch" 25)
             fi
@@ -358,17 +362,18 @@ show_status() {
             fi
             
             if [ "$LONG_FORMAT" = "true" ]; then
+                # Long format: tab-separated, variable width
                 if [ "$changes" -gt 0 ]; then
                     if [ "$urgent" -gt 0 ]; then
-                        printf "%-26s %-27s ${YELLOW}%-10s${NC} %-20s %-25s ${RED}%-25s${NC}\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%s\t%s\t${YELLOW}%s${NC}\t%s\t%s\t${RED}%s${NC}\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
                     else
-                        printf "%-26s %-27s ${YELLOW}%-10s${NC} %-20s %-25s %-25s\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%s\t%s\t${YELLOW}%s${NC}\t%s\t%s\t%s\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
                     fi
                 else
                     if [ "$urgent" -gt 0 ]; then
-                        printf "%-26s %-27s ${GREEN}%-10s${NC} %-20s %-25s ${RED}%-25s${NC}\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%s\t%s\t${GREEN}%s${NC}\t%s\t%s\t${RED}%s${NC}\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
                     else
-                        printf "%-26s %-27s ${GREEN}%-10s${NC} %-20s %-25s %-25s\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%s\t%s\t${GREEN}%s${NC}\t%s\t%s\t%s\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
                     fi
                 fi
             else
@@ -392,11 +397,15 @@ show_status() {
                 (cd "$SCRIPT_DIR/$repo" && git status --short 2>/dev/null | sed 's/^/    /')
             fi
         else
-            # Truncate repository name for missing repos too
-            repo_display=$(truncate_string "$repo" 24)
+            # Handle missing repos display
+            if [ "$LONG_FORMAT" = "true" ]; then
+                repo_display="$repo"
+            else
+                repo_display=$(truncate_string "$repo" 24)
+            fi
             
             if [ "$LONG_FORMAT" = "true" ]; then
-                printf "%-26s ${RED}%-27s${NC} %-10s %-20s %-25s %-25s\n" "$repo_display" "missing" "-" "-" "-" "-"
+                printf "%s\t${RED}%s${NC}\t%s\t%s\t%s\t%s\n" "$repo_display" "missing" "-" "-" "-" "-"
             else
                 printf "%-26s ${RED}%-27s${NC} %-8s %-20s %-8s %-8s\n" "$repo_display" "missing" "-" "-" "-" "-"
             fi
