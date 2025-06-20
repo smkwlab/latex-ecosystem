@@ -11,16 +11,17 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOS=(
     "."                          # Management repository (latex-ecosystem)
-    "ai-academic-paper-reviewer"
-    "aldc" 
+    "texlive-ja-textlint"
     "latex-environment"
-    "latex-release-action"
+    "aldc"
+    "sotsuron-template"
     "latex-template"
     "sotsuron-report-template"
-    "sotsuron-template"
-    "texlive-ja-textlint"
-    "thesis-management-tools"
     "wr-template"
+    "ise-report-template"
+    "latex-release-action"
+    "thesis-management-tools"
+    "ai-academic-paper-reviewer"
 )
 
 # Cache configuration
