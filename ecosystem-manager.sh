@@ -73,10 +73,12 @@ Commands:
 Options:
     --repo REPO     Apply command to specific repository only
     --verbose       Show detailed output
+    --urgent-issues Show only repositories with urgent issues
     --dry-run       Show what would be done without executing
 
 Examples:
     $0 status                    # Show status of all repos
+    $0 status --urgent-issues    # Show only repos with urgent issues
     $0 sync --repo latex-environment  # Sync only latex-environment
     $0 check --verbose           # Check for changes with details
     $0 claude-status             # Check CLAUDE.md git tracking
@@ -110,15 +112,86 @@ get_repo_status() {
     fi
 }
 
+# Get repository issue status
+get_issue_status() {
+    local repo="$1"
+    if repo_exists "$repo" && command -v gh >/dev/null 2>&1; then
+        (cd "$SCRIPT_DIR/$repo" && {
+            # Get issues with labels for categorization
+            issues_json=$(gh issue list --state open --json number,title,labels,createdAt 2>/dev/null || echo "[]")
+            
+            if [ "$issues_json" = "[]" ] || [ -z "$issues_json" ]; then
+                echo "0|0|0|0"
+                return
+            fi
+            
+            # Count total issues
+            total=$(echo "$issues_json" | jq -r 'length' 2>/dev/null || echo "0")
+            
+            # Count by type (based on labels)
+            bugs=$(echo "$issues_json" | jq -r '[.[] | select(.labels[]?.name | test("bug|error|critical|regression"; "i"))] | length' 2>/dev/null || echo "0")
+            enhancements=$(echo "$issues_json" | jq -r '[.[] | select(.labels[]?.name | test("enhancement|feature|improvement|request"; "i"))] | length' 2>/dev/null || echo "0")
+            urgent=$(echo "$issues_json" | jq -r '[.[] | select(.labels[]?.name | test("critical|urgent|high"; "i"))] | length' 2>/dev/null || echo "0")
+            
+            echo "$total|$bugs|$enhancements|$urgent"
+        })
+    else
+        echo "0|0|0|0"
+    fi
+}
+
+# Format issue information for display
+format_issue_info() {
+    local issue_data="$1"
+    IFS='|' read -r total bugs enhancements urgent <<< "$issue_data"
+    
+    if [ "$total" -eq 0 ]; then
+        echo "0 open"
+        return
+    fi
+    
+    local details=""
+    local urgent_marker=""
+    
+    # Add urgent marker if there are urgent issues
+    if [ "$urgent" -gt 0 ]; then
+        urgent_marker=" 🚨"
+    fi
+    
+    # Build details string
+    if [ "$bugs" -gt 0 ] && [ "$enhancements" -gt 0 ]; then
+        details="$bugs bug"
+        [ "$bugs" -gt 1 ] && details="${details}s"
+        details="${details}, $enhancements feature"
+        [ "$enhancements" -gt 1 ] && details="${details}s"
+    elif [ "$bugs" -gt 0 ]; then
+        details="$bugs bug"
+        [ "$bugs" -gt 1 ] && details="${details}s"
+    elif [ "$enhancements" -gt 0 ]; then
+        details="$enhancements feature"
+        [ "$enhancements" -gt 1 ] && details="${details}s"
+    fi
+    
+    if [ -n "$details" ]; then
+        echo "$total open ($details)$urgent_marker"
+    else
+        echo "$total open$urgent_marker"
+    fi
+}
+
 # Show status of all repositories
 show_status() {
     local specific_repo="$1"
     local verbose="$2"
     
-    log "Repository Status Overview"
+    if [ "$URGENT_ISSUES_ONLY" = "true" ]; then
+        log "🚨 Repositories with Urgent Issues"
+    else
+        log "Repository Status Overview"
+    fi
     echo
-    printf "%-30s %-15s %-10s %-20s\n" "Repository" "Branch" "Changes" "Last Commit"
-    printf "%-30s %-15s %-10s %-20s\n" "----------" "------" "-------" "-----------"
+    printf "%-30s %-15s %-10s %-20s %-25s\n" "Repository" "Branch" "Changes" "Last Commit" "Issues"
+    printf "%-30s %-15s %-10s %-20s %-25s\n" "----------" "------" "-------" "-----------" "------"
     
     for repo in "${REPOS[@]}"; do
         if [ -n "$specific_repo" ] && [ "$specific_repo" != "$repo" ]; then
@@ -129,18 +202,36 @@ show_status() {
             branch=$(get_current_branch "$repo")
             changes=$(get_repo_status "$repo")
             last_commit=$(cd "$SCRIPT_DIR/$repo" && git log -1 --format="%h %cr" 2>/dev/null || echo "unknown")
+            issue_data=$(get_issue_status "$repo")
+            issue_info=$(format_issue_info "$issue_data")
+            
+            # Extract urgent count for color coding
+            IFS='|' read -r total bugs enhancements urgent <<< "$issue_data"
+            
+            # Skip if filtering for urgent issues and this repo has none
+            if [ "$URGENT_ISSUES_ONLY" = "true" ] && [ "$urgent" -eq 0 ]; then
+                continue
+            fi
             
             if [ "$changes" -gt 0 ]; then
-                printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s\n" "$repo" "$branch" "$changes" "$last_commit"
+                if [ "$urgent" -gt 0 ]; then
+                    printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s ${RED}%-25s${NC}\n" "$repo" "$branch" "$changes" "$last_commit" "$issue_info"
+                else
+                    printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s %-25s\n" "$repo" "$branch" "$changes" "$last_commit" "$issue_info"
+                fi
             else
-                printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s\n" "$repo" "$branch" "clean" "$last_commit"
+                if [ "$urgent" -gt 0 ]; then
+                    printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s ${RED}%-25s${NC}\n" "$repo" "$branch" "clean" "$last_commit" "$issue_info"
+                else
+                    printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s %-25s\n" "$repo" "$branch" "clean" "$last_commit" "$issue_info"
+                fi
             fi
             
             if [ "$verbose" = "true" ]; then
                 (cd "$SCRIPT_DIR/$repo" && git status --short 2>/dev/null | sed 's/^/    /')
             fi
         else
-            printf "%-30s ${RED}%-15s${NC} %-10s %-20s\n" "$repo" "missing" "-" "-"
+            printf "%-30s ${RED}%-15s${NC} %-10s %-20s %-25s\n" "$repo" "missing" "-" "-" "-"
         fi
     done
 }
@@ -339,6 +430,7 @@ COMMAND=""
 SPECIFIC_REPO=""
 VERBOSE=false
 DRY_RUN=false
+URGENT_ISSUES_ONLY=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -352,6 +444,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --verbose)
             VERBOSE=true
+            shift
+            ;;
+        --urgent-issues)
+            URGENT_ISSUES_ONLY=true
             shift
             ;;
         --dry-run)
