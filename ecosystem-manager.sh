@@ -34,6 +34,15 @@ RATE_LIMIT_WARNING_THRESHOLD=50
 RATE_LIMIT_ERROR_THRESHOLD=5
 MAX_PARALLEL_JOBS=3
 
+# Display configuration (make hardcoded values configurable)
+readonly REPO_COLUMN_WIDTH=24
+readonly BRANCH_COLUMN_WIDTH=25
+readonly LAST_COMMIT_COLUMN_WIDTH=22
+
+# Error handling configuration
+readonly GITHUB_API_TIMEOUT=10
+readonly MAX_RETRIES=3
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -46,11 +55,84 @@ log() {
 }
 
 warn() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
+    echo -e "${YELLOW}[WARNING]${NC} $1" >&2
 }
 
 error() {
     echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Global flag to track if GitHub CLI warning has been shown
+GITHUB_CLI_WARNING_SHOWN=false
+
+# Check if GitHub CLI is authenticated and available
+check_github_cli() {
+    if ! command -v gh >/dev/null 2>&1; then
+        return 1
+    fi
+    
+    # Check authentication status
+    if ! gh auth status >/dev/null 2>&1; then
+        # Show warning only once per execution
+        if [ "$GITHUB_CLI_WARNING_SHOWN" = "false" ]; then
+            warn "GitHub CLI is not authenticated. Some features may not work properly."
+            warn "Run 'gh auth login' to authenticate."
+            GITHUB_CLI_WARNING_SHOWN=true
+        fi
+        return 1
+    fi
+    
+    return 0
+}
+
+# Robust jq parsing with error handling
+safe_jq() {
+    local json="$1"
+    local query="$2"
+    local default_value="${3:-0}"
+    
+    if [ -z "$json" ] || [ "$json" = "[]" ] || [ "$json" = "null" ]; then
+        echo "$default_value"
+        return
+    fi
+    
+    if ! command -v jq >/dev/null 2>&1; then
+        warn "jq command not found. Install jq for full functionality."
+        echo "$default_value"
+        return
+    fi
+    
+    local result
+    result=$(echo "$json" | jq -r "$query" 2>/dev/null)
+    if [ $? -ne 0 ] || [ -z "$result" ] || [ "$result" = "null" ]; then
+        echo "$default_value"
+    else
+        echo "$result"
+    fi
+}
+
+# Execute GitHub CLI command with retry and timeout
+github_api_call() {
+    local cmd="$1"
+    local retries=0
+    local result
+    
+    while [ $retries -lt $MAX_RETRIES ]; do
+        result=$(timeout $GITHUB_API_TIMEOUT $cmd 2>/dev/null)
+        if [ $? -eq 0 ] && [ -n "$result" ]; then
+            echo "$result"
+            return 0
+        fi
+        
+        retries=$((retries + 1))
+        if [ $retries -lt $MAX_RETRIES ]; then
+            sleep 1
+        fi
+    done
+    
+    # Return empty JSON array on failure
+    echo "[]"
+    return 1
 }
 
 success() {
@@ -242,17 +324,30 @@ repo_exists() {
     fi
 }
 
-# Truncate string to specified length with ellipsis
+# Truncate string to specified length with ellipsis (multibyte-aware)
 truncate_string() {
     local str="$1"
     local max_length="$2"
     local ellipsis="..."
     
-    if [ ${#str} -le $max_length ]; then
+    # Get actual character count (multibyte-aware)
+    local str_length
+    if command -v wc >/dev/null 2>&1; then
+        str_length=$(echo -n "$str" | wc -m 2>/dev/null || echo "${#str}")
+    else
+        str_length=${#str}
+    fi
+    
+    if [ "$str_length" -le "$max_length" ]; then
         echo "$str"
     else
         local truncated_length=$((max_length - ${#ellipsis}))
-        echo "${str:0:$truncated_length}$ellipsis"
+        # Use cut for proper multibyte character handling if available
+        if command -v cut >/dev/null 2>&1; then
+            echo "$(echo "$str" | cut -c1-"$truncated_length" 2>/dev/null || echo "${str:0:$truncated_length}")$ellipsis"
+        else
+            echo "${str:0:$truncated_length}$ellipsis"
+        fi
     fi
 }
 
@@ -297,35 +392,41 @@ get_repo_status() {
 # Get repository issue status (direct API call)
 get_issue_status_direct() {
     local repo="$1"
-    if repo_exists "$repo" && command -v gh >/dev/null 2>&1; then
-        local target_dir
-        if [ "$repo" = "." ]; then
-            target_dir="$SCRIPT_DIR"
-        else
-            target_dir="$SCRIPT_DIR/$repo"
-        fi
-        (cd "$target_dir" && {
-            # Get issues with labels for categorization
-            issues_json=$(gh issue list --state open --json number,title,labels,createdAt 2>/dev/null || echo "[]")
-            
-            if [ "$issues_json" = "[]" ] || [ -z "$issues_json" ]; then
-                echo "0|0|0|0"
-                return
-            fi
-            
-            # Count total issues
-            total=$(echo "$issues_json" | jq -r 'length' 2>/dev/null || echo "0")
-            
-            # Count by type (based on labels)
-            bugs=$(echo "$issues_json" | jq -r '[.[] | select(.labels[]?.name | test("bug|error|critical|regression"; "i"))] | length' 2>/dev/null || echo "0")
-            enhancements=$(echo "$issues_json" | jq -r '[.[] | select(.labels[]?.name | test("enhancement|feature|improvement|request"; "i"))] | length' 2>/dev/null || echo "0")
-            urgent=$(echo "$issues_json" | jq -r '[.[] | select(.labels[]?.name | test("critical|urgent|high"; "i"))] | length' 2>/dev/null || echo "0")
-            
-            echo "$total|$bugs|$enhancements|$urgent"
-        })
-    else
+    
+    # Check GitHub CLI availability
+    if ! repo_exists "$repo" || ! check_github_cli; then
         echo "0|0|0|0"
+        return
     fi
+    
+    local target_dir
+    if [ "$repo" = "." ]; then
+        target_dir="$SCRIPT_DIR"
+    else
+        target_dir="$SCRIPT_DIR/$repo"
+    fi
+    
+    (cd "$target_dir" && {
+        # Get issues with labels for categorization using robust API call
+        local issues_json
+        issues_json=$(github_api_call "gh issue list --state open --json number,title,labels,createdAt")
+        
+        if [ "$issues_json" = "[]" ] || [ -z "$issues_json" ]; then
+            echo "0|0|0|0"
+            return
+        fi
+        
+        # Count total issues using safe_jq
+        local total bugs enhancements urgent
+        total=$(safe_jq "$issues_json" 'length' '0')
+        
+        # Count by type (based on labels) using safe_jq
+        bugs=$(safe_jq "$issues_json" '[.[] | select(.labels[]?.name | test("bug|error|critical|regression"; "i"))] | length' '0')
+        enhancements=$(safe_jq "$issues_json" '[.[] | select(.labels[]?.name | test("enhancement|feature|improvement|request"; "i"))] | length' '0')
+        urgent=$(safe_jq "$issues_json" '[.[] | select(.labels[]?.name | test("critical|urgent|high"; "i"))] | length' '0')
+        
+        echo "$total|$bugs|$enhancements|$urgent"
+    })
 }
 
 # Get repository issue status (wrapper for compatibility)
@@ -379,36 +480,42 @@ get_repo_data() {
 # Get repository PR status (direct API call)
 get_pr_status_direct() {
     local repo="$1"
-    if repo_exists "$repo" && command -v gh >/dev/null 2>&1; then
-        local target_dir
-        if [ "$repo" = "." ]; then
-            target_dir="$SCRIPT_DIR"
-        else
-            target_dir="$SCRIPT_DIR/$repo"
-        fi
-        (cd "$target_dir" && {
-            # Get PR information with review status
-            pr_json=$(gh pr list --state open --json number,title,isDraft,reviewDecision,labels 2>/dev/null || echo "[]")
-            
-            if [ "$pr_json" = "[]" ] || [ -z "$pr_json" ]; then
-                echo "0|0|0"
-                return
-            fi
-            
-            # Count total PRs
-            total=$(echo "$pr_json" | jq -r 'length' 2>/dev/null || echo "0")
-            
-            # Count draft PRs
-            drafts=$(echo "$pr_json" | jq -r '[.[] | select(.isDraft == true)] | length' 2>/dev/null || echo "0")
-            
-            # Count PRs needing review (not draft and no approval yet)
-            needs_review=$(echo "$pr_json" | jq -r '[.[] | select(.isDraft == false and (.reviewDecision == null or .reviewDecision == "REVIEW_REQUIRED"))] | length' 2>/dev/null || echo "0")
-            
-            echo "$total|$drafts|$needs_review"
-        })
-    else
+    
+    # Check GitHub CLI availability
+    if ! repo_exists "$repo" || ! check_github_cli; then
         echo "0|0|0"
+        return
     fi
+    
+    local target_dir
+    if [ "$repo" = "." ]; then
+        target_dir="$SCRIPT_DIR"
+    else
+        target_dir="$SCRIPT_DIR/$repo"
+    fi
+    
+    (cd "$target_dir" && {
+        # Get PR information with review status using robust API call
+        local pr_json
+        pr_json=$(github_api_call "gh pr list --state open --json number,title,isDraft,reviewDecision,labels")
+        
+        if [ "$pr_json" = "[]" ] || [ -z "$pr_json" ]; then
+            echo "0|0|0"
+            return
+        fi
+        
+        # Count total PRs using safe_jq
+        local total drafts needs_review
+        total=$(safe_jq "$pr_json" 'length' '0')
+        
+        # Count draft PRs using safe_jq
+        drafts=$(safe_jq "$pr_json" '[.[] | select(.isDraft == true)] | length' '0')
+        
+        # Count PRs needing review (not draft and no approval yet) using safe_jq
+        needs_review=$(safe_jq "$pr_json" '[.[] | select(.isDraft == false and (.reviewDecision == null or .reviewDecision == "REVIEW_REQUIRED"))] | length' '0')
+        
+        echo "$total|$drafts|$needs_review"
+    })
 }
 
 # Get repository PR status (wrapper for compatibility)
@@ -438,14 +545,14 @@ format_pr_info() {
             details="$drafts draft"
             [ "$drafts" -gt 1 ] && details="${details}s"
             details="${details}, $needs_review need"
-            [ "$needs_review" -gt 1 ] && details="${details}" || details="${details}s"
+            [ "$needs_review" -eq 1 ] || details="${details}s"
             details="${details} review"
         elif [ "$drafts" -gt 0 ]; then
             details="$drafts draft"
             [ "$drafts" -gt 1 ] && details="${details}s"
         elif [ "$needs_review" -gt 0 ]; then
             details="$needs_review need"
-            [ "$needs_review" -gt 1 ] && details="${details}" || details="${details}s"
+            [ "$needs_review" -eq 1 ] || details="${details}s"
             details="${details} review"
         fi
         
@@ -680,8 +787,8 @@ show_status() {
                 branch_display="$branch"
             else
                 # Compact format: truncate for fixed-width table
-                repo_display=$(truncate_string "$repo_name" 24)
-                branch_display=$(truncate_string "$branch" 25)
+                repo_display=$(truncate_string "$repo_name" $REPO_COLUMN_WIDTH)
+                branch_display=$(truncate_string "$branch" $BRANCH_COLUMN_WIDTH)
             fi
             
             # Extract counts for filtering
@@ -746,7 +853,7 @@ show_status() {
             if [ "$LONG_FORMAT" = "true" ]; then
                 repo_display="$repo_name"
             else
-                repo_display=$(truncate_string "$repo_name" 24)
+                repo_display=$(truncate_string "$repo_name" $REPO_COLUMN_WIDTH)
             fi
             
             if [ "$LONG_FORMAT" = "true" ]; then
