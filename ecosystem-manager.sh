@@ -12,7 +12,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOS=(
     "ai-academic-paper-reviewer"
     "aldc" 
-    "latex-ecosystem"
     "latex-environment"
     "latex-release-action"
     "latex-template"
