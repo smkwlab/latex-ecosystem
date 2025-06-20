@@ -68,14 +68,16 @@ check_github_cli() {
         return 1
     fi
     
-    # Check authentication status
-    if ! gh auth status >/dev/null 2>&1; then
+    # Check authentication status - look for active account
+    local auth_output
+    auth_output=$(gh auth status 2>&1)
+    if ! echo "$auth_output" | grep -q "Active account: true"; then
         # Show warning only once per execution using file-based flag
         local warning_file="${CACHE_DIR}/gh_warning_shown"
         if [ ! -f "$warning_file" ]; then
             # Ensure cache directory exists
             mkdir -p "$CACHE_DIR" 2>/dev/null
-            warn "GitHub CLI is not authenticated. Some features may not work properly."
+            warn "GitHub CLI has no active authenticated account. Some features may not work properly."
             warn "Run 'gh auth login' to authenticate."
             # Create warning flag file
             touch "$warning_file" 2>/dev/null
