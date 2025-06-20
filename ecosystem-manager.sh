@@ -10,6 +10,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOS=(
+    "."                          # Management repository (latex-ecosystem)
     "ai-academic-paper-reviewer"
     "aldc" 
     "latex-environment"
@@ -233,7 +234,11 @@ EOF
 # Check if repository exists
 repo_exists() {
     local repo="$1"
-    [ -d "$SCRIPT_DIR/$repo/.git" ]
+    if [ "$repo" = "." ]; then
+        [ -d "$SCRIPT_DIR/.git" ]
+    else
+        [ -d "$SCRIPT_DIR/$repo/.git" ]
+    fi
 }
 
 # Truncate string to specified length with ellipsis
@@ -250,11 +255,25 @@ truncate_string() {
     fi
 }
 
+# Convert repository path to display name
+get_repo_display_name() {
+    local repo="$1"
+    if [ "$repo" = "." ]; then
+        echo "latex-ecosystem"
+    else
+        echo "$repo"
+    fi
+}
+
 # Get current branch for repository
 get_current_branch() {
     local repo="$1"
     if repo_exists "$repo"; then
-        (cd "$SCRIPT_DIR/$repo" && git branch --show-current 2>/dev/null || echo "detached")
+        if [ "$repo" = "." ]; then
+            (cd "$SCRIPT_DIR" && git branch --show-current 2>/dev/null || echo "detached")
+        else
+            (cd "$SCRIPT_DIR/$repo" && git branch --show-current 2>/dev/null || echo "detached")
+        fi
     else
         echo "missing"
     fi
@@ -264,7 +283,11 @@ get_current_branch() {
 get_repo_status() {
     local repo="$1"
     if repo_exists "$repo"; then
-        (cd "$SCRIPT_DIR/$repo" && git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+        if [ "$repo" = "." ]; then
+            (cd "$SCRIPT_DIR" && git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+        else
+            (cd "$SCRIPT_DIR/$repo" && git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+        fi
     else
         echo "missing"
     fi
@@ -274,7 +297,13 @@ get_repo_status() {
 get_issue_status_direct() {
     local repo="$1"
     if repo_exists "$repo" && command -v gh >/dev/null 2>&1; then
-        (cd "$SCRIPT_DIR/$repo" && {
+        local target_dir
+        if [ "$repo" = "." ]; then
+            target_dir="$SCRIPT_DIR"
+        else
+            target_dir="$SCRIPT_DIR/$repo"
+        fi
+        (cd "$target_dir" && {
             # Get issues with labels for categorization
             issues_json=$(gh issue list --state open --json number,title,labels,createdAt 2>/dev/null || echo "[]")
             
@@ -350,7 +379,13 @@ get_repo_data() {
 get_pr_status_direct() {
     local repo="$1"
     if repo_exists "$repo" && command -v gh >/dev/null 2>&1; then
-        (cd "$SCRIPT_DIR/$repo" && {
+        local target_dir
+        if [ "$repo" = "." ]; then
+            target_dir="$SCRIPT_DIR"
+        else
+            target_dir="$SCRIPT_DIR/$repo"
+        fi
+        (cd "$target_dir" && {
             # Get PR information with review status
             pr_json=$(gh pr list --state open --json number,title,isDraft,reviewDecision,labels 2>/dev/null || echo "[]")
             
@@ -612,8 +647,8 @@ show_status() {
         printf "%s\t%s\t%s\t%s\t%s\t%s\n" "----------" "------" "-------" "-----------" "---" "------"
     else
         # Compact format: fixed width, with truncation
-        printf "%-26s %-27s %-8s %-20s %-8s %-8s\n" "Repository" "Branch" "Changes" "Last Commit" "PRs" "Issues"
-        printf "%-26s %-27s %-8s %-20s %-8s %-8s\n" "----------" "------" "-------" "-----------" "---" "------"
+        printf "%-26s %-27s %-8s %-22s %-8s %-8s\n" "Repository" "Branch" "Changes" "Last Commit" "PRs" "Issues"
+        printf "%-26s %-27s %-8s %-22s %-8s %-8s\n" "----------" "------" "-------" "-----------" "---" "------"
     fi
     
     for repo in "${REPOS[@]}"; do
@@ -624,20 +659,27 @@ show_status() {
         if repo_exists "$repo"; then
             branch=$(get_current_branch "$repo")
             changes=$(get_repo_status "$repo")
-            last_commit=$(cd "$SCRIPT_DIR/$repo" && git log -1 --format="%h %cr" 2>/dev/null || echo "unknown")
+            if [ "$repo" = "." ]; then
+                last_commit=$(cd "$SCRIPT_DIR" && git log -1 --format="%h %cr" 2>/dev/null || echo "unknown")
+            else
+                last_commit=$(cd "$SCRIPT_DIR/$repo" && git log -1 --format="%h %cr" 2>/dev/null || echo "unknown")
+            fi
             issue_data=$(get_issue_status "$repo")
             issue_info=$(format_issue_info "$issue_data" "$LONG_FORMAT")
             pr_data=$(get_pr_status "$repo")
             pr_info=$(format_pr_info "$pr_data" "$LONG_FORMAT")
             
-            # Truncate repository and branch names for display
+            # Convert repository name and truncate for display
+            local repo_name
+            repo_name=$(get_repo_display_name "$repo")
+            
             if [ "$LONG_FORMAT" = "true" ]; then
                 # Long format: no truncation, show full names
-                repo_display="$repo"
+                repo_display="$repo_name"
                 branch_display="$branch"
             else
                 # Compact format: truncate for fixed-width table
-                repo_display=$(truncate_string "$repo" 24)
+                repo_display=$(truncate_string "$repo_name" 24)
                 branch_display=$(truncate_string "$branch" 25)
             fi
             
@@ -675,34 +717,41 @@ show_status() {
                 # Short format with fixed width columns
                 if [ "$changes" -gt 0 ]; then
                     if [ "$urgent" -gt 0 ]; then
-                        printf "%-26s %-27s ${YELLOW}%-8s${NC} %-20s %-8s ${RED}%-8s${NC}\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-26s %-27s ${YELLOW}%-8s${NC} %-22s %-8s ${RED}%-8s${NC}\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
                     else
-                        printf "%-26s %-27s ${YELLOW}%-8s${NC} %-20s %-8s %-8s\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-26s %-27s ${YELLOW}%-8s${NC} %-22s %-8s %-8s\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
                     fi
                 else
                     if [ "$urgent" -gt 0 ]; then
-                        printf "%-26s %-27s ${GREEN}%-8s${NC} %-20s %-8s ${RED}%-8s${NC}\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-26s %-27s ${GREEN}%-8s${NC} %-22s %-8s ${RED}%-8s${NC}\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
                     else
-                        printf "%-26s %-27s ${GREEN}%-8s${NC} %-20s %-8s %-8s\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-26s %-27s ${GREEN}%-8s${NC} %-22s %-8s %-8s\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
                     fi
                 fi
             fi
             
             if [ "$verbose" = "true" ]; then
-                (cd "$SCRIPT_DIR/$repo" && git status --short 2>/dev/null | sed 's/^/    /')
+                if [ "$repo" = "." ]; then
+                    (cd "$SCRIPT_DIR" && git status --short 2>/dev/null | sed 's/^/    /')
+                else
+                    (cd "$SCRIPT_DIR/$repo" && git status --short 2>/dev/null | sed 's/^/    /')
+                fi
             fi
         else
             # Handle missing repos display
+            local repo_name
+            repo_name=$(get_repo_display_name "$repo")
+            
             if [ "$LONG_FORMAT" = "true" ]; then
-                repo_display="$repo"
+                repo_display="$repo_name"
             else
-                repo_display=$(truncate_string "$repo" 24)
+                repo_display=$(truncate_string "$repo_name" 24)
             fi
             
             if [ "$LONG_FORMAT" = "true" ]; then
                 printf "%s\t${RED}%s${NC}\t%s\t%s\t%s\t%s\n" "$repo_display" "missing" "-" "-" "-" "-"
             else
-                printf "%-26s ${RED}%-27s${NC} %-8s %-20s %-8s %-8s\n" "$repo_display" "missing" "-" "-" "-" "-"
+                printf "%-26s ${RED}%-27s${NC} %-8s %-22s %-8s %-8s\n" "$repo_display" "missing" "-" "-" "-" "-"
             fi
         fi
     done
