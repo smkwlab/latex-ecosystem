@@ -62,9 +62,6 @@ error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Global flag to track if GitHub CLI warning has been shown
-GITHUB_CLI_WARNING_SHOWN=false
-
 # Check if GitHub CLI is authenticated and available
 check_github_cli() {
     if ! command -v gh >/dev/null 2>&1; then
@@ -73,11 +70,15 @@ check_github_cli() {
     
     # Check authentication status
     if ! gh auth status >/dev/null 2>&1; then
-        # Show warning only once per execution
-        if [ "$GITHUB_CLI_WARNING_SHOWN" = "false" ]; then
+        # Show warning only once per execution using file-based flag
+        local warning_file="${CACHE_DIR}/gh_warning_shown"
+        if [ ! -f "$warning_file" ]; then
+            # Ensure cache directory exists
+            mkdir -p "$CACHE_DIR" 2>/dev/null
             warn "GitHub CLI is not authenticated. Some features may not work properly."
             warn "Run 'gh auth login' to authenticate."
-            GITHUB_CLI_WARNING_SHOWN=true
+            # Create warning flag file
+            touch "$warning_file" 2>/dev/null
         fi
         return 1
     fi
@@ -1145,6 +1146,9 @@ done
 # Main execution
 check_environment
 init_cache
+
+# Clear GitHub CLI warning flag at start of execution
+rm -f "${CACHE_DIR}/gh_warning_shown" 2>/dev/null
 
 case "$COMMAND" in
     status)
