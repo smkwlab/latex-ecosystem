@@ -4,10 +4,37 @@ This guide explains how to set up the complete LaTeX ecosystem development envir
 
 ## Prerequisites
 
-- Git
-- GitHub CLI (`gh`) - Recommended for easier authentication and cloning
-- Docker (optional, for testing)
-- VSCode (recommended for development)
+### Required Tools
+- **Git**: Version control system
+- **GitHub CLI (`gh`)**: Required for PR/Issue tracking, recommended for easier cloning
+- **jq**: JSON processor (required for ecosystem-manager.sh)
+- **Bash**: Shell interpreter (version 4.0+)
+
+### Optional Tools
+- **Docker**: For testing Docker images
+- **VSCode**: Recommended IDE for development
+
+### GitHub CLI Setup
+
+```bash
+# Install GitHub CLI
+# macOS
+brew install gh
+
+# Ubuntu/Debian  
+sudo apt install gh
+
+# Windows (with Scoop)
+scoop install gh
+
+# Authenticate
+gh auth login
+
+# Verify authentication
+gh auth status
+```
+
+**Note**: Full ecosystem management features require GitHub CLI authentication. Without it, PR/Issue tracking will not work.
 
 ## Quick Setup
 

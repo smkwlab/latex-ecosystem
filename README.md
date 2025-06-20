@@ -24,6 +24,38 @@ thesis-environment/
 └── sotsuron-report-template/ # Independent Git repository
 ```
 
+## Prerequisites
+
+### Required Tools
+
+- **Git**: Version control system
+- **GitHub CLI (gh)**: Required for PR/Issue tracking features
+- **jq**: JSON processor for parsing API responses
+- **Bash**: Shell interpreter (version 4.0+)
+
+### GitHub CLI Setup
+
+The ecosystem manager uses GitHub CLI for advanced features. To get full functionality:
+
+```bash
+# Install GitHub CLI (if not already installed)
+# macOS
+brew install gh
+
+# Ubuntu/Debian
+sudo apt install gh
+
+# Other platforms: see https://cli.github.com/
+
+# Authenticate with GitHub
+gh auth login
+
+# Verify authentication
+gh auth status
+```
+
+**Note**: Without GitHub CLI authentication, the ecosystem manager will still work but with limited functionality (no PR/Issue counts).
+
 ## Quick Start
 
 ### Initial Setup
