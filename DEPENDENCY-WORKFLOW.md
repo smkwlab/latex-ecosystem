@@ -82,44 +82,47 @@ latex-environment (DevContainer template)
    git push origin v0.X.Y
    ```
 
-### Phase 3: Template Repository Updates
+### Phase 3: Student Environment Update (latex-environment release branch)
 
-1. **Update each template individually**
+1. **Update latex-environment release branch**
    ```bash
-   for template in sotsuron-template wr-template latex-template sotsuron-report-template; do
-     cd $template/
-     git checkout -b update-latex-environment-v0.X.Y
-     # Update any references to latex-environment version
-     git commit -m "Update latex-environment to v0.X.Y"
-     git push origin update-latex-environment-v0.X.Y
-     # Create PR via GitHub
-     cd ..
-   done
+   cd latex-environment/
+   git checkout release
+   git reset --hard main  # Use latest main branch content
+   
+   # Remove development-only files for clean student environment
+   rm CLAUDE.md DEPENDENCY-UPDATE.md VERSIONS.md CHANGELOG.md VERSION
+   rm .github/workflows/check-texlive-updates.yml .github/workflows/create-release.yml
+   
+   git add -A
+   git commit -m "Update release branch to v0.X.Y: texlive-ja-textlint YYYY[a-z]"
+   git push origin release --force
    ```
 
-2. **Test each template**
-   - DevContainer startup
-   - LaTeX compilation
-   - Template-specific features
+2. **Verify student environment files**
+   - `.devcontainer/devcontainer.json` (updated image version)
+   - `.github/workflows/autoassingnees.yml` (reviewer assignment)
+   - `.github/workflows/latex-build.yml` (PDF generation)
+   - `README.md`, `.latexmkrc`, `.textlintrc` (configuration)
 
-3. **Merge and tag**
-   - Merge PRs after testing
-   - Create appropriate version tags
-
-### Phase 4: Management Tools Update
-
-1. **Update thesis-management-tools**
+3. **Test aldc integration**
    ```bash
-   cd thesis-management-tools/
-   # Update default image references in scripts
-   # Update documentation
+   # Test aldc downloads updated environment
+   mkdir test-integration && cd test-integration
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/aldc/main/aldc)"
+   # Verify .devcontainer uses latest image version
    ```
 
-2. **Update aldc**
-   ```bash
-   cd aldc/
-   # Update default configurations
-   ```
+### Phase 4: Template Repository Notes
+
+**No manual template updates required** - Templates automatically receive updates through aldc:
+
+- **sotsuron-template**: No .devcontainer directory (added by aldc)
+- **latex-template**: No .devcontainer directory (added by aldc) 
+- **wr-template**: No .devcontainer directory (added by aldc)
+- **sotsuron-report-template**: No .devcontainer directory (added by aldc)
+
+**Student workflow**: When students create repositories using thesis-management-tools, aldc automatically integrates the latest latex-environment release branch content.
 
 ## Automated vs Manual Steps
 

@@ -161,30 +161,42 @@ git commit -m "feat: description"
    git push origin v0.5.1
    ```
 
-#### Step 3: Template Repository Updates
+#### Step 3: Student Environment Update (Automated via aldc)
 
-1. **Prioritize critical templates**
+1. **Update latex-environment release branch**
    ```bash
-   # Priority order:
-   # 1. sotsuron-template (most used)
-   # 2. latex-template (basic template)
-   # 3. wr-template (regular use)
-   # 4. sotsuron-report-template
-   # 5. ise-report-template (HTML-focused)
+   cd latex-environment/
+   git checkout release
+   git reset --hard main  # Use latest main branch content
+   
+   # Remove development-only files for clean student environment
+   rm CLAUDE.md DEPENDENCY-UPDATE.md VERSIONS.md CHANGELOG.md VERSION
+   rm .github/workflows/check-texlive-updates.yml .github/workflows/create-release.yml
+   
+   git add -A
+   git commit -m "Update release branch to v0.5.1: texlive-ja-textlint 2025d"
+   git push origin release --force
    ```
 
-2. **Update each template**
+2. **Verify automatic template integration**
    ```bash
-   cd sotsuron-template/
-   git checkout -b update-latex-environment-v0.5.1
+   # Templates automatically receive updates via aldc - no manual updates needed:
+   # - sotsuron-template: Uses aldc for .devcontainer integration
+   # - latex-template: Uses aldc for .devcontainer integration  
+   # - wr-template: Uses aldc for .devcontainer integration
+   # - sotsuron-report-template: Uses aldc for .devcontainer integration
+   # - ise-report-template: Independent (HTML-focused, no LaTeX dependency)
+   ```
+
+3. **Test end-to-end student workflow**
+   ```bash
+   # Test repository creation with updated environment
+   mkdir test-student-repo && cd test-student-repo
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/aldc/main/aldc)"
    
-   # Update devcontainer references if any
-   # Update documentation
-   # Test template functionality
-   
-   git commit -m "Update latex-environment to v0.5.1"
-   git push origin update-latex-environment-v0.5.1
-   # Create PR, review, merge, tag
+   # Verify .devcontainer/devcontainer.json contains latest image version
+   grep "texlive-ja-textlint:" .devcontainer/devcontainer.json
+   # Expected: "image": "ghcr.io/smkwlab/texlive-ja-textlint:2025d"
    ```
 
 ### Post-Release Phase
