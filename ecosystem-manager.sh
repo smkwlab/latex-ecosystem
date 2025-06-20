@@ -62,23 +62,18 @@ error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Global flag to track if GitHub CLI warning has been shown
-GITHUB_CLI_WARNING_SHOWN=false
-
 # Check if GitHub CLI is authenticated and available
 check_github_cli() {
     if ! command -v gh >/dev/null 2>&1; then
         return 1
     fi
     
-    # Check authentication status
-    if ! gh auth status >/dev/null 2>&1; then
-        # Show warning only once per execution
-        if [ "$GITHUB_CLI_WARNING_SHOWN" = "false" ]; then
-            warn "GitHub CLI is not authenticated. Some features may not work properly."
-            warn "Run 'gh auth login' to authenticate."
-            GITHUB_CLI_WARNING_SHOWN=true
-        fi
+    # Check authentication status - look for active account
+    local auth_output
+    auth_output=$(gh auth status 2>&1)
+    if ! echo "$auth_output" | grep -q "Active account: true"; then
+        warn "GitHub CLI has no active authenticated account. Some features may not work properly."
+        warn "Run 'gh auth login' to authenticate."
         return 1
     fi
     
