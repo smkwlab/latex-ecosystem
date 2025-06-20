@@ -22,6 +22,16 @@ REPOS=(
     "wr-template"
 )
 
+# Cache configuration
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/ecosystem-manager"
+CACHE_DURATION=300  # 5 minutes
+DEFAULT_CACHE_ENABLED=true
+
+# Performance configuration
+RATE_LIMIT_WARNING_THRESHOLD=50
+RATE_LIMIT_ERROR_THRESHOLD=5
+MAX_PARALLEL_JOBS=3
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -53,6 +63,114 @@ check_environment() {
     fi
 }
 
+# Initialize cache directory
+init_cache() {
+    if [ "$CACHE_ENABLED" = "true" ]; then
+        mkdir -p "$CACHE_DIR"
+    fi
+}
+
+# Check GitHub API rate limit
+check_rate_limit() {
+    if ! command -v gh >/dev/null 2>&1; then
+        return 0  # No gh CLI, skip rate limit check
+    fi
+    
+    local rate_info
+    rate_info=$(gh api rate_limit --jq '.resources.core | {remaining: .remaining, reset: .reset}' 2>/dev/null || echo '{"remaining": "unknown", "reset": 0}')
+    
+    local remaining=$(echo "$rate_info" | jq -r '.remaining' 2>/dev/null || echo "unknown")
+    local reset_time=$(echo "$rate_info" | jq -r '.reset' 2>/dev/null || echo "0")
+    
+    if [ "$remaining" != "unknown" ] && [ "$remaining" -lt "$RATE_LIMIT_WARNING_THRESHOLD" ]; then
+        local reset_date=$(date -d "@$reset_time" 2>/dev/null || echo "unknown")
+        warn "GitHub API rate limit low: $remaining requests remaining (resets at $reset_date)"
+        
+        if [ "$remaining" -lt "$RATE_LIMIT_ERROR_THRESHOLD" ]; then
+            error "GitHub API rate limit critical: $remaining requests remaining"
+            error "Consider using --cache-only or waiting until $reset_date"
+            return 1
+        fi
+    fi
+    
+    return 0
+}
+
+# Get cache file path for repository
+get_cache_file() {
+    local repo="$1"
+    echo "$CACHE_DIR/${repo}_data.json"
+}
+
+# Check if cache is valid
+is_cache_valid() {
+    local cache_file="$1"
+    
+    if [ ! -f "$cache_file" ]; then
+        return 1
+    fi
+    
+    local cache_age
+    if command -v stat >/dev/null 2>&1; then
+        local cache_mtime
+        cache_mtime=$(stat -c %Y "$cache_file" 2>/dev/null || stat -f %m "$cache_file" 2>/dev/null || echo "0")
+        cache_age=$(( $(date +%s) - cache_mtime ))
+    else
+        # Fallback if stat is not available
+        cache_age=$((CACHE_DURATION + 1))
+    fi
+    
+    [ "$cache_age" -lt "$CACHE_DURATION" ]
+}
+
+# Get cached repository data
+get_cached_data() {
+    local repo="$1"
+    local cache_file
+    cache_file=$(get_cache_file "$repo")
+    
+    if [ "$CACHE_ENABLED" = "true" ] && is_cache_valid "$cache_file"; then
+        cat "$cache_file" 2>/dev/null && return 0
+    fi
+    
+    return 1
+}
+
+# Store repository data in cache
+store_cache_data() {
+    local repo="$1"
+    local pr_data="$2"
+    local issue_data="$3"
+    local cache_file
+    cache_file=$(get_cache_file "$repo")
+    
+    if [ "$CACHE_ENABLED" = "true" ]; then
+        local timestamp=$(date +%s)
+        cat > "$cache_file" <<EOF
+{
+  "timestamp": $timestamp,
+  "pr_data": "$pr_data",
+  "issue_data": "$issue_data"
+}
+EOF
+    fi
+}
+
+# Clear cache for specific repository or all
+clear_cache() {
+    local repo="$1"
+    
+    if [ -n "$repo" ]; then
+        local cache_file
+        cache_file=$(get_cache_file "$repo")
+        rm -f "$cache_file"
+        log "Cache cleared for $repo"
+    else
+        rm -rf "$CACHE_DIR"
+        log "All cache cleared"
+    fi
+}
+
 # Display help
 show_help() {
     cat << EOF
@@ -79,6 +197,17 @@ Options:
     --needs-review  Show only repositories with PRs needing review
     --dry-run       Show what would be done without executing
 
+Cache Options:
+    --no-cache      Disable cache, always fetch fresh data
+    --cache-only    Use cache only, skip GitHub API calls
+    --clear-cache   Clear all cached data
+    --cache-status  Show cache status and location
+
+Performance Options:
+    --parallel      Enable parallel processing (default: $MAX_PARALLEL_JOBS jobs)
+    --sequential    Disable parallel processing
+    --quiet         Suppress progress output
+
 Format Legend (compact mode):
     PRs: number(dr) - d=drafts, r=needs review
     Issues: number(bf!) - b=bugs, f=features, !=urgent
@@ -89,9 +218,14 @@ Examples:
     $0 status --urgent-issues    # Show only repos with urgent issues
     $0 status --with-prs         # Show only repos with open PRs
     $0 status --needs-review     # Show only repos with PRs needing review
+    $0 status --cache-only       # Fast display using cached data only
+    $0 status --no-cache         # Fresh data, bypass cache
+    $0 status --parallel         # Use parallel processing for speed
     $0 sync --repo latex-environment  # Sync only latex-environment
     $0 check --verbose           # Check for changes with details
     $0 claude-status             # Check CLAUDE.md git tracking
+    $0 --clear-cache             # Clear all cached data
+    $0 --cache-status            # Show cache information
 
 EOF
 }
@@ -136,8 +270,8 @@ get_repo_status() {
     fi
 }
 
-# Get repository issue status
-get_issue_status() {
+# Get repository issue status (direct API call)
+get_issue_status_direct() {
     local repo="$1"
     if repo_exists "$repo" && command -v gh >/dev/null 2>&1; then
         (cd "$SCRIPT_DIR/$repo" && {
@@ -164,8 +298,56 @@ get_issue_status() {
     fi
 }
 
-# Get repository PR status
-get_pr_status() {
+# Get repository issue status (wrapper for compatibility)
+get_issue_status() {
+    local repo="$1"
+    local repo_data
+    repo_data=$(get_repo_data "$repo")
+    echo "$repo_data" | cut -d'|' -f4-7
+}
+
+# Get repository data with cache support
+get_repo_data() {
+    local repo="$1"
+    local force_fresh="$2"  # "true" to bypass cache
+    
+    # Try cache first (unless disabled or force_fresh)  
+    if [ "$force_fresh" != "true" ] && [ "$CACHE_ENABLED" = "true" ]; then
+        local cached_data
+        if cached_data=$(get_cached_data "$repo"); then
+            local pr_data issue_data
+            pr_data=$(echo "$cached_data" | jq -r '.pr_data' 2>/dev/null || echo "0|0|0")
+            issue_data=$(echo "$cached_data" | jq -r '.issue_data' 2>/dev/null || echo "0|0|0|0")
+            echo "$pr_data|$issue_data"
+            return 0
+        fi
+    fi
+    
+    # If cache-only mode and no cache available
+    if [ "$CACHE_ONLY" = "true" ]; then
+        echo "0|0|0|0|0|0|0"
+        return 0
+    fi
+    
+    # Check rate limit before API calls
+    if ! check_rate_limit; then
+        echo "0|0|0|0|0|0|0"
+        return 1
+    fi
+    
+    # Fetch fresh data
+    local pr_data issue_data
+    pr_data=$(get_pr_status_direct "$repo")
+    issue_data=$(get_issue_status_direct "$repo")
+    
+    # Store in cache
+    store_cache_data "$repo" "$pr_data" "$issue_data"
+    
+    echo "$pr_data|$issue_data"
+}
+
+# Get repository PR status (direct API call)
+get_pr_status_direct() {
     local repo="$1"
     if repo_exists "$repo" && command -v gh >/dev/null 2>&1; then
         (cd "$SCRIPT_DIR/$repo" && {
@@ -191,6 +373,14 @@ get_pr_status() {
     else
         echo "0|0|0"
     fi
+}
+
+# Get repository PR status (wrapper for compatibility)
+get_pr_status() {
+    local repo="$1"
+    local repo_data
+    repo_data=$(get_repo_data "$repo")
+    echo "$repo_data" | cut -d'|' -f1-3
 }
 
 # Format PR information for display
@@ -294,6 +484,111 @@ format_issue_info() {
             echo "$total"
         fi
     fi
+}
+
+# Show cache status
+show_cache_status() {
+    log "Cache Status"
+    echo
+    echo "Cache directory: $CACHE_DIR"
+    echo "Cache duration: ${CACHE_DURATION}s ($(($CACHE_DURATION / 60)) minutes)"
+    echo "Cache enabled: $CACHE_ENABLED"
+    echo
+    
+    if [ -d "$CACHE_DIR" ]; then
+        local cache_files
+        cache_files=$(find "$CACHE_DIR" -name "*.json" 2>/dev/null | wc -l)
+        echo "Cached repositories: $cache_files"
+        
+        if [ "$cache_files" -gt 0 ]; then
+            echo
+            printf "%-30s %-20s %-10s\n" "Repository" "Cache Age" "Status"
+            printf "%-30s %-20s %-10s\n" "----------" "---------" "------"
+            
+            for cache_file in "$CACHE_DIR"/*.json; do
+                if [ -f "$cache_file" ]; then
+                    local repo
+                    repo=$(basename "$cache_file" _data.json)
+                    local cache_age
+                    if command -v stat >/dev/null 2>&1; then
+                        local cache_mtime
+                        cache_mtime=$(stat -c %Y "$cache_file" 2>/dev/null || stat -f %m "$cache_file" 2>/dev/null || echo "0")
+                        cache_age=$(( $(date +%s) - cache_mtime ))
+                    else
+                        cache_age="unknown"
+                    fi
+                    
+                    local status="valid"
+                    if [ "$cache_age" != "unknown" ] && [ "$cache_age" -gt "$CACHE_DURATION" ]; then
+                        status="expired"
+                    fi
+                    
+                    local age_display
+                    if [ "$cache_age" = "unknown" ]; then
+                        age_display="unknown"
+                    else
+                        age_display="${cache_age}s"
+                    fi
+                    
+                    printf "%-30s %-20s %-10s\n" "$repo" "$age_display" "$status"
+                fi
+            done
+        fi
+    else
+        echo "Cache directory does not exist"
+    fi
+}
+
+# Process repositories in parallel
+process_repos_parallel() {
+    local repos_array=("$@")
+    local pids=()
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    local job_count=0
+    
+    for repo in "${repos_array[@]}"; do
+        # Wait if we've reached max parallel jobs
+        if [ "$job_count" -ge "$MAX_PARALLEL_JOBS" ]; then
+            wait "${pids[0]}"
+            pids=("${pids[@]:1}")
+            ((job_count--))
+        fi
+        
+        # Start background job
+        {
+            local repo_data
+            repo_data=$(get_repo_data "$repo" "$NO_CACHE")
+            echo "$repo|$repo_data" > "$temp_dir/$repo.result"
+        } &
+        
+        pids+=($!)
+        ((job_count++))
+        
+        # Show progress if not quiet
+        if [ "$QUIET" != "true" ]; then
+            echo -n "." >&2
+        fi
+    done
+    
+    # Wait for remaining jobs
+    wait
+    
+    if [ "$QUIET" != "true" ]; then
+        echo >&2
+    fi
+    
+    # Collect results
+    for repo in "${repos_array[@]}"; do
+        if [ -f "$temp_dir/$repo.result" ]; then
+            cat "$temp_dir/$repo.result"
+        else
+            echo "$repo|0|0|0|0|0|0|0"
+        fi
+    done
+    
+    # Cleanup
+    rm -rf "$temp_dir"
 }
 
 # Show status of all repositories
@@ -612,6 +907,13 @@ WITH_PRS_ONLY=false
 NEEDS_REVIEW_ONLY=false
 LONG_FORMAT=false
 
+# Performance and cache options
+CACHE_ENABLED="$DEFAULT_CACHE_ENABLED"
+NO_CACHE=false
+CACHE_ONLY=false
+PARALLEL_ENABLED=true
+QUIET=false
+
 while [[ $# -gt 0 ]]; do
     case $1 in
         status|sync|check|versions|deps|test|claude-status|help)
@@ -646,6 +948,35 @@ while [[ $# -gt 0 ]]; do
             DRY_RUN=true
             shift
             ;;
+        --no-cache)
+            CACHE_ENABLED=false
+            NO_CACHE=true
+            shift
+            ;;
+        --cache-only)
+            CACHE_ONLY=true
+            shift
+            ;;
+        --clear-cache)
+            COMMAND="clear-cache"
+            shift
+            ;;
+        --cache-status)
+            COMMAND="cache-status"
+            shift
+            ;;
+        --parallel)
+            PARALLEL_ENABLED=true
+            shift
+            ;;
+        --sequential)
+            PARALLEL_ENABLED=false
+            shift
+            ;;
+        --quiet)
+            QUIET=true
+            shift
+            ;;
         *)
             error "Unknown option: $1"
             show_help
@@ -656,6 +987,7 @@ done
 
 # Main execution
 check_environment
+init_cache
 
 case "$COMMAND" in
     status)
@@ -672,6 +1004,12 @@ case "$COMMAND" in
         ;;
     deps)
         analyze_deps
+        ;;
+    clear-cache)
+        clear_cache "$SPECIFIC_REPO"
+        ;;
+    cache-status)
+        show_cache_status
         ;;
     test)
         run_tests "$DRY_RUN"
