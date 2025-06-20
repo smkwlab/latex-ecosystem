@@ -37,7 +37,6 @@ MAX_PARALLEL_JOBS=3
 # Display configuration (make hardcoded values configurable)
 readonly REPO_COLUMN_WIDTH=24
 readonly BRANCH_COLUMN_WIDTH=25
-readonly LAST_COMMIT_COLUMN_WIDTH=22
 
 # Error handling configuration
 readonly GITHUB_API_TIMEOUT=10
@@ -98,8 +97,7 @@ safe_jq() {
     fi
     
     local result
-    result=$(echo "$json" | jq -r "$query" 2>/dev/null)
-    if [ $? -ne 0 ] || [ -z "$result" ] || [ "$result" = "null" ]; then
+    if ! result=$(echo "$json" | jq -r "$query" 2>/dev/null) || [ -z "$result" ] || [ "$result" = "null" ]; then
         echo "$default_value"
     else
         echo "$result"
@@ -113,8 +111,7 @@ github_api_call() {
     local result
     
     while [ $retries -lt $MAX_RETRIES ]; do
-        result=$(timeout $GITHUB_API_TIMEOUT $cmd 2>/dev/null)
-        if [ $? -eq 0 ] && [ -n "$result" ]; then
+        if result=$(timeout "$GITHUB_API_TIMEOUT" bash -c "$cmd" 2>/dev/null) && [ -n "$result" ]; then
             echo "$result"
             return 0
         fi
@@ -158,11 +155,14 @@ check_rate_limit() {
     local rate_info
     rate_info=$(gh api rate_limit --jq '.resources.core | {remaining: .remaining, reset: .reset}' 2>/dev/null || echo '{"remaining": "unknown", "reset": 0}')
     
-    local remaining=$(echo "$rate_info" | jq -r '.remaining' 2>/dev/null || echo "unknown")
-    local reset_time=$(echo "$rate_info" | jq -r '.reset' 2>/dev/null || echo "0")
+    local remaining
+    remaining=$(echo "$rate_info" | jq -r '.remaining' 2>/dev/null || echo "unknown")
+    local reset_time
+    reset_time=$(echo "$rate_info" | jq -r '.reset' 2>/dev/null || echo "0")
     
     if [ "$remaining" != "unknown" ] && [ "$remaining" -lt "$RATE_LIMIT_WARNING_THRESHOLD" ]; then
-        local reset_date=$(date -d "@$reset_time" 2>/dev/null || echo "unknown")
+        local reset_date
+        reset_date=$(date -d "@$reset_time" 2>/dev/null || echo "unknown")
         warn "GitHub API rate limit low: $remaining requests remaining (resets at $reset_date)"
         
         if [ "$remaining" -lt "$RATE_LIMIT_ERROR_THRESHOLD" ]; then
@@ -224,7 +224,8 @@ store_cache_data() {
     cache_file=$(get_cache_file "$repo")
     
     if [ "$CACHE_ENABLED" = "true" ]; then
-        local timestamp=$(date +%s)
+        local timestamp
+        timestamp=$(date +%s)
         cat > "$cache_file" <<EOF
 {
   "timestamp": $timestamp,
@@ -629,7 +630,7 @@ show_cache_status() {
     log "Cache Status"
     echo
     echo "Cache directory: $CACHE_DIR"
-    echo "Cache duration: ${CACHE_DURATION}s ($(($CACHE_DURATION / 60)) minutes)"
+    echo "Cache duration: ${CACHE_DURATION}s ($((CACHE_DURATION / 60)) minutes)"
     echo "Cache enabled: $CACHE_ENABLED"
     echo
     
@@ -787,7 +788,7 @@ show_status() {
             fi
             
             # Extract counts for filtering
-            IFS='|' read -r issue_total bugs enhancements urgent <<< "$issue_data"
+            IFS='|' read -r _ bugs enhancements urgent <<< "$issue_data"
             IFS='|' read -r pr_total drafts needs_review <<< "$pr_data"
             
             # Apply filters
@@ -1063,7 +1064,7 @@ LONG_FORMAT=false
 CACHE_ENABLED="$DEFAULT_CACHE_ENABLED"
 NO_CACHE=false
 CACHE_ONLY=false
-PARALLEL_ENABLED=true
+# PARALLEL_ENABLED=true  # TODO: Implement parallel processing
 QUIET=false
 
 while [[ $# -gt 0 ]]; do
@@ -1118,11 +1119,11 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --parallel)
-            PARALLEL_ENABLED=true
+            # TODO: Implement parallel processing
             shift
             ;;
         --sequential)
-            PARALLEL_ENABLED=false
+            # TODO: Implement sequential processing
             shift
             ;;
         --quiet)
