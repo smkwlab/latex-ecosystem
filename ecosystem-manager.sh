@@ -73,12 +73,22 @@ Commands:
 Options:
     --repo REPO     Apply command to specific repository only
     --verbose       Show detailed output
+    --long, -l      Show detailed PR/Issue information (default: compact)
     --urgent-issues Show only repositories with urgent issues
+    --with-prs      Show only repositories with open PRs
+    --needs-review  Show only repositories with PRs needing review
     --dry-run       Show what would be done without executing
 
+Format Legend (compact mode):
+    PRs: number(dr) - d=drafts, r=needs review
+    Issues: number(bf!) - b=bugs, f=features, !=urgent
+
 Examples:
-    $0 status                    # Show status of all repos
+    $0 status                    # Show compact status of all repos
+    $0 status --long             # Show detailed status with full descriptions  
     $0 status --urgent-issues    # Show only repos with urgent issues
+    $0 status --with-prs         # Show only repos with open PRs
+    $0 status --needs-review     # Show only repos with PRs needing review
     $0 sync --repo latex-environment  # Sync only latex-environment
     $0 check --verbose           # Check for changes with details
     $0 claude-status             # Check CLAUDE.md git tracking
@@ -90,6 +100,20 @@ EOF
 repo_exists() {
     local repo="$1"
     [ -d "$SCRIPT_DIR/$repo/.git" ]
+}
+
+# Truncate string to specified length with ellipsis
+truncate_string() {
+    local str="$1"
+    local max_length="$2"
+    local ellipsis="..."
+    
+    if [ ${#str} -le $max_length ]; then
+        echo "$str"
+    else
+        local truncated_length=$((max_length - ${#ellipsis}))
+        echo "${str:0:$truncated_length}$ellipsis"
+    fi
 }
 
 # Get current branch for repository
@@ -140,42 +164,135 @@ get_issue_status() {
     fi
 }
 
-# Format issue information for display
-format_issue_info() {
-    local issue_data="$1"
-    IFS='|' read -r total bugs enhancements urgent <<< "$issue_data"
+# Get repository PR status
+get_pr_status() {
+    local repo="$1"
+    if repo_exists "$repo" && command -v gh >/dev/null 2>&1; then
+        (cd "$SCRIPT_DIR/$repo" && {
+            # Get PR information with review status
+            pr_json=$(gh pr list --state open --json number,title,isDraft,reviewDecision,labels 2>/dev/null || echo "[]")
+            
+            if [ "$pr_json" = "[]" ] || [ -z "$pr_json" ]; then
+                echo "0|0|0"
+                return
+            fi
+            
+            # Count total PRs
+            total=$(echo "$pr_json" | jq -r 'length' 2>/dev/null || echo "0")
+            
+            # Count draft PRs
+            drafts=$(echo "$pr_json" | jq -r '[.[] | select(.isDraft == true)] | length' 2>/dev/null || echo "0")
+            
+            # Count PRs needing review (not draft and no approval yet)
+            needs_review=$(echo "$pr_json" | jq -r '[.[] | select(.isDraft == false and (.reviewDecision == null or .reviewDecision == "REVIEW_REQUIRED"))] | length' 2>/dev/null || echo "0")
+            
+            echo "$total|$drafts|$needs_review"
+        })
+    else
+        echo "0|0|0"
+    fi
+}
+
+# Format PR information for display
+format_pr_info() {
+    local pr_data="$1"
+    local long_format="$2"
+    IFS='|' read -r total drafts needs_review <<< "$pr_data"
     
     if [ "$total" -eq 0 ]; then
-        echo "0 open"
+        echo "0"
         return
     fi
     
-    local details=""
-    local urgent_marker=""
-    
-    # Add urgent marker if there are urgent issues
-    if [ "$urgent" -gt 0 ]; then
-        urgent_marker=" 🚨"
-    fi
-    
-    # Build details string
-    if [ "$bugs" -gt 0 ] && [ "$enhancements" -gt 0 ]; then
-        details="$bugs bug"
-        [ "$bugs" -gt 1 ] && details="${details}s"
-        details="${details}, $enhancements feature"
-        [ "$enhancements" -gt 1 ] && details="${details}s"
-    elif [ "$bugs" -gt 0 ]; then
-        details="$bugs bug"
-        [ "$bugs" -gt 1 ] && details="${details}s"
-    elif [ "$enhancements" -gt 0 ]; then
-        details="$enhancements feature"
-        [ "$enhancements" -gt 1 ] && details="${details}s"
-    fi
-    
-    if [ -n "$details" ]; then
-        echo "$total open ($details)$urgent_marker"
+    if [ "$long_format" = "true" ]; then
+        local details=""
+        
+        # Build details string for long format
+        if [ "$drafts" -gt 0 ] && [ "$needs_review" -gt 0 ]; then
+            details="$drafts draft"
+            [ "$drafts" -gt 1 ] && details="${details}s"
+            details="${details}, $needs_review need"
+            [ "$needs_review" -gt 1 ] && details="${details}" || details="${details}s"
+            details="${details} review"
+        elif [ "$drafts" -gt 0 ]; then
+            details="$drafts draft"
+            [ "$drafts" -gt 1 ] && details="${details}s"
+        elif [ "$needs_review" -gt 0 ]; then
+            details="$needs_review need"
+            [ "$needs_review" -gt 1 ] && details="${details}" || details="${details}s"
+            details="${details} review"
+        fi
+        
+        if [ -n "$details" ]; then
+            echo "$total open ($details)"
+        else
+            echo "$total open"
+        fi
     else
-        echo "$total open$urgent_marker"
+        # Short format: just number, with markers
+        local markers=""
+        [ "$drafts" -gt 0 ] && markers="${markers}d"
+        [ "$needs_review" -gt 0 ] && markers="${markers}r"
+        
+        if [ -n "$markers" ]; then
+            echo "$total($markers)"
+        else
+            echo "$total"
+        fi
+    fi
+}
+
+# Format issue information for display
+format_issue_info() {
+    local issue_data="$1"
+    local long_format="$2"
+    IFS='|' read -r total bugs enhancements urgent <<< "$issue_data"
+    
+    if [ "$total" -eq 0 ]; then
+        echo "0"
+        return
+    fi
+    
+    if [ "$long_format" = "true" ]; then
+        local details=""
+        local urgent_marker=""
+        
+        # Add urgent marker if there are urgent issues
+        if [ "$urgent" -gt 0 ]; then
+            urgent_marker=" 🚨"
+        fi
+        
+        # Build details string for long format
+        if [ "$bugs" -gt 0 ] && [ "$enhancements" -gt 0 ]; then
+            details="$bugs bug"
+            [ "$bugs" -gt 1 ] && details="${details}s"
+            details="${details}, $enhancements feature"
+            [ "$enhancements" -gt 1 ] && details="${details}s"
+        elif [ "$bugs" -gt 0 ]; then
+            details="$bugs bug"
+            [ "$bugs" -gt 1 ] && details="${details}s"
+        elif [ "$enhancements" -gt 0 ]; then
+            details="$enhancements feature"
+            [ "$enhancements" -gt 1 ] && details="${details}s"
+        fi
+        
+        if [ -n "$details" ]; then
+            echo "$total open ($details)$urgent_marker"
+        else
+            echo "$total open$urgent_marker"
+        fi
+    else
+        # Short format: just number, with markers
+        local markers=""
+        [ "$bugs" -gt 0 ] && markers="${markers}b"
+        [ "$enhancements" -gt 0 ] && markers="${markers}f"
+        [ "$urgent" -gt 0 ] && markers="${markers}!"
+        
+        if [ -n "$markers" ]; then
+            echo "$total($markers)"
+        else
+            echo "$total"
+        fi
     fi
 }
 
@@ -186,12 +303,23 @@ show_status() {
     
     if [ "$URGENT_ISSUES_ONLY" = "true" ]; then
         log "🚨 Repositories with Urgent Issues"
+    elif [ "$WITH_PRS_ONLY" = "true" ]; then
+        log "📋 Repositories with Open Pull Requests"
+    elif [ "$NEEDS_REVIEW_ONLY" = "true" ]; then
+        log "👁️ Repositories with PRs Needing Review"
     else
         log "Repository Status Overview"
     fi
     echo
-    printf "%-30s %-15s %-10s %-20s %-25s\n" "Repository" "Branch" "Changes" "Last Commit" "Issues"
-    printf "%-30s %-15s %-10s %-20s %-25s\n" "----------" "------" "-------" "-----------" "------"
+    if [ "$LONG_FORMAT" = "true" ]; then
+        # Long format: variable width, no truncation
+        printf "%s\t%s\t%s\t%s\t%s\t%s\n" "Repository" "Branch" "Changes" "Last Commit" "PRs" "Issues"
+        printf "%s\t%s\t%s\t%s\t%s\t%s\n" "----------" "------" "-------" "-----------" "---" "------"
+    else
+        # Compact format: fixed width, with truncation
+        printf "%-26s %-27s %-8s %-20s %-8s %-8s\n" "Repository" "Branch" "Changes" "Last Commit" "PRs" "Issues"
+        printf "%-26s %-27s %-8s %-20s %-8s %-8s\n" "----------" "------" "-------" "-----------" "---" "------"
+    fi
     
     for repo in "${REPOS[@]}"; do
         if [ -n "$specific_repo" ] && [ "$specific_repo" != "$repo" ]; then
@@ -203,27 +331,65 @@ show_status() {
             changes=$(get_repo_status "$repo")
             last_commit=$(cd "$SCRIPT_DIR/$repo" && git log -1 --format="%h %cr" 2>/dev/null || echo "unknown")
             issue_data=$(get_issue_status "$repo")
-            issue_info=$(format_issue_info "$issue_data")
+            issue_info=$(format_issue_info "$issue_data" "$LONG_FORMAT")
+            pr_data=$(get_pr_status "$repo")
+            pr_info=$(format_pr_info "$pr_data" "$LONG_FORMAT")
             
-            # Extract urgent count for color coding
-            IFS='|' read -r total bugs enhancements urgent <<< "$issue_data"
+            # Truncate repository and branch names for display
+            if [ "$LONG_FORMAT" = "true" ]; then
+                # Long format: no truncation, show full names
+                repo_display="$repo"
+                branch_display="$branch"
+            else
+                # Compact format: truncate for fixed-width table
+                repo_display=$(truncate_string "$repo" 24)
+                branch_display=$(truncate_string "$branch" 25)
+            fi
             
-            # Skip if filtering for urgent issues and this repo has none
+            # Extract counts for filtering
+            IFS='|' read -r issue_total bugs enhancements urgent <<< "$issue_data"
+            IFS='|' read -r pr_total drafts needs_review <<< "$pr_data"
+            
+            # Apply filters
             if [ "$URGENT_ISSUES_ONLY" = "true" ] && [ "$urgent" -eq 0 ]; then
                 continue
             fi
+            if [ "$WITH_PRS_ONLY" = "true" ] && [ "$pr_total" -eq 0 ]; then
+                continue
+            fi
+            if [ "$NEEDS_REVIEW_ONLY" = "true" ] && [ "$needs_review" -eq 0 ]; then
+                continue
+            fi
             
-            if [ "$changes" -gt 0 ]; then
-                if [ "$urgent" -gt 0 ]; then
-                    printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s ${RED}%-25s${NC}\n" "$repo" "$branch" "$changes" "$last_commit" "$issue_info"
+            if [ "$LONG_FORMAT" = "true" ]; then
+                # Long format: tab-separated, variable width
+                if [ "$changes" -gt 0 ]; then
+                    if [ "$urgent" -gt 0 ]; then
+                        printf "%s\t%s\t${YELLOW}%s${NC}\t%s\t%s\t${RED}%s${NC}\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                    else
+                        printf "%s\t%s\t${YELLOW}%s${NC}\t%s\t%s\t%s\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                    fi
                 else
-                    printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s %-25s\n" "$repo" "$branch" "$changes" "$last_commit" "$issue_info"
+                    if [ "$urgent" -gt 0 ]; then
+                        printf "%s\t%s\t${GREEN}%s${NC}\t%s\t%s\t${RED}%s${NC}\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
+                    else
+                        printf "%s\t%s\t${GREEN}%s${NC}\t%s\t%s\t%s\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
+                    fi
                 fi
             else
-                if [ "$urgent" -gt 0 ]; then
-                    printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s ${RED}%-25s${NC}\n" "$repo" "$branch" "clean" "$last_commit" "$issue_info"
+                # Short format with fixed width columns
+                if [ "$changes" -gt 0 ]; then
+                    if [ "$urgent" -gt 0 ]; then
+                        printf "%-26s %-27s ${YELLOW}%-8s${NC} %-20s %-8s ${RED}%-8s${NC}\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                    else
+                        printf "%-26s %-27s ${YELLOW}%-8s${NC} %-20s %-8s %-8s\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                    fi
                 else
-                    printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s %-25s\n" "$repo" "$branch" "clean" "$last_commit" "$issue_info"
+                    if [ "$urgent" -gt 0 ]; then
+                        printf "%-26s %-27s ${GREEN}%-8s${NC} %-20s %-8s ${RED}%-8s${NC}\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
+                    else
+                        printf "%-26s %-27s ${GREEN}%-8s${NC} %-20s %-8s %-8s\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
+                    fi
                 fi
             fi
             
@@ -231,7 +397,18 @@ show_status() {
                 (cd "$SCRIPT_DIR/$repo" && git status --short 2>/dev/null | sed 's/^/    /')
             fi
         else
-            printf "%-30s ${RED}%-15s${NC} %-10s %-20s %-25s\n" "$repo" "missing" "-" "-" "-"
+            # Handle missing repos display
+            if [ "$LONG_FORMAT" = "true" ]; then
+                repo_display="$repo"
+            else
+                repo_display=$(truncate_string "$repo" 24)
+            fi
+            
+            if [ "$LONG_FORMAT" = "true" ]; then
+                printf "%s\t${RED}%s${NC}\t%s\t%s\t%s\t%s\n" "$repo_display" "missing" "-" "-" "-" "-"
+            else
+                printf "%-26s ${RED}%-27s${NC} %-8s %-20s %-8s %-8s\n" "$repo_display" "missing" "-" "-" "-" "-"
+            fi
         fi
     done
 }
@@ -431,6 +608,9 @@ SPECIFIC_REPO=""
 VERBOSE=false
 DRY_RUN=false
 URGENT_ISSUES_ONLY=false
+WITH_PRS_ONLY=false
+NEEDS_REVIEW_ONLY=false
+LONG_FORMAT=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -446,8 +626,20 @@ while [[ $# -gt 0 ]]; do
             VERBOSE=true
             shift
             ;;
+        --long|-l)
+            LONG_FORMAT=true
+            shift
+            ;;
         --urgent-issues)
             URGENT_ISSUES_ONLY=true
+            shift
+            ;;
+        --with-prs)
+            WITH_PRS_ONLY=true
+            shift
+            ;;
+        --needs-review)
+            NEEDS_REVIEW_ONLY=true
             shift
             ;;
         --dry-run)
