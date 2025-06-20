@@ -102,6 +102,20 @@ repo_exists() {
     [ -d "$SCRIPT_DIR/$repo/.git" ]
 }
 
+# Truncate string to specified length with ellipsis
+truncate_string() {
+    local str="$1"
+    local max_length="$2"
+    local ellipsis="..."
+    
+    if [ ${#str} -le $max_length ]; then
+        echo "$str"
+    else
+        local truncated_length=$((max_length - ${#ellipsis}))
+        echo "${str:0:$truncated_length}$ellipsis"
+    fi
+}
+
 # Get current branch for repository
 get_current_branch() {
     local repo="$1"
@@ -319,6 +333,15 @@ show_status() {
             pr_data=$(get_pr_status "$repo")
             pr_info=$(format_pr_info "$pr_data" "$LONG_FORMAT")
             
+            # Truncate repository and branch names for display
+            if [ "$LONG_FORMAT" = "true" ]; then
+                repo_display=$(truncate_string "$repo" 28)
+                branch_display=$(truncate_string "$branch" 13)
+            else
+                repo_display=$(truncate_string "$repo" 28)
+                branch_display=$(truncate_string "$branch" 13)
+            fi
+            
             # Extract counts for filtering
             IFS='|' read -r issue_total bugs enhancements urgent <<< "$issue_data"
             IFS='|' read -r pr_total drafts needs_review <<< "$pr_data"
@@ -337,30 +360,30 @@ show_status() {
             if [ "$LONG_FORMAT" = "true" ]; then
                 if [ "$changes" -gt 0 ]; then
                     if [ "$urgent" -gt 0 ]; then
-                        printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s %-25s ${RED}%-25s${NC}\n" "$repo" "$branch" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s %-25s ${RED}%-25s${NC}\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
                     else
-                        printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s %-25s %-25s\n" "$repo" "$branch" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s %-25s %-25s\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
                     fi
                 else
                     if [ "$urgent" -gt 0 ]; then
-                        printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s %-25s ${RED}%-25s${NC}\n" "$repo" "$branch" "clean" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s %-25s ${RED}%-25s${NC}\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
                     else
-                        printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s %-25s %-25s\n" "$repo" "$branch" "clean" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s %-25s %-25s\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
                     fi
                 fi
             else
                 # Short format with fixed width columns
                 if [ "$changes" -gt 0 ]; then
                     if [ "$urgent" -gt 0 ]; then
-                        printf "%-30s %-15s ${YELLOW}%-8s${NC} %-20s %-8s ${RED}%-8s${NC}\n" "$repo" "$branch" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-30s %-15s ${YELLOW}%-8s${NC} %-20s %-8s ${RED}%-8s${NC}\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
                     else
-                        printf "%-30s %-15s ${YELLOW}%-8s${NC} %-20s %-8s %-8s\n" "$repo" "$branch" "$changes" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-30s %-15s ${YELLOW}%-8s${NC} %-20s %-8s %-8s\n" "$repo_display" "$branch_display" "$changes" "$last_commit" "$pr_info" "$issue_info"
                     fi
                 else
                     if [ "$urgent" -gt 0 ]; then
-                        printf "%-30s %-15s ${GREEN}%-8s${NC} %-20s %-8s ${RED}%-8s${NC}\n" "$repo" "$branch" "clean" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-30s %-15s ${GREEN}%-8s${NC} %-20s %-8s ${RED}%-8s${NC}\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
                     else
-                        printf "%-30s %-15s ${GREEN}%-8s${NC} %-20s %-8s %-8s\n" "$repo" "$branch" "clean" "$last_commit" "$pr_info" "$issue_info"
+                        printf "%-30s %-15s ${GREEN}%-8s${NC} %-20s %-8s %-8s\n" "$repo_display" "$branch_display" "clean" "$last_commit" "$pr_info" "$issue_info"
                     fi
                 fi
             fi
@@ -369,10 +392,13 @@ show_status() {
                 (cd "$SCRIPT_DIR/$repo" && git status --short 2>/dev/null | sed 's/^/    /')
             fi
         else
+            # Truncate repository name for missing repos too
+            repo_display=$(truncate_string "$repo" 28)
+            
             if [ "$LONG_FORMAT" = "true" ]; then
-                printf "%-30s ${RED}%-15s${NC} %-10s %-20s %-25s %-25s\n" "$repo" "missing" "-" "-" "-" "-"
+                printf "%-30s ${RED}%-15s${NC} %-10s %-20s %-25s %-25s\n" "$repo_display" "missing" "-" "-" "-" "-"
             else
-                printf "%-30s ${RED}%-15s${NC} %-8s %-20s %-8s %-8s\n" "$repo" "missing" "-" "-" "-" "-"
+                printf "%-30s ${RED}%-15s${NC} %-8s %-20s %-8s %-8s\n" "$repo_display" "missing" "-" "-" "-" "-"
             fi
         fi
     done
