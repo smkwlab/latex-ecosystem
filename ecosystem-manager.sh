@@ -74,11 +74,15 @@ Options:
     --repo REPO     Apply command to specific repository only
     --verbose       Show detailed output
     --urgent-issues Show only repositories with urgent issues
+    --with-prs      Show only repositories with open PRs
+    --needs-review  Show only repositories with PRs needing review
     --dry-run       Show what would be done without executing
 
 Examples:
     $0 status                    # Show status of all repos
     $0 status --urgent-issues    # Show only repos with urgent issues
+    $0 status --with-prs         # Show only repos with open PRs
+    $0 status --needs-review     # Show only repos with PRs needing review
     $0 sync --repo latex-environment  # Sync only latex-environment
     $0 check --verbose           # Check for changes with details
     $0 claude-status             # Check CLAUDE.md git tracking
@@ -140,6 +144,70 @@ get_issue_status() {
     fi
 }
 
+# Get repository PR status
+get_pr_status() {
+    local repo="$1"
+    if repo_exists "$repo" && command -v gh >/dev/null 2>&1; then
+        (cd "$SCRIPT_DIR/$repo" && {
+            # Get PR information with review status
+            pr_json=$(gh pr list --state open --json number,title,isDraft,reviewDecision,labels 2>/dev/null || echo "[]")
+            
+            if [ "$pr_json" = "[]" ] || [ -z "$pr_json" ]; then
+                echo "0|0|0"
+                return
+            fi
+            
+            # Count total PRs
+            total=$(echo "$pr_json" | jq -r 'length' 2>/dev/null || echo "0")
+            
+            # Count draft PRs
+            drafts=$(echo "$pr_json" | jq -r '[.[] | select(.isDraft == true)] | length' 2>/dev/null || echo "0")
+            
+            # Count PRs needing review (not draft and no approval yet)
+            needs_review=$(echo "$pr_json" | jq -r '[.[] | select(.isDraft == false and (.reviewDecision == null or .reviewDecision == "REVIEW_REQUIRED"))] | length' 2>/dev/null || echo "0")
+            
+            echo "$total|$drafts|$needs_review"
+        })
+    else
+        echo "0|0|0"
+    fi
+}
+
+# Format PR information for display
+format_pr_info() {
+    local pr_data="$1"
+    IFS='|' read -r total drafts needs_review <<< "$pr_data"
+    
+    if [ "$total" -eq 0 ]; then
+        echo "0 open"
+        return
+    fi
+    
+    local details=""
+    
+    # Build details string
+    if [ "$drafts" -gt 0 ] && [ "$needs_review" -gt 0 ]; then
+        details="$drafts draft"
+        [ "$drafts" -gt 1 ] && details="${details}s"
+        details="${details}, $needs_review need"
+        [ "$needs_review" -gt 1 ] && details="${details}" || details="${details}s"
+        details="${details} review"
+    elif [ "$drafts" -gt 0 ]; then
+        details="$drafts draft"
+        [ "$drafts" -gt 1 ] && details="${details}s"
+    elif [ "$needs_review" -gt 0 ]; then
+        details="$needs_review need"
+        [ "$needs_review" -gt 1 ] && details="${details}" || details="${details}s"
+        details="${details} review"
+    fi
+    
+    if [ -n "$details" ]; then
+        echo "$total open ($details)"
+    else
+        echo "$total open"
+    fi
+}
+
 # Format issue information for display
 format_issue_info() {
     local issue_data="$1"
@@ -186,12 +254,16 @@ show_status() {
     
     if [ "$URGENT_ISSUES_ONLY" = "true" ]; then
         log "🚨 Repositories with Urgent Issues"
+    elif [ "$WITH_PRS_ONLY" = "true" ]; then
+        log "📋 Repositories with Open Pull Requests"
+    elif [ "$NEEDS_REVIEW_ONLY" = "true" ]; then
+        log "👁️ Repositories with PRs Needing Review"
     else
         log "Repository Status Overview"
     fi
     echo
-    printf "%-30s %-15s %-10s %-20s %-25s\n" "Repository" "Branch" "Changes" "Last Commit" "Issues"
-    printf "%-30s %-15s %-10s %-20s %-25s\n" "----------" "------" "-------" "-----------" "------"
+    printf "%-30s %-15s %-10s %-20s %-25s %-25s\n" "Repository" "Branch" "Changes" "Last Commit" "PRs" "Issues"
+    printf "%-30s %-15s %-10s %-20s %-25s %-25s\n" "----------" "------" "-------" "-----------" "---" "------"
     
     for repo in "${REPOS[@]}"; do
         if [ -n "$specific_repo" ] && [ "$specific_repo" != "$repo" ]; then
@@ -204,26 +276,35 @@ show_status() {
             last_commit=$(cd "$SCRIPT_DIR/$repo" && git log -1 --format="%h %cr" 2>/dev/null || echo "unknown")
             issue_data=$(get_issue_status "$repo")
             issue_info=$(format_issue_info "$issue_data")
+            pr_data=$(get_pr_status "$repo")
+            pr_info=$(format_pr_info "$pr_data")
             
-            # Extract urgent count for color coding
-            IFS='|' read -r total bugs enhancements urgent <<< "$issue_data"
+            # Extract counts for filtering
+            IFS='|' read -r issue_total bugs enhancements urgent <<< "$issue_data"
+            IFS='|' read -r pr_total drafts needs_review <<< "$pr_data"
             
-            # Skip if filtering for urgent issues and this repo has none
+            # Apply filters
             if [ "$URGENT_ISSUES_ONLY" = "true" ] && [ "$urgent" -eq 0 ]; then
+                continue
+            fi
+            if [ "$WITH_PRS_ONLY" = "true" ] && [ "$pr_total" -eq 0 ]; then
+                continue
+            fi
+            if [ "$NEEDS_REVIEW_ONLY" = "true" ] && [ "$needs_review" -eq 0 ]; then
                 continue
             fi
             
             if [ "$changes" -gt 0 ]; then
                 if [ "$urgent" -gt 0 ]; then
-                    printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s ${RED}%-25s${NC}\n" "$repo" "$branch" "$changes" "$last_commit" "$issue_info"
+                    printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s %-25s ${RED}%-25s${NC}\n" "$repo" "$branch" "$changes" "$last_commit" "$pr_info" "$issue_info"
                 else
-                    printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s %-25s\n" "$repo" "$branch" "$changes" "$last_commit" "$issue_info"
+                    printf "%-30s %-15s ${YELLOW}%-10s${NC} %-20s %-25s %-25s\n" "$repo" "$branch" "$changes" "$last_commit" "$pr_info" "$issue_info"
                 fi
             else
                 if [ "$urgent" -gt 0 ]; then
-                    printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s ${RED}%-25s${NC}\n" "$repo" "$branch" "clean" "$last_commit" "$issue_info"
+                    printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s %-25s ${RED}%-25s${NC}\n" "$repo" "$branch" "clean" "$last_commit" "$pr_info" "$issue_info"
                 else
-                    printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s %-25s\n" "$repo" "$branch" "clean" "$last_commit" "$issue_info"
+                    printf "%-30s %-15s ${GREEN}%-10s${NC} %-20s %-25s %-25s\n" "$repo" "$branch" "clean" "$last_commit" "$pr_info" "$issue_info"
                 fi
             fi
             
@@ -231,7 +312,7 @@ show_status() {
                 (cd "$SCRIPT_DIR/$repo" && git status --short 2>/dev/null | sed 's/^/    /')
             fi
         else
-            printf "%-30s ${RED}%-15s${NC} %-10s %-20s %-25s\n" "$repo" "missing" "-" "-" "-"
+            printf "%-30s ${RED}%-15s${NC} %-10s %-20s %-25s %-25s\n" "$repo" "missing" "-" "-" "-" "-"
         fi
     done
 }
@@ -431,6 +512,8 @@ SPECIFIC_REPO=""
 VERBOSE=false
 DRY_RUN=false
 URGENT_ISSUES_ONLY=false
+WITH_PRS_ONLY=false
+NEEDS_REVIEW_ONLY=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -448,6 +531,14 @@ while [[ $# -gt 0 ]]; do
             ;;
         --urgent-issues)
             URGENT_ISSUES_ONLY=true
+            shift
+            ;;
+        --with-prs)
+            WITH_PRS_ONLY=true
+            shift
+            ;;
+        --needs-review)
+            NEEDS_REVIEW_ONLY=true
             shift
             ;;
         --dry-run)
