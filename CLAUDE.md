@@ -64,7 +64,37 @@ This directory contains multiple **independent Git repositories**:
 2. Use that repository's CLAUDE.md for context
 3. Follow that repository's development workflow
 
-## Detailed Documentation
+## Architecture Overview
 
-- **[Architecture Guide](docs/CLAUDE-ARCHITECTURE.md)** - Ecosystem structure, dependencies, repository boundaries
-- **[Workflows & Examples](docs/CLAUDE-WORKFLOWS.md)** - Detailed command examples, cross-repository coordination
+### Dependency Chain
+- **texlive-ja-textlint** → **latex-environment** → **templates**
+- **Supporting tools** integrate with templates and environments
+- **Management tools** coordinate the entire ecosystem
+
+### Git Repository Boundaries
+```
+thesis-environment/           # This management repository
+├── .git/                    # Git for management files only
+├── ECOSYSTEM.md             # Tracked
+├── ecosystem-manager.sh     # Tracked
+├── CLAUDE.md               # Tracked (this file)
+│
+├── latex-environment/      # Independent repository
+│   ├── .git/              # Separate Git repository
+│   └── CLAUDE.md          # Different CLAUDE.md for that repo
+│
+└── (other independent repos...)
+```
+
+## Shell Command Gotchas
+
+### Directory Navigation
+```bash
+# Working in ecosystem management
+pwd  # /path/to/thesis-environment (management repo)
+
+# Working in component
+cd latex-environment/
+pwd  # /path/to/latex-environment (different repo)
+git status  # Shows latex-environment repository status
+```
