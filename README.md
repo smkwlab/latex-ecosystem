@@ -107,12 +107,10 @@ Review workflow documentation is available in `thesis-management-tools/docs/`.
 
 - **[ECOSYSTEM.md](ECOSYSTEM.md)**: Comprehensive ecosystem architecture and management guide
 - **[docs/](docs/)**: Detailed documentation
-  - **[SETUP.md](docs/SETUP.md)**: Setup instructions for developers
+  - **[CLAUDE-SETUP.md](docs/CLAUDE-SETUP.md)**: Comprehensive setup, dependency management, and release processes
   - **[CLAUDE-ARCHITECTURE.md](docs/CLAUDE-ARCHITECTURE.md)**: Architecture guide and repository boundaries
-  - **[CLAUDE-WORKFLOWS.md](docs/CLAUDE-WORKFLOWS.md)**: Management workflows and examples
+  - **[CLAUDE-WORKFLOWS.md](docs/CLAUDE-WORKFLOWS.md)**: Ecosystem management workflows and coordination
   - **[CLAUDE-GIT-WORKFLOW.md](docs/CLAUDE-GIT-WORKFLOW.md)**: Git best practices and conflict resolution
-  - **[DEPENDENCY-WORKFLOW.md](docs/DEPENDENCY-WORKFLOW.md)**: Dependency management procedures
-  - **[RELEASE-PROCESS.md](docs/RELEASE-PROCESS.md)**: Release coordination workflows
 - **Individual repositories**: Each has its own README.md and CLAUDE.md documentation
 
 ## Repository Management
