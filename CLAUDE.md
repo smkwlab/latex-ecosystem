@@ -49,8 +49,8 @@ This directory contains multiple **independent Git repositories**:
 ## Important Conventions
 
 ### This Management Repository
-- **Tracks only**: ECOSYSTEM.md, ecosystem-manager.sh, README.md, CLAUDE.md, .claude/
-- **Excludes**: All subdirectories (they are independent repositories)
+- **Tracks**: ECOSYSTEM.md, ecosystem-manager.sh, README.md, CLAUDE.md, .claude/, docs/
+- **Excludes**: All subdirectories except docs/ (they are independent repositories)
 - **Purpose**: Cross-repository coordination and documentation
 
 ### Working with Components
@@ -70,62 +70,7 @@ This directory contains multiple **independent Git repositories**:
 2. Use that repository's CLAUDE.md for context
 3. Follow that repository's development workflow
 
-## Architecture Overview
+## Detailed Documentation
 
-### Dependency Chain
-- **texlive-ja-textlint** → **latex-environment** → **templates**
-- **Supporting tools** integrate with templates and environments
-- **Management tools** coordinate the entire ecosystem
-
-### Version Coordination
-- Each repository has independent versioning
-- Compatibility matrices documented in ECOSYSTEM.md
-- Automated update chains where appropriate
-
-### Student Workflow
-- Students create repositories using automated tools
-- They receive clean templates without management overhead
-- Faculty use review workflows for supervision
-
-### Git Repository Boundaries
-```
-thesis-environment/           # This management repository
-├── .git/                    # Git for management files only
-├── ECOSYSTEM.md             # Tracked
-├── ecosystem-manager.sh     # Tracked
-├── CLAUDE.md               # Tracked (this file)
-│
-├── latex-environment/      # Independent repository
-│   ├── .git/              # Separate Git repository
-│   └── CLAUDE.md          # Different CLAUDE.md for that repo
-│
-└── (other independent repos...)
-```
-
-## Shell Command Gotchas
-
-### Directory Navigation
-```bash
-# Working in ecosystem management
-pwd  # /path/to/thesis-environment (management repo)
-
-# Working in component
-cd latex-environment/
-pwd  # /path/to/latex-environment (different repo)
-git status  # Shows latex-environment repository status
-```
-
-### Git Operations
-```bash
-# Management repository operations
-git add ECOSYSTEM.md
-git commit -m "Update ecosystem docs"
-
-# Component repository operations  
-cd latex-environment/
-git add .devcontainer/devcontainer.json
-git commit -m "Update devcontainer config"
-cd ..
-
-# These are completely separate Git repositories
-```
+- **[Architecture Guide](docs/CLAUDE-ARCHITECTURE.md)** - Ecosystem structure, dependencies, repository boundaries
+- **[Workflows & Examples](docs/CLAUDE-WORKFLOWS.md)** - Detailed command examples, cross-repository coordination
