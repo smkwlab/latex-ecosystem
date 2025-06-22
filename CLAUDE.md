@@ -17,6 +17,12 @@ Ecosystem management repository for the LaTeX thesis environment at Kyushu Sangy
 
 # Check for uncommitted changes
 ./ecosystem-manager.sh check
+
+# Show version information
+./ecosystem-manager.sh versions
+
+# Check CLAUDE.md tracking status
+./ecosystem-manager.sh claude-status
 ```
 
 ### Working with Components
@@ -71,6 +77,16 @@ This directory contains multiple **independent Git repositories**:
 - **Supporting tools** integrate with templates and environments
 - **Management tools** coordinate the entire ecosystem
 
+### Version Coordination
+- Each repository has independent versioning
+- Compatibility matrices documented in ECOSYSTEM.md
+- Automated update chains where appropriate
+
+### Student Workflow
+- Students create repositories using automated tools
+- They receive clean templates without management overhead
+- Faculty use review workflows for supervision
+
 ### Git Repository Boundaries
 ```
 thesis-environment/           # This management repository
@@ -97,4 +113,19 @@ pwd  # /path/to/thesis-environment (management repo)
 cd latex-environment/
 pwd  # /path/to/latex-environment (different repo)
 git status  # Shows latex-environment repository status
+```
+
+### Git Operations
+```bash
+# Management repository operations
+git add ECOSYSTEM.md
+git commit -m "Update ecosystem docs"
+
+# Component repository operations  
+cd latex-environment/
+git add .devcontainer/devcontainer.json
+git commit -m "Update devcontainer config"
+cd ..
+
+# These are completely separate Git repositories
 ```
