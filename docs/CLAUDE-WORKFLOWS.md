@@ -1,6 +1,6 @@
-# Ecosystem Workflow Examples and Best Practices
+# Ecosystem Management Workflows
 
-This document provides detailed workflow examples for working with the LaTeX ecosystem management repository.
+This document provides workflow examples specifically for ecosystem management tasks using the LaTeX ecosystem management repository.
 
 ## Ecosystem Management Commands
 
@@ -215,47 +215,40 @@ cd ../sotsuron-template/
 grep -r "latex-environment" .devcontainer/
 ```
 
-## Version Management
+## Ecosystem Coordination Tasks
 
-### Release Coordination
+### Cross-Repository Documentation Updates
 ```bash
-# Plan coordinated release
-vim ECOSYSTEM.md  # Update version compatibility matrix
+# When CLAUDE.md structure changes across ecosystem
+./ecosystem-manager.sh claude-status  # Check current state
 
-# Tag management repository
-git tag v2025.1 -m "Ecosystem release 2025.1"
-git push origin v2025.1
+# Plan documentation updates
+for repo in texlive-ja-textlint latex-environment sotsuron-template; do
+    cd $repo/
+    echo "Planning docs update for $repo"
+    # Create feature branch, update docs/, create PR
+    cd ..
+done
 
-# Coordinate component releases
-cd texlive-ja-textlint/
-git tag v2025c -m "TeXLive 2025c release"
-git push origin v2025c
-
-cd ../latex-environment/
-# Update to reference new texlive version
-vim .devcontainer/devcontainer.json
-git commit -m "Update to texlive-ja-textlint v2025c"
-git tag v2025.1 -m "Compatible with texlive v2025c"
+# Track progress
+./ecosystem-manager.sh claude-status  # Verify updates
 ```
 
-### Dependency Updates
+### Issue Coordination
 ```bash
-# Check current dependency relationships
-./ecosystem-manager.sh deps
+# Create coordinated issues for ecosystem-wide changes
+echo "Creating coordinated issues for major update..."
 
-# Update base dependencies first
-cd texlive-ja-textlint/
-# Make updates, test, release
+# Document in ecosystem management
+vim ECOSYSTEM.md  # Add to Known Issues or Planned Updates
 
-# Update downstream dependencies
-cd ../latex-environment/
-# Update references to texlive-ja-textlint
-# Test, release
-
-# Update templates
-cd ../sotsuron-template/
-# May need updates if latex-environment changed significantly
-# Test, coordinate release
+# Create issues in affected repositories  
+repositories=("texlive-ja-textlint" "latex-environment" "sotsuron-template")
+for repo in "${repositories[@]}"; do
+    cd "$repo/"
+    gh issue create --title "Update for ecosystem change XYZ" --body "See latex-ecosystem management repository for coordination"
+    cd ..
+done
 ```
 
 ## Best Practices
