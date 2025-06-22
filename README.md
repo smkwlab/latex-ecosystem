@@ -7,10 +7,11 @@ Comprehensive ecosystem management for LaTeX thesis templates and tools at Shimo
 This directory contains multiple independent Git repositories that work together to form a comprehensive LaTeX academic document management system:
 
 ```
-thesis-environment/
+latex-ecosystem/
 ├── ECOSYSTEM.md              # This management repository
 ├── ecosystem-manager.sh      # Cross-repository management script
 ├── README.md                 # This file
+├── docs/                     # Detailed documentation
 │
 ├── texlive-ja-textlint/      # Independent Git repository
 ├── latex-environment/        # Independent Git repository  
@@ -105,7 +106,13 @@ Review workflow documentation is available in `thesis-management-tools/docs/`.
 ## Documentation
 
 - **[ECOSYSTEM.md](ECOSYSTEM.md)**: Comprehensive ecosystem architecture and management guide
-- **[SETUP.md](SETUP.md)**: Detailed setup instructions
+- **[docs/](docs/)**: Detailed documentation
+  - **[SETUP.md](docs/SETUP.md)**: Setup instructions for developers
+  - **[CLAUDE-ARCHITECTURE.md](docs/CLAUDE-ARCHITECTURE.md)**: Architecture guide and repository boundaries
+  - **[CLAUDE-WORKFLOWS.md](docs/CLAUDE-WORKFLOWS.md)**: Management workflows and examples
+  - **[CLAUDE-GIT-WORKFLOW.md](docs/CLAUDE-GIT-WORKFLOW.md)**: Git best practices and conflict resolution
+  - **[DEPENDENCY-WORKFLOW.md](docs/DEPENDENCY-WORKFLOW.md)**: Dependency management procedures
+  - **[RELEASE-PROCESS.md](docs/RELEASE-PROCESS.md)**: Release coordination workflows
 - **Individual repositories**: Each has its own README.md and CLAUDE.md documentation
 
 ## Repository Management
@@ -114,7 +121,7 @@ Review workflow documentation is available in `thesis-management-tools/docs/`.
 
 This management repository contains:
 - **ECOSYSTEM.md**: Comprehensive ecosystem architecture documentation
-- **SETUP.md**: Setup guide for developers
+- **docs/**: Detailed documentation directory with specialized guides
 - **ecosystem-manager.sh**: Cross-repository management script
 - **setup.sh**: Automated setup script for cloning all repositories
 - **README.md**: This overview file
