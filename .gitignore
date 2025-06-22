@@ -9,6 +9,9 @@
 !CLAUDE.md
 !.claude/
 
+# Exception: Include docs directory for ecosystem documentation
+!docs/
+
 # macOS system files
 .DS_Store
 .DS_Store?
