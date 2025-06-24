@@ -21,7 +21,9 @@ REPOS=(
     "ise-report-template"
     "latex-release-action"
     "thesis-management-tools"
+    "thesis-student-registry"
     "ai-academic-paper-reviewer"
+    "ai-reviewer"                # Fork with bug fixes
 )
 
 # Cache configuration
