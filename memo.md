@@ -1,0 +1,33 @@
+# このリポジトリ群は、卒業論文の執筆支援を主たる目的としている。
+- 卒業論文は LaTeX で記述する。
+- 卒業論文は Pull Request ベースで添削を行う。
+- 卒業論文を書く前段階として、週報を LaTeX で記述することで LaTeX の学習を行う
+- 卒業論文を書く前段階として、卒業論文レポートを LaTeX で記述することでも LaTeX の学習を行う
+- 卒業論文を書く前段階として、情報科学演習演習I,II のレポートで Pull Request べーすの添削を学習する
+- 卒業論文のテンプレートファイルは sotsuron-template リポジトリが提供する
+ - sotsuron-templateリポジトリでは、Pull Request べーすの添削を支援するための workflow が定義されている
+- 週報のテンプレートファイルは wr-template リポジトリが提供する
+- 卒業論文レポートのテンプレートファイルは sotsuron-report-template リポジトリで提供される
+- 情報科学演習I,II のテンプレートファイルは ise-report-template リポジトリが提供する
+- 卒業研究以外の論文執筆用に汎用のテンプレートとして latex-template リポジトリを提供する
+- 複数の LaTeX テンプレートで共通の LaTeX 環境を提供する
+ - 共通 LaTeX 環境は VS Code devcontainer で提供する
+  - 共通の LaTeX 環境は latex-environment リポジトリで提供する
+  - latex-environment で使用するコンテナイメージは texlive-ja-textlint で構築する
+  - 各LaTeX系テンプレートに、latex-environment を統合するスクリプト aldc を提供する
+  - aldc は aldc リポジトリで開発している
+- テンプレートリポジトリを元に、各学生用の論文執筆・週報執筆リポジトリを作成するためのスクリプトを提供する
+ - 提供されるスクリプトは thesis-management-tools/create-repo/setup*.sh
+  - このスクリプトは、リポジトリの作成とともに、Pull Request ベースの添削を支援するためのブランチ保護や、リポジトリ一覧ファイルの更新を行う。
+  - リポジトリ一覧ファイルはセキュリティの観点から thesis-student-registry リポジトリに作成される
+ - thesis-management-tools リポジトリで、その他関連するスクリプトを開発している
+- 作成されたリポジトリ一覧ファイルを元に、学生の論文・レポート執筆状況を把握するためのスクリプトを提供する。
+ - 執筆状況把握用スクリプトは thesis-student-registry/thesis_monitor
+- ai-reviewer は、各リポジトリの Pull Request を自動レビューするための action
+ - folk 元に bug があったので、ここで debug して利用している
+- ai-academic-paper-reviewer は、論文としての ai review をするための action
+ - ai-reviewer を元に開発している
+- latex-release-action は、LaTeX 文章作成において、PDF を自動生成し GitHub に登録するための action
+ - いくつかの LaTeX 文章リポジトリでつかわれている
+- latex-ecosystem リポジトリは、全体を一括で管理するためのリポジトリ
+ - リポジトリ全体の状況把握用のスクリプトなども含む
