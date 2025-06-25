@@ -12,6 +12,9 @@
 # Exception: Include docs directory for ecosystem documentation
 !docs/
 
+# Exception: Include ecosystem_manager Elixir project
+!ecosystem_manager/
+
 # macOS system files
 .DS_Store
 .DS_Store?
