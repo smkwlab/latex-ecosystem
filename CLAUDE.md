@@ -143,5 +143,6 @@ thesis-monitor status --verbose
 ## Development Notes
 
 - **ai-reviewer**: Fork maintained here due to upstream bugs
+- **ai-academic-paper-reviewer**: Developed based on `ai-reviewer`.
 - **thesis-monitor**: Elixir-based monitoring tool with CSV integration
 - **Cross-repository Coordination**: All repositories work together as unified system
