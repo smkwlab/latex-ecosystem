@@ -106,7 +106,9 @@ defmodule EcosystemManager.GitHub do
   # Private functions
 
   defp gh_api_call(args) do
-    # Check for mock mode in test environment
+    # Use environment variable for mock mode to support both
+    # development (with Mix) and production (escript) contexts
+    # Mix.env() is not available in escript, so we rely on MOCK_GH_CLI
     if System.get_env("MOCK_GH_CLI") == "true" do
       mock_gh_response(args)
     else

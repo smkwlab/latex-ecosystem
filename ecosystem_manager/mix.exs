@@ -11,6 +11,9 @@ defmodule EcosystemManager.MixProject do
       escript: [main_module: EcosystemManager.CLI, name: "ecosystem-manager"],
       test_coverage: [
         threshold: 90,
+        # UserConfig is excluded due to high environmental dependencies
+        # (filesystem, HOME variable, permissions) which make reliable
+        # testing complex without significant infrastructure
         ignore_modules: [
           EcosystemManager.UserConfig
         ]
