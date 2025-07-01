@@ -61,11 +61,13 @@ gh auth status
 
 ### Initial Setup
 
+**One-line setup:**
 ```bash
-# One-line setup
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
+```
 
-# Or clone and setup manually
+**Manual clone and setup:**
+```bash
 gh repo clone smkwlab/latex-ecosystem latex-ecosystem-dev
 cd latex-ecosystem-dev
 ./setup.sh
@@ -91,11 +93,13 @@ cd latex-ecosystem-dev
 
 Students should use the automated repository creation process:
 
+**Basic setup (zero dependencies required):**
 ```bash
-# Create your thesis repository (zero dependencies required)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/main/create-repo/setup.sh)"
+```
 
-# With student ID
+**With student ID specified:**
+```bash
 STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/main/create-repo/setup.sh)"
 ```
 
