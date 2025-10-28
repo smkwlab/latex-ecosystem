@@ -15,6 +15,7 @@ This document describes the architecture and management strategy for the thesis-
 - **wr-template**: Weekly report template
 - **latex-template**: Basic LaTeX template
 - **sotsuron-report-template**: Report template for thesis work
+- **poster-template**: Academic poster template (A0 size, conference presentations)
 
 ### Management & Automation
 - **thesis-management-tools**: Administrative tools and documentation for thesis supervision
@@ -36,7 +37,8 @@ latex-environment (DevContainer Template)
 ├── ise-report-template (HTML-based quality-focused)
 ├── wr-template
 ├── latex-template
-└── sotsuron-report-template
+├── sotsuron-report-template
+└── poster-template
 
 Supporting Infrastructure:
 ├── latex-release-action → (Used by templates)
@@ -55,6 +57,7 @@ Supporting Infrastructure:
 | latex-template | Latest | Auto-updated via aldc | No manual updates needed |
 | wr-template | Latest | Auto-updated via aldc | No manual updates needed |
 | sotsuron-report-template | Latest | Auto-updated via aldc | No manual updates needed |
+| poster-template | Latest | Auto-updated via aldc | No manual updates needed |
 | latex-release-action | v2.2.0 | All templates | Per feature |
 | aldc | Latest | latex-environment:release | No updates needed |
 
@@ -105,18 +108,21 @@ Supporting Infrastructure:
 - **ise-report-template**: HTML-based reports with web accessibility and quality automation
 - **wr-template**: Weekly progress reports with structured formatting
 - **latex-template**: Minimal LaTeX setup for general academic documents
+- **poster-template**: A0-sized academic posters using tikzposter with LuaLaTeX
 
 ### Quality Management Approaches
 - **ise-report-template**: Comprehensive quality pipeline (HTML5 validation, accessibility checks, textlint for Japanese)
 - **sotsuron-template**: Academic writing standards with citation management
 - **wr-template**: Structured progress tracking with consistent formatting
 - **latex-template**: Basic LaTeX quality assurance
+- **poster-template**: Automated PDF generation with visual design validation
 
 ### Target Audiences
 - **ise-report-template**: Information Science Exercise students (HTML proficiency development)
 - **sotsuron-template**: Undergraduate/graduate thesis students (research document preparation)
 - **wr-template**: Research students and faculty (progress tracking)
 - **latex-template**: General academic users (basic LaTeX needs)
+- **poster-template**: Researchers presenting at conferences and symposiums
 
 ## Cross-Repository Standards
 

@@ -14,7 +14,7 @@ latex-ecosystem/
 ├── docs/                     # Detailed documentation
 │
 ├── texlive-ja-textlint/      # Independent Git repository
-├── latex-environment/        # Independent Git repository  
+├── latex-environment/        # Independent Git repository
 ├── sotsuron-template/        # Independent Git repository
 ├── thesis-management-tools/  # Independent Git repository
 ├── latex-release-action/     # Independent Git repository
@@ -22,7 +22,8 @@ latex-ecosystem/
 ├── aldc/                     # Independent Git repository
 ├── wr-template/              # Independent Git repository
 ├── latex-template/           # Independent Git repository
-└── sotsuron-report-template/ # Independent Git repository
+├── sotsuron-report-template/ # Independent Git repository
+└── poster-template/          # Independent Git repository
 ```
 
 ## Prerequisites
@@ -165,7 +166,8 @@ latex-environment (DevContainer Template)
 ├── sotsuron-template (Student Templates)
 ├── wr-template
 ├── latex-template
-└── sotsuron-report-template
+├── sotsuron-report-template
+└── poster-template
 
 Supporting Infrastructure:
 ├── latex-release-action → (Used by templates)
