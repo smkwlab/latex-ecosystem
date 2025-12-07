@@ -128,6 +128,65 @@ thesis-monitor status --verbose
 2. Use that repository's CLAUDE.md for context
 3. Follow that repository's development workflow
 
+### Updating Workflow Files in Student Repositories
+
+**IMPORTANT**: Student repositories use draft-to-draft PR workflow (`2nd-draft` → `1st-draft` → `0th-draft` → `main`). When updating workflow files, you must propagate changes through the branch hierarchy to avoid triggering GitHub Actions security restrictions.
+
+#### Why This Matters
+
+- `pull_request` event workflows use the **base branch's** workflow file
+- If workflow changes appear in PR diffs, GitHub may skip workflow execution for security
+- Each draft branch needs the updated workflow for proper PR handling
+
+#### Correct Procedure
+
+```bash
+# 1. Update main branch first
+git checkout main
+# Make workflow changes
+git add .github/workflows/
+git commit -m "Update workflow files"
+git push
+
+# 2. Propagate to each draft branch via merge (preserves commit history)
+git checkout 0th-draft
+git merge main -m "Merge workflow updates from main"
+git push
+
+git checkout 1st-draft
+git merge 0th-draft -m "Merge workflow updates from 0th-draft"
+git push
+
+git checkout 2nd-draft
+git merge 1st-draft -m "Merge workflow updates from 1st-draft"
+git push
+
+# Continue for 3rd-draft, etc. if they exist
+```
+
+#### What NOT To Do
+
+❌ **Do not push identical changes independently to each branch**:
+```bash
+# WRONG - creates separate commit histories
+git checkout 0th-draft && git add . && git commit && git push
+git checkout 1st-draft && git add . && git commit && git push
+git checkout 2nd-draft && git add . && git commit && git push
+```
+
+This causes:
+- PR diffs to include workflow file changes (even if content is identical)
+- GitHub Actions security restrictions to skip `pull_request` triggered workflows
+- Notification emails and other PR-triggered actions to fail
+
+#### Verification
+
+After updating, verify that existing PRs don't show workflow file changes:
+```bash
+gh pr diff <PR_NUMBER> --repo smkwlab/<repo> | grep -E "\.github/workflows"
+# Should return empty if done correctly
+```
+
 ## Security & Data Management
 
 - **Student Data Separation**: `thesis-student-registry` repository keeps student information separate for security
