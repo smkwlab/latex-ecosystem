@@ -140,7 +140,12 @@ thesis-monitor status --verbose
 
 #### Correct Procedure (Automated)
 
-Use the `propagate-workflow` command from `thesis-student-registry/registry-manager`:
+Use the `propagate-workflow` command from `thesis-student-registry/registry-manager`.
+
+> **Prerequisite**: Run these from the `thesis-student-registry` repository
+> checkout, in the directory where the `registry-manager` escript has been
+> built (e.g. `cd thesis-student-registry/registry_manager && mix escript.build`).
+> Otherwise `./registry-manager` will fail with "file not found".
 
 ```bash
 # Check what would be done (dry-run)
