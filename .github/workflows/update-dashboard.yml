@@ -42,24 +42,39 @@ jobs:
             --description "Ecosystem update dashboard (auto-maintained)" \
             --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
 
-          # Find the existing open dashboard issue, if any.
-          ISSUE=$(gh issue list \
+          # All open issues carrying the label, oldest first. The lowest number
+          # is the canonical dashboard; any others are duplicates to be closed,
+          # so the dashboard self-heals to a single issue.
+          ISSUES=$(gh issue list \
             --repo "$GITHUB_REPOSITORY" \
             --label "$DASHBOARD_LABEL" \
             --state open \
             --json number \
-            --jq '.[0].number // empty')
+            --jq '.[].number' | sort -n)
 
-          if [ -n "$ISSUE" ]; then
-            echo "Updating dashboard issue #$ISSUE"
-            gh issue edit "$ISSUE" \
-              --repo "$GITHUB_REPOSITORY" \
-              --body-file body.md
+          CANON=$(printf '%s\n' "$ISSUES" | head -n 1)
+
+          if [ -n "$CANON" ]; then
+            echo "Updating dashboard issue #$CANON"
+            gh issue edit "$CANON" --repo "$GITHUB_REPOSITORY" --body-file body.md
+
+            # Close any extra labelled issues as duplicates.
+            printf '%s\n' "$ISSUES" | tail -n +2 | while read -r dup; do
+              [ -n "$dup" ] || continue
+              echo "Closing duplicate dashboard issue #$dup"
+              gh issue close "$dup" --repo "$GITHUB_REPOSITORY" \
+                --comment "Duplicate of #$CANON — the dashboard is auto-maintained as a single issue."
+            done
           else
             echo "Creating dashboard issue"
-            gh issue create \
+            URL=$(gh issue create \
               --repo "$GITHUB_REPOSITORY" \
               --title "$DASHBOARD_TITLE" \
               --label "$DASHBOARD_LABEL" \
-              --body-file body.md
+              --body-file body.md)
+            CANON="${URL##*/}"
           fi
+
+          # Pin for discoverability (best-effort: ignore if already pinned or
+          # the repo's 3-pin limit is reached).
+          gh issue pin "$CANON" --repo "$GITHUB_REPOSITORY" 2>/dev/null || true

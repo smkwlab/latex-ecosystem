@@ -16,8 +16,11 @@ NOW="$(date -u +"%Y-%m-%d %H:%M UTC")"
 # --- collect -----------------------------------------------------------------
 
 # Latest texlive-ja-textlint release tag (YYYY[letter], version-sorted).
-LATEST="$(gh api "repos/${OWNER}/texlive-ja-textlint/tags" --paginate --jq '.[].name' \
-  | grep -E '^[0-9]{4}[a-z]*$' | sort -V | tail -1)"
+# Degrade to "?" instead of aborting if the API is flaky or returns no tags,
+# so a transient hiccup never leaves the dashboard stale.
+LATEST="$(gh api "repos/${OWNER}/texlive-ja-textlint/tags" --paginate --jq '.[].name' 2>/dev/null \
+  | grep -E '^[0-9]{4}[a-z]*$' | sort -V | tail -1 || true)"
+[ -z "$LATEST" ] && LATEST="?"
 
 # Image tag pinned in latex-environment's devcontainer.json on a given ref.
 pin_of() {
@@ -28,12 +31,22 @@ pin_of() {
 MAIN_PIN="$(pin_of main || echo '?')"
 REL_PIN="$(pin_of release || echo '?')"
 
-# ⚠️ / ✅ depending on whether a pin already matches the latest release.
-state() { [ "$1" = "$LATEST" ] && echo "✅ 最新" || echo "⚠️ 更新可能"; }
+# Status cell: ❓ when either side is unknown, ✅ when already current, ⚠️ when
+# the pin lags the latest release.
+state() {
+  if [ "$LATEST" = "?" ] || [ "$1" = "?" ]; then
+    echo "❓ 判定不可"
+  elif [ "$1" = "$LATEST" ]; then
+    echo "✅ 最新"
+  else
+    echo "⚠️ 更新可能"
+  fi
+}
 
 # Open update PRs in latex-environment (title mentions texlive).
-PRS="$(gh api "repos/${OWNER}/latex-environment/pulls" \
-  --jq '.[] | select(.title|test("texlive";"i")) | "- \(.html_url) — \(.title)"' || true)"
+# --paginate so the list stays complete beyond the first 30 results.
+PRS="$(gh api --paginate "repos/${OWNER}/latex-environment/pulls?state=open&per_page=100" \
+  --jq '.[] | select(.title|test("texlive";"i")) | "- \(.html_url) — \(.title)"' 2>/dev/null || true)"
 [ -z "$PRS" ] && PRS="- (なし)"
 
 # --- render ------------------------------------------------------------------
