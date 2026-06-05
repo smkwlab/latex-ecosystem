@@ -144,10 +144,10 @@ Use the `propagate-workflow` command of `registry-manager`, the Elixir escript
 located in the `registry_manager/` directory of the `thesis-student-registry`
 repository.
 
-> **Prerequisite**: Build the escript first, then run the commands from the
-> `thesis-student-registry` repository checkout root:
+> **Prerequisite**: All commands below are run from the `thesis-student-registry`
+> checkout root. Build the escript first (also from that root):
 > ```bash
-> cd thesis-student-registry/registry_manager && mix escript.build && cd ..
+> (cd registry_manager && mix escript.build)
 > ```
 > Otherwise `./registry_manager/registry-manager` will fail with "file not found".
 
