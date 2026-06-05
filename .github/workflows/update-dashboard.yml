@@ -44,11 +44,13 @@ jobs:
 
           # All open issues carrying the label, oldest first. The lowest number
           # is the canonical dashboard; any others are duplicates to be closed,
-          # so the dashboard self-heals to a single issue.
+          # so the dashboard self-heals to a single issue. --limit overrides the
+          # default cap of 30 so even a large duplicate pile-up fully heals.
           ISSUES=$(gh issue list \
             --repo "$GITHUB_REPOSITORY" \
             --label "$DASHBOARD_LABEL" \
             --state open \
+            --limit 1000 \
             --json number \
             --jq '.[].number' | sort -n)
 
