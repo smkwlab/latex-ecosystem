@@ -138,7 +138,25 @@ thesis-monitor status --verbose
 - If workflow changes appear in PR diffs, GitHub may skip workflow execution for security
 - Each draft branch needs the updated workflow for proper PR handling
 
-#### Correct Procedure
+#### Correct Procedure (Automated)
+
+Use the `propagate-workflow` command from `thesis-student-registry/registry-manager`:
+
+```bash
+# Check what would be done (dry-run)
+./registry-manager propagate-workflow k22rs001-sotsuron --dry-run
+
+# Propagate workflow updates for a single repository
+./registry-manager propagate-workflow k22rs001-sotsuron
+
+# Propagate to all thesis repositories at once
+./registry-manager propagate-workflow --all --type thesis
+
+# Check all repositories first
+./registry-manager propagate-workflow --all --type thesis --dry-run
+```
+
+#### Manual Procedure (if needed)
 
 ```bash
 # 1. Update main branch first
