@@ -149,7 +149,9 @@ repository.
 > ```bash
 > (cd registry_manager && mix escript.build)
 > ```
-> Otherwise `./registry_manager/registry-manager` will fail with "file not found".
+> Without this build step the `./registry_manager/registry-manager` binary does
+> not exist yet, so the command fails (the exact wording varies by shell/OS, e.g.
+> "No such file or directory").
 
 ```bash
 # (run from the thesis-student-registry checkout root)

@@ -233,6 +233,14 @@ git checkout 0th-draft  # または指定されたブランチ
 4. Issue自動クローズ
 
 #### B. レジストリ管理
+
+> **前提**: 以下は `thesis-student-registry` チェックアウトのルートから実行する。
+> 初回はその前に escript をビルドしておく（ルートから）:
+> ```bash
+> (cd registry_manager && mix escript.build)
+> ```
+> 未ビルドだと `./registry_manager/registry-manager` が存在せずコマンドが失敗する。
+
 ```bash
 # 進捗監視（thesis-student-registry チェックアウトのルートから実行）
 ./registry_manager/registry-manager status
