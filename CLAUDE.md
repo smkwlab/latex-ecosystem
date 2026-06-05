@@ -140,25 +140,31 @@ thesis-monitor status --verbose
 
 #### Correct Procedure (Automated)
 
-Use the `propagate-workflow` command from `thesis-student-registry/registry-manager`.
+Use the `propagate-workflow` command of `registry-manager`, the Elixir escript
+located in the `registry_manager/` directory of the `thesis-student-registry`
+repository.
 
-> **Prerequisite**: Run these from the `thesis-student-registry` repository
-> checkout, in the directory where the `registry-manager` escript has been
-> built (e.g. `cd thesis-student-registry/registry_manager && mix escript.build`).
-> Otherwise `./registry-manager` will fail with "file not found".
+> **Prerequisite**: Build the escript first, then run the commands from the
+> `thesis-student-registry` repository checkout root:
+> ```bash
+> cd thesis-student-registry/registry_manager && mix escript.build && cd ..
+> ```
+> Otherwise `./registry_manager/registry-manager` will fail with "file not found".
 
 ```bash
+# (run from the thesis-student-registry checkout root)
+
 # Check what would be done (dry-run)
-./registry-manager propagate-workflow k22rs001-sotsuron --dry-run
+./registry_manager/registry-manager propagate-workflow k22rs001-sotsuron --dry-run
 
 # Propagate workflow updates for a single repository
-./registry-manager propagate-workflow k22rs001-sotsuron
+./registry_manager/registry-manager propagate-workflow k22rs001-sotsuron
 
 # Propagate to all thesis repositories at once
-./registry-manager propagate-workflow --all --type thesis
+./registry_manager/registry-manager propagate-workflow --all --type thesis
 
 # Check all repositories first
-./registry-manager propagate-workflow --all --type thesis --dry-run
+./registry_manager/registry-manager propagate-workflow --all --type thesis --dry-run
 ```
 
 #### Manual Procedure (if needed)
