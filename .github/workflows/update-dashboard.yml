@@ -1,0 +1,82 @@
+---
+name: Ecosystem Update Dashboard
+
+# Maintains a single read-only "dashboard" issue that summarises pending
+# ecosystem updates (texlive-ja-textlint image, latex-environment pins, open
+# update PRs) and lists the commands to act on them. It never triggers other
+# workflows; acting on an update stays a deliberate manual step.
+
+on:
+  schedule:
+    # Daily at 23:30 UTC (08:30 JST), just after check-texlive-updates runs.
+    - cron: '30 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+concurrency:
+  group: update-dashboard
+  cancel-in-progress: true
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DASHBOARD_LABEL: update-dashboard
+      DASHBOARD_TITLE: "📊 Ecosystem Update Dashboard"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build dashboard body
+        run: bash .github/scripts/build-dashboard.sh > body.md
+
+      - name: Upsert dashboard issue
+        run: |
+          # Ensure the tracking label exists (idempotent).
+          gh label create "$DASHBOARD_LABEL" \
+            --color FBCA04 \
+            --description "Ecosystem update dashboard (auto-maintained)" \
+            --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
+
+          # All open issues carrying the label, oldest first. The lowest number
+          # is the canonical dashboard; any others are duplicates to be closed,
+          # so the dashboard self-heals to a single issue. --limit overrides the
+          # default cap of 30 so even a large duplicate pile-up fully heals.
+          ISSUES=$(gh issue list \
+            --repo "$GITHUB_REPOSITORY" \
+            --label "$DASHBOARD_LABEL" \
+            --state open \
+            --limit 1000 \
+            --json number \
+            --jq '.[].number' | sort -n)
+
+          CANON=$(printf '%s\n' "$ISSUES" | head -n 1)
+
+          if [ -n "$CANON" ]; then
+            echo "Updating dashboard issue #$CANON"
+            gh issue edit "$CANON" --repo "$GITHUB_REPOSITORY" --body-file body.md
+
+            # Close any extra labelled issues as duplicates.
+            printf '%s\n' "$ISSUES" | tail -n +2 | while read -r dup; do
+              [ -n "$dup" ] || continue
+              echo "Closing duplicate dashboard issue #$dup"
+              gh issue close "$dup" --repo "$GITHUB_REPOSITORY" \
+                --comment "Duplicate of #$CANON — the dashboard is auto-maintained as a single issue."
+            done
+          else
+            echo "Creating dashboard issue"
+            URL=$(gh issue create \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$DASHBOARD_TITLE" \
+              --label "$DASHBOARD_LABEL" \
+              --body-file body.md)
+            CANON="${URL##*/}"
+          fi
+
+          # Pin for discoverability (best-effort: ignore if already pinned or
+          # the repo's 3-pin limit is reached).
+          gh issue pin "$CANON" --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
