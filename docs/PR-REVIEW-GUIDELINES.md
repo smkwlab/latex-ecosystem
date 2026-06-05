@@ -234,11 +234,11 @@ git checkout 0th-draft  # または指定されたブランチ
 
 #### B. レジストリ管理
 ```bash
-# 進捗監視
-./registry-manager status
+# 進捗監視（thesis-student-registry チェックアウトのルートから実行）
+./registry_manager/registry-manager status
 
 # 保護状況確認  
-./registry-manager status --show-protection
+./registry_manager/registry-manager status --show-protection
 ```
 
 ### 2. 品質管理システム
@@ -325,7 +325,7 @@ branches:
 - [学生作品例3](http://www-st.is.kyusan-u.ac.jp/~k22rs004/semi3a/)
 
 ### 管理ツール
-- [registry-manager](../thesis-student-registry/registry_manager_v3/)
+- [registry-manager](../thesis-student-registry/registry_manager/)
 - [thesis-management-tools](../thesis-management-tools/)
 
 ---
