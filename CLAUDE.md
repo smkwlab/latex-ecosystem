@@ -100,10 +100,10 @@ This directory contains multiple **independent Git repositories**:
 ### Student Repository Creation
 ```bash
 # Create student thesis repository (automated)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/main/create-repo/setup.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/v1/create-repo/setup.sh)" bash thesis
 
 # Create weekly report repository
-STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/main/create-repo/setup-wr.sh)"
+STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/v1/create-repo/setup.sh)" bash wr
 ```
 
 ### Student Progress Monitoring
