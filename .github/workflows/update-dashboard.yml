@@ -1,0 +1,65 @@
+---
+name: Ecosystem Update Dashboard
+
+# Maintains a single read-only "dashboard" issue that summarises pending
+# ecosystem updates (texlive-ja-textlint image, latex-environment pins, open
+# update PRs) and lists the commands to act on them. It never triggers other
+# workflows; acting on an update stays a deliberate manual step.
+
+on:
+  schedule:
+    # Daily at 23:30 UTC (08:30 JST), just after check-texlive-updates runs.
+    - cron: '30 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+concurrency:
+  group: update-dashboard
+  cancel-in-progress: true
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DASHBOARD_LABEL: update-dashboard
+      DASHBOARD_TITLE: "📊 Ecosystem Update Dashboard"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build dashboard body
+        run: bash .github/scripts/build-dashboard.sh > body.md
+
+      - name: Upsert dashboard issue
+        run: |
+          # Ensure the tracking label exists (idempotent).
+          gh label create "$DASHBOARD_LABEL" \
+            --color FBCA04 \
+            --description "Ecosystem update dashboard (auto-maintained)" \
+            --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
+
+          # Find the existing open dashboard issue, if any.
+          ISSUE=$(gh issue list \
+            --repo "$GITHUB_REPOSITORY" \
+            --label "$DASHBOARD_LABEL" \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+
+          if [ -n "$ISSUE" ]; then
+            echo "Updating dashboard issue #$ISSUE"
+            gh issue edit "$ISSUE" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body-file body.md
+          else
+            echo "Creating dashboard issue"
+            gh issue create \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$DASHBOARD_TITLE" \
+              --label "$DASHBOARD_LABEL" \
+              --body-file body.md
+          fi

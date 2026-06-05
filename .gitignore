@@ -15,6 +15,12 @@
 # Exception: Include ecosystem_manager Elixir project
 !ecosystem_manager/
 
+# Exception: Include .github (workflows, scripts, settings) for this repo
+# Re-include nested paths too: the leading */ rule also matches subdirectories
+# such as .github/workflows, so a single !.github/ is not enough.
+!.github/
+!.github/**
+
 # macOS system files
 .DS_Store
 .DS_Store?
