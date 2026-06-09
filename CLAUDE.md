@@ -138,7 +138,38 @@ thesis-monitor status --verbose
 - If workflow changes appear in PR diffs, GitHub may skip workflow execution for security
 - Each draft branch needs the updated workflow for proper PR handling
 
-#### Correct Procedure
+#### Correct Procedure (Automated)
+
+Use the `propagate-workflow` command of `registry-manager`, the Elixir escript
+located in the `registry_manager/` directory of the `thesis-student-registry`
+repository.
+
+> **Prerequisite**: All commands below are run from the `thesis-student-registry`
+> checkout root. Build the escript first (also from that root):
+> ```bash
+> (cd registry_manager && mix escript.build)
+> ```
+> Without this build step the `./registry_manager/registry-manager` binary does
+> not exist yet, so the command fails (the exact wording varies by shell/OS, e.g.
+> "No such file or directory").
+
+```bash
+# (run from the thesis-student-registry checkout root)
+
+# Check what would be done (dry-run)
+./registry_manager/registry-manager propagate-workflow k22rs001-sotsuron --dry-run
+
+# Propagate workflow updates for a single repository
+./registry_manager/registry-manager propagate-workflow k22rs001-sotsuron
+
+# Propagate to all thesis repositories at once
+./registry_manager/registry-manager propagate-workflow --all --type thesis
+
+# Check all repositories first
+./registry_manager/registry-manager propagate-workflow --all --type thesis --dry-run
+```
+
+#### Manual Procedure (if needed)
 
 ```bash
 # 1. Update main branch first

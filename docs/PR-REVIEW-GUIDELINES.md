@@ -233,12 +233,20 @@ git checkout 0th-draft  # または指定されたブランチ
 4. Issue自動クローズ
 
 #### B. レジストリ管理
+
+> **前提**: 以下は `thesis-student-registry` チェックアウトのルートから実行する。
+> 初回はその前に escript をビルドしておく（ルートから）:
+> ```bash
+> (cd registry_manager && mix escript.build)
+> ```
+> 未ビルドだと `./registry_manager/registry-manager` が存在せずコマンドが失敗する。
+
 ```bash
-# 進捗監視
-./registry-manager status
+# 進捗監視（thesis-student-registry チェックアウトのルートから実行）
+./registry_manager/registry-manager status
 
 # 保護状況確認  
-./registry-manager status --show-protection
+./registry_manager/registry-manager status --show-protection
 ```
 
 ### 2. 品質管理システム
@@ -325,7 +333,7 @@ branches:
 - [学生作品例3](http://www-st.is.kyusan-u.ac.jp/~k22rs004/semi3a/)
 
 ### 管理ツール
-- [registry-manager](../thesis-student-registry/registry_manager_v3/)
+- [registry-manager](../thesis-student-registry/registry_manager/)
 - [thesis-management-tools](../thesis-management-tools/)
 
 ---
