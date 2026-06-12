@@ -51,14 +51,14 @@ Supporting Infrastructure:
 
 | Component | Current Version | Compatible With | Update Frequency |
 |-----------|----------------|-----------------|------------------|
-| texlive-ja-textlint | 2025d | TeXLive 2025 | Annual (TeXLive release) |
-| latex-environment | v0.5.0 | texlive-ja-textlint:2025d | Per texlive update |
+| texlive-ja-textlint | 2026a | TeXLive 2026 | Annual (TeXLive release) |
+| latex-environment | release branch | texlive-ja-textlint:2026a | Auto (on merge to main) |
 | sotsuron-template | Latest | Auto-updated via aldc | No manual updates needed |
 | latex-template | Latest | Auto-updated via aldc | No manual updates needed |
 | wr-template | Latest | Auto-updated via aldc | No manual updates needed |
 | sotsuron-report-template | Latest | Auto-updated via aldc | No manual updates needed |
 | poster-template | Latest | Auto-updated via aldc | No manual updates needed |
-| latex-release-action | v2.2.0 | All templates | Per feature |
+| latex-release-action | v3.3.0 | All templates | Per feature |
 | aldc | Latest | latex-environment:release | No updates needed |
 
 ## Automated Update Chain
@@ -70,7 +70,8 @@ Supporting Infrastructure:
    ↓  
 3. Manual PR review and merge to main branch
    ↓
-4. Manual latex-environment release branch update
+4. latex-environment release branch updated automatically
+   (update-release-branch workflow on merge to main)
    ↓
 5. aldc automatically uses updated release branch
    ↓
