@@ -26,7 +26,7 @@ This document covers the architecture, dependencies, and coordination patterns f
 latex-ecosystem/                 # This management repository
 ├── .git/                       # Git for management files only
 ├── ECOSYSTEM.md                # Tracked - ecosystem overview
-├── ecosystem-manager.sh        # Tracked - coordination scripts
+├── ecosystem_manager/          # Tracked - coordination tool (Elixir escript)
 ├── CLAUDE.md                   # Tracked - this file
 ├── .claude/                    # Tracked - claude configuration
 ├── docs/                       # Tracked - ecosystem documentation
@@ -99,5 +99,5 @@ thesis-management-tools (student workflows)
 
 ### Compatibility Management
 - **Version matrices**: Documented in ECOSYSTEM.md
-- **Testing coordination**: Use ecosystem-manager.sh for validation
+- **Testing coordination**: Use ecosystem_manager/ecosystem-manager for validation
 - **Breaking change communication**: Cross-repository issue coordination

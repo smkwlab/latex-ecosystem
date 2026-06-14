@@ -5,36 +5,42 @@ This document provides workflow examples specifically for ecosystem management t
 ## Ecosystem Management Commands
 
 ### Comprehensive Command Reference
+
+The manager is an Elixir escript. Build it once with
+`(cd ecosystem_manager && mix escript.build)`, then:
+
 ```bash
-# Show status of all repositories
-./ecosystem-manager.sh status
+# Show status of all repositories (default command)
+./ecosystem_manager/ecosystem-manager status
 
-# Check dependency relationships
-./ecosystem-manager.sh deps
+# Detailed status: branch, uncommitted changes, last commit, PRs, issues
+./ecosystem_manager/ecosystem-manager status --long
 
-# Sync all repositories
-./ecosystem-manager.sh sync
+# Fast status without GitHub API calls
+./ecosystem_manager/ecosystem-manager status --fast
 
-# Check for uncommitted changes
-./ecosystem-manager.sh check
+# Filter: urgent issues / open PRs / PRs needing review
+./ecosystem_manager/ecosystem-manager status --urgent-issues
+./ecosystem_manager/ecosystem-manager status --with-prs
+./ecosystem_manager/ecosystem-manager status --needs-review
 
-# Show version information
-./ecosystem-manager.sh versions
+# Show repository configuration and sources
+./ecosystem_manager/ecosystem-manager repos
 
-# Check CLAUDE.md tracking status
-./ecosystem-manager.sh claude-status
+# Show current configuration
+./ecosystem_manager/ecosystem-manager config
 ```
 
 ### Status Monitoring Examples
 ```bash
-# Quick ecosystem health check
-./ecosystem-manager.sh status | grep -E "(AHEAD|BEHIND|DIRTY)"
+# Quick ecosystem health check (rows with branch/commit/change info)
+./ecosystem_manager/ecosystem-manager status --long
 
-# Version compatibility check
-./ecosystem-manager.sh versions | grep -E "texlive-ja-textlint|latex-environment"
+# Show only repositories that need attention
+./ecosystem_manager/ecosystem-manager status --urgent-issues
+./ecosystem_manager/ecosystem-manager status --needs-review
 
-# Documentation consistency check
-./ecosystem-manager.sh claude-status
+# Version compatibility is tracked in ECOSYSTEM.md (compatibility matrix)
 ```
 
 ## Repository Navigation and Operations
@@ -93,8 +99,7 @@ git push origin main
 #### Cross-repository Coordination
 ```bash
 # Check current state
-./ecosystem-manager.sh status
-./ecosystem-manager.sh versions
+./ecosystem_manager/ecosystem-manager status
 
 # Coordinate updates
 vim ECOSYSTEM.md  # Document planned changes
@@ -167,8 +172,7 @@ done
 ### Issue Tracking and Coordination
 ```bash
 # Track progress across repositories
-./ecosystem-manager.sh status
-./ecosystem-manager.sh versions
+./ecosystem_manager/ecosystem-manager status --with-prs
 
 # Check issue status across ecosystem
 for repo in */; do
@@ -185,8 +189,8 @@ done
 
 ### Ecosystem-wide Testing
 ```bash
-# Validate all repositories
-./ecosystem-manager.sh check
+# Validate all repositories (branches, uncommitted changes)
+./ecosystem_manager/ecosystem-manager status --long
 
 # Test compilation across templates
 templates=("sotsuron-template" "wr-template" "latex-template")
@@ -202,8 +206,8 @@ done
 
 ### Compatibility Validation
 ```bash
-# Check version compatibility
-./ecosystem-manager.sh versions > versions.txt
+# Version compatibility is documented in ECOSYSTEM.md (compatibility matrix);
+# review it when coordinating updates.
 
 # Validate dependency chain
 echo "Checking texlive-ja-textlint → latex-environment compatibility..."
@@ -220,7 +224,7 @@ grep -r "latex-environment" .devcontainer/
 ### Cross-Repository Documentation Updates
 ```bash
 # When CLAUDE.md structure changes across ecosystem
-./ecosystem-manager.sh claude-status  # Check current state
+./ecosystem_manager/ecosystem-manager status  # Check current state
 
 # Plan documentation updates
 for repo in texlive-ja-textlint latex-environment sotsuron-template; do
@@ -231,7 +235,7 @@ for repo in texlive-ja-textlint latex-environment sotsuron-template; do
 done
 
 # Track progress
-./ecosystem-manager.sh claude-status  # Verify updates
+./ecosystem_manager/ecosystem-manager status  # Verify updates
 ```
 
 ### Issue Coordination

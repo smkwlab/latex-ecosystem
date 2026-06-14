@@ -7,7 +7,7 @@ This comprehensive guide covers setup, dependency management, and release proces
 ### Required Tools
 - **Git**: Version control system
 - **GitHub CLI (`gh`)**: Required for PR/Issue tracking, recommended for easier cloning
-- **jq**: JSON processor (required for ecosystem-manager.sh)
+- **Elixir/Mix** (with Erlang/OTP): Required to build and run the `ecosystem-manager` escript
 - **Bash**: Shell interpreter (version 4.0+)
 
 ### Optional Tools
@@ -81,11 +81,14 @@ git clone https://github.com/smkwlab/latex-ecosystem.git .
 ### 3. Verify Installation
 
 ```bash
-# Check ecosystem status
-./ecosystem-manager.sh status
+# Build the manager once (Elixir escript)
+(cd ecosystem_manager && mix escript.build)
 
-# Verify all repositories are present
-./ecosystem-manager.sh deps
+# Check ecosystem status
+./ecosystem_manager/ecosystem-manager status
+
+# Show repository configuration and sources
+./ecosystem_manager/ecosystem-manager repos
 ```
 
 ## Dependency Management
@@ -247,8 +250,8 @@ gh issue create --title "Release Planning: texlive-ja-textlint 2025d" --body "
 #### 3. Testing Phase
 
 ```bash
-# Ecosystem-wide compatibility testing
-./ecosystem-manager.sh check
+# Ecosystem-wide status check (branches, uncommitted changes, PRs)
+./ecosystem_manager/ecosystem-manager status --long
 
 # Test critical workflows
 cd thesis-management-tools/
@@ -351,11 +354,10 @@ Investigation ongoing.
 
 ```bash
 # Weekly maintenance
-./ecosystem-manager.sh status
-./ecosystem-manager.sh claude-status
+./ecosystem_manager/ecosystem-manager status --long
 
 # Monthly maintenance
-./ecosystem-manager.sh sync
+# Pull the latest changes in each repository as needed (git pull)
 # Review and update documentation
 # Check for upstream updates (TeXLive, Node.js, etc.)
 
@@ -374,8 +376,8 @@ Investigation ongoing.
 # - Student repository creation issues
 # - Compilation failures in templates
 
-# Use ecosystem-manager.sh for automated checks
-./ecosystem-manager.sh check --automated
+# Use ecosystem-manager for status checks (e.g. in cron / CI)
+./ecosystem_manager/ecosystem-manager status --fast
 ```
 
 ## Development Best Practices

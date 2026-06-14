@@ -70,6 +70,13 @@ check_prerequisites() {
     else
         print_warning "Docker is not installed (optional for testing)"
     fi
+
+    # Check Elixir/Mix (required to build the ecosystem-manager escript)
+    if command -v mix &> /dev/null; then
+        print_status "Elixir/Mix is installed"
+    else
+        print_warning "Elixir/Mix is not installed (required to build ecosystem-manager)"
+    fi
 }
 
 setup_base_directory() {
@@ -115,11 +122,20 @@ setup_ecosystem_management() {
         print_warning "Directory already contains a git repository"
     fi
     
-    # Verify ecosystem-manager.sh exists
-    if [ -f ecosystem-manager.sh ]; then
-        print_status "ecosystem-manager.sh is ready"
+    # Build the ecosystem-manager escript (Elixir)
+    if [ -f ecosystem_manager/mix.exs ]; then
+        if command -v mix &> /dev/null; then
+            echo "Building ecosystem-manager (Elixir escript)..."
+            if ( cd ecosystem_manager && mix deps.get && mix escript.build ); then
+                print_status "ecosystem-manager is ready"
+            else
+                print_warning "Failed to build ecosystem-manager (build it later: cd ecosystem_manager && mix escript.build)"
+            fi
+        else
+            print_warning "Skipping ecosystem-manager build (Elixir/Mix not found). Build later: cd ecosystem_manager && mix escript.build"
+        fi
     else
-        print_error "ecosystem-manager.sh not found"
+        print_error "ecosystem_manager/mix.exs not found"
         exit 1
     fi
 }
@@ -216,15 +232,17 @@ main() {
     
     # Final verification
     echo -e "\nVerifying setup..."
-    if [ -x ecosystem-manager.sh ]; then
-        ./ecosystem-manager.sh status
+    if [ -x ecosystem_manager/ecosystem-manager ]; then
+        ./ecosystem_manager/ecosystem-manager status
         print_status "Setup completed successfully!"
         echo -e "\nNext steps:"
         echo "  cd $BASE_DIR"
-        echo "  ./ecosystem-manager.sh check"
+        echo "  ./ecosystem_manager/ecosystem-manager status --long"
     else
-        print_error "Setup verification failed"
-        exit 1
+        print_warning "Setup completed, but ecosystem-manager is not built yet."
+        echo -e "\nTo build it:"
+        echo "  cd $BASE_DIR/ecosystem_manager && mix escript.build"
+        echo "  ./ecosystem_manager/ecosystem-manager status"
     fi
 }
 
