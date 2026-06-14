@@ -9,7 +9,8 @@ This directory contains multiple independent Git repositories that work together
 ```
 latex-ecosystem/
 ├── ECOSYSTEM.md              # This management repository
-├── ecosystem-manager.sh      # Cross-repository management script
+├── ecosystem_manager/        # Cross-repository management tool (Elixir escript)
+├── setup.sh                  # Automated setup script
 ├── README.md                 # This file
 ├── docs/                     # Detailed documentation
 │
@@ -32,7 +33,7 @@ latex-ecosystem/
 
 - **Git**: Version control system
 - **GitHub CLI (gh)**: Required for PR/Issue tracking features
-- **jq**: JSON processor for parsing API responses
+- **Elixir/Mix** (with Erlang/OTP): Required to build and run the ecosystem-manager escript
 - **Bash**: Shell interpreter (version 4.0+)
 
 ### GitHub CLI Setup
@@ -76,18 +77,20 @@ cd latex-ecosystem-dev
 
 ### Daily Ecosystem Management
 
+> **First time?** Build the escript once: `(cd ecosystem_manager && mix escript.build)`
+
 ```bash
 # Check status of all repositories
-./ecosystem-manager.sh status
+./ecosystem_manager/ecosystem-manager status
 
-# Show dependency relationships
-./ecosystem-manager.sh deps
+# Detailed status (branch, uncommitted changes, last commit, PRs, issues)
+./ecosystem_manager/ecosystem-manager status --long
 
-# Check CLAUDE.md tracking across repos
-./ecosystem-manager.sh claude-status
+# Fast status without GitHub API calls
+./ecosystem_manager/ecosystem-manager status --fast
 
-# Sync all repositories
-./ecosystem-manager.sh sync
+# Show repository configuration and sources
+./ecosystem_manager/ecosystem-manager repos
 ```
 
 ### For Students
@@ -125,7 +128,7 @@ Review workflow documentation is available in `thesis-management-tools/docs/`.
 This management repository contains:
 - **ECOSYSTEM.md**: Comprehensive ecosystem architecture documentation
 - **docs/**: Detailed documentation directory with specialized guides
-- **ecosystem-manager.sh**: Cross-repository management script
+- **ecosystem_manager/**: Cross-repository management tool (Elixir escript)
 - **setup.sh**: Automated setup script for cloning all repositories
 - **README.md**: This overview file
 
@@ -144,7 +147,7 @@ Each subdirectory is a separate Git repository with its own:
 ### For Ecosystem-wide Changes
 
 1. Update documentation in this repository
-2. Use ecosystem-manager.sh to coordinate changes
+2. Use ecosystem_manager/ecosystem-manager to coordinate changes
 3. Create issues in relevant individual repositories
 4. Test changes across the ecosystem
 
