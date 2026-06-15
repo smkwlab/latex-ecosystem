@@ -20,8 +20,8 @@ This document describes the architecture and management strategy for the thesis-
 ### Management & Automation
 - **thesis-management-tools**: Administrative tools and documentation for thesis supervision
 - **thesis-student-registry**: Student repository registry and monitoring tools (registry-manager / thesis-monitor escripts)
-- **ai-academic-paper-reviewer**: GitHub Action for automated academic paper review using Gemini AI
-- **ai-reviewer**: Automated PR code review GitHub Action (fork maintained for upstream bug fixes)
+- **ai-academic-paper-reviewer**: GitHub Action for automated review via the org-standard AI review workflow; supports both `ACADEMIC` (paper) and `CODE` review modes, so it is the single AI reviewer for the ecosystem
+- **ai-reviewer** (legacy): standalone code-review Action hosted at `toshi0806/ai-reviewer` (a fork of `Nasubikun/ai-reviewer`). Superseded by `ai-academic-paper-reviewer` (`CODE` mode) and no longer used by the migrated workflows; kept for reference only
 - **aldc**: Command-line tool for adding LaTeX devcontainer to repositories
 
 > **Out of ecosystem scope**: Other repositories that may appear alongside these in a local
@@ -48,8 +48,7 @@ latex-environment (DevContainer Template)
 
 Supporting Infrastructure:
 ├── latex-release-action → (Used by templates)
-├── ai-academic-paper-reviewer → (Used by thesis repos)
-├── ai-reviewer → (Used for PR code review)
+├── ai-academic-paper-reviewer → (AI review for thesis repos & code review, ACADEMIC/CODE modes)
 ├── aldc → latex-environment (release branch)
 ├── thesis-management-tools → (Management workflows)
 └── thesis-student-registry → (Student repository registry & monitoring)
