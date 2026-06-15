@@ -26,6 +26,8 @@ TEMPLATE_REPOS=(
     "wr-template"
     "latex-template"
     "sotsuron-report-template"
+    "ise-report-template"
+    "poster-template"
 )
 
 TOOL_REPOS=(

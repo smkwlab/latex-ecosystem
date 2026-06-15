@@ -19,8 +19,14 @@ This document describes the architecture and management strategy for the thesis-
 
 ### Management & Automation
 - **thesis-management-tools**: Administrative tools and documentation for thesis supervision
+- **thesis-student-registry**: Student repository registry and monitoring tools (registry-manager / thesis-monitor escripts)
 - **ai-academic-paper-reviewer**: GitHub Action for automated academic paper review using Gemini AI
+- **ai-reviewer**: Automated PR code review GitHub Action (fork maintained for upstream bug fixes)
 - **aldc**: Command-line tool for adding LaTeX devcontainer to repositories
+
+> **Out of ecosystem scope**: Other repositories that may appear alongside these in a local
+> workspace (e.g. `split-sentences`, `ise-report`) are not part of the thesis-environment
+> ecosystem and are not managed here.
 
 ## Dependency Matrix
 
@@ -42,9 +48,11 @@ latex-environment (DevContainer Template)
 
 Supporting Infrastructure:
 ├── latex-release-action → (Used by templates)
-├── ai-academic-paper-reviewer → (Used by thesis repos)  
+├── ai-academic-paper-reviewer → (Used by thesis repos)
+├── ai-reviewer → (Used for PR code review)
 ├── aldc → latex-environment (release branch)
-└── thesis-management-tools → (Management workflows)
+├── thesis-management-tools → (Management workflows)
+└── thesis-student-registry → (Student repository registry & monitoring)
 ```
 
 ## Version Compatibility
@@ -210,7 +218,7 @@ Supporting Infrastructure:
 
 ### Short Term (3 months)
 - [ ] Implement cross-repository testing
-- [ ] Enhance dependency update automation
+- [x] Enhance dependency update automation (check-texlive-updates workflow + Renovate across repos)
 - [ ] Improve error reporting and diagnostics
 
 ### Medium Term (6 months)  
@@ -246,5 +254,5 @@ Supporting Infrastructure:
 
 ---
 
-*Last Updated: 2025-06-13*  
-*Document Version: 1.0*
+*Last Updated: 2026-06-15*  
+*Document Version: 1.1*
