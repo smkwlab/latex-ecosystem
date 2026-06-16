@@ -1,7 +1,6 @@
-# Caller template: AI Code Review (one-shot, inline) — calls the ai-review reusable.
-# Distributed by scripts/distribute-workflow.sh as
-# .github/workflows/ai-code-review.yml in each target repository.
-# The ref / model / language tokens below are substituted at distribution time.
+# AI Code Review (one-shot, inline) — calls the smkwlab org-standard
+# ai-review reusable workflow (smkwlab/.github). Maintained manually in this
+# repository; the ref / model / language values below are set directly.
 name: AI Code Review
 
 on:
