@@ -16,7 +16,10 @@ GITHUB_ORG="smkwlab"
 
 # Failure tracking: individual failures do not stop the run (graceful
 # degradation), but they are summarized at the end and reflected in the
-# exit code so scripted callers can detect a partial setup
+# exit code so scripted callers can detect a partial setup.
+# NOTE: functions that update these (clone_repositories,
+# setup_ecosystem_management) must be called directly, never via a
+# subshell ($(...) or (...)), or the updates are lost.
 FAILED_CLONES=()
 BUILD_FAILED=0
 
@@ -278,7 +281,9 @@ main() {
     if [ ${#FAILED_CLONES[@]} -gt 0 ] || [ "$BUILD_FAILED" -eq 1 ]; then
         echo ""
         if [ ${#FAILED_CLONES[@]} -gt 0 ]; then
-            print_error "Failed to clone: ${FAILED_CLONES[*]}"
+            for repo in "${FAILED_CLONES[@]}"; do
+                print_error "Failed to clone: $repo"
+            done
         fi
         if [ "$BUILD_FAILED" -eq 1 ]; then
             print_error "ecosystem-manager escript build failed"
