@@ -1,5 +1,9 @@
 defmodule EcosystemManager.UserConfigTest do
-  use ExUnit.Case
+  # async: false is the ExUnit default, but make it explicit: these tests
+  # mutate the ECOSYSTEM_MANAGER_CONFIG_DIR environment variable and the
+  # :ecosystem_manager application env, which are global state.
+  use ExUnit.Case, async: false
+
   alias EcosystemManager.UserConfig
 
   describe "get_config_path/0" do
@@ -30,10 +34,12 @@ defmodule EcosystemManager.UserConfigTest do
             assert String.ends_with?(example_path, "config.example.exs")
 
             content = File.read!(example_path)
+            # Heredoc indentation is trimmed by Elixir, so the generated
+            # file must start at column 0
+            assert String.starts_with?(content, "# EcosystemManager User Configuration")
+            assert String.contains?(content, "\nimport Config\n")
             assert String.contains?(content, "workspace_path:")
-            assert String.contains?(content, "import Config")
             assert String.contains?(content, "repositories:")
-            assert String.contains?(content, "EcosystemManager User Configuration")
 
           {:error, reason} ->
             flunk("Expected success but got error: #{reason}")
@@ -131,6 +137,21 @@ defmodule EcosystemManager.UserConfigTest do
       with_temp_config_dir(fn config_dir ->
         config_path = Path.join(config_dir, "config.exs")
         File.write!(config_path, "invalid elixir syntax {{")
+
+        assert {:error, message} = UserConfig.load()
+        assert message =~ "configuration"
+      end)
+    end
+
+    test "handles config file that throws" do
+      with_temp_config_dir(fn config_dir ->
+        config_path = Path.join(config_dir, "config.exs")
+
+        File.write!(config_path, """
+        import Config
+
+        throw(:boom)
+        """)
 
         assert {:error, message} = UserConfig.load()
         assert message =~ "configuration"
@@ -245,8 +266,11 @@ defmodule EcosystemManager.UserConfigTest do
             assert config_path == Path.join(config_dir, "config.exs")
 
             content = File.read!(config_path)
+            # Heredoc indentation is trimmed by Elixir, so the generated
+            # file must start at column 0
+            assert String.starts_with?(content, "# EcosystemManager User Configuration")
+            assert String.contains?(content, "\nimport Config\n")
             assert String.contains?(content, ~s(workspace_path: "/test/workspace"))
-            assert String.contains?(content, "import Config")
 
           {:error, reason} ->
             flunk("Expected success but got error: #{reason}")

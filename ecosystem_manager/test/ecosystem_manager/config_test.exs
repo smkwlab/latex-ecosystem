@@ -68,6 +68,22 @@ defmodule EcosystemManager.ConfigTest do
   end
 
   describe "configuration fallbacks" do
+    setup do
+      # Snapshot and always restore the application env, even when an
+      # assertion in the test fails midway
+      keys = [:default_concurrency, :github_timeout, :default_format]
+      originals = Enum.map(keys, &{&1, Application.get_env(:ecosystem_manager, &1)})
+
+      on_exit(fn ->
+        Enum.each(originals, fn
+          {key, nil} -> Application.delete_env(:ecosystem_manager, key)
+          {key, value} -> Application.put_env(:ecosystem_manager, key, value)
+        end)
+      end)
+
+      :ok
+    end
+
     test "functions return defaults when application config is missing" do
       # Test that functions work even when specific config is not set
       Application.delete_env(:ecosystem_manager, :default_concurrency)
@@ -78,11 +94,6 @@ defmodule EcosystemManager.ConfigTest do
 
       Application.delete_env(:ecosystem_manager, :default_format)
       assert Config.default_format() == :compact
-
-      # Restore configuration
-      Application.put_env(:ecosystem_manager, :default_concurrency, 8)
-      Application.put_env(:ecosystem_manager, :github_timeout, 15_000)
-      Application.put_env(:ecosystem_manager, :default_format, :compact)
     end
   end
 

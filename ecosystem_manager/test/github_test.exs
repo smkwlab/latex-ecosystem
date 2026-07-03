@@ -773,6 +773,10 @@ defmodule EcosystemManager.GitHubTest do
         File.mkdir_p!(test_repo)
 
         System.cmd("git", ["init"], cd: test_repo)
+        # Some git versions reject unusual URLs (e.g. the empty string).
+        # That is fine for this test: whether the remote is added with a
+        # non-GitHub URL or not added at all, get_github_remote/1 must
+        # return :error either way.
         System.cmd("git", ["remote", "add", "origin", url], cd: test_repo)
 
         try do

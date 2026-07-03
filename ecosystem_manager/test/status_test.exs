@@ -179,65 +179,25 @@ defmodule EcosystemManager.StatusTest do
     end
 
     test "sorts repositories by last commit time when time_sort option is provided" do
-      temp_dir = System.tmp_dir!()
-      test_ecosystem = Path.join(temp_dir, "time_sort_test_#{:rand.uniform(10000)}")
-      File.mkdir_p!(test_ecosystem)
-
-      # Create test repositories sequentially with delays
-      repo_configs = [
-        # created first
-        {"oldest_repo", 0},
-        # 1 second delay
-        {"middle_repo", 1000},
-        # 2 seconds delay
-        {"newest_repo", 2000}
+      # Build repository structs with explicit timestamps instead of real
+      # git repos with sleeps: the sort only reads last_commit_timestamp,
+      # and this keeps the test fast and deterministic
+      test_repos = [
+        %Repository{name: "oldest_repo", last_commit_timestamp: 1_000},
+        %Repository{name: "newest_repo", last_commit_timestamp: 3_000},
+        %Repository{name: "middle_repo", last_commit_timestamp: 2_000},
+        %Repository{name: "no_commit_repo", last_commit_timestamp: nil}
       ]
 
-      test_repos =
-        for {name, delay} <- repo_configs do
-          repo_path = Path.join(test_ecosystem, name)
-          File.mkdir_p!(repo_path)
-          System.cmd("git", ["init"], cd: repo_path)
-          System.cmd("git", ["config", "user.email", "test@example.com"], cd: repo_path)
-          System.cmd("git", ["config", "user.name", "Test User"], cd: repo_path)
+      sorted_repos = Status.sort_repositories_by_time(test_repos)
 
-          # Sleep to create time difference
-          if delay > 0, do: Process.sleep(delay)
-
-          # Create initial commit
-          File.write!(Path.join(repo_path, "README.md"), "# #{name}")
-          System.cmd("git", ["add", "README.md"], cd: repo_path)
-          System.cmd("git", ["commit", "-m", "Initial commit for #{name}"], cd: repo_path)
-
-          Repository.new(name, test_ecosystem) |> Repository.fetch_git_info()
-        end
-
-      try do
-        # Test sorting by last commit time (newest first)
-        sorted_repos = Status.sort_repositories_by_time(test_repos)
-
-        # Should be sorted by last_commit timestamp (newest first)
-        assert length(sorted_repos) == 3
-
-        # Get timestamps to verify sorting
-        timestamps =
-          Enum.map(sorted_repos, fn repo ->
-            {repo.name, repo.last_commit_timestamp || 0}
-          end)
-
-        # Should be sorted in descending order (newest first)
-        sorted_timestamps = Enum.map(timestamps, fn {_, ts} -> ts end)
-        assert sorted_timestamps == Enum.sort(sorted_timestamps, :desc)
-
-        # Verify sort order: newest first, oldest last
-        repo_names = Enum.map(sorted_repos, & &1.name)
-        # newest_repo was created last
-        assert List.first(repo_names) == "newest_repo"
-        # oldest_repo was created first
-        assert List.last(repo_names) == "oldest_repo"
-      after
-        File.rm_rf!(test_ecosystem)
-      end
+      # Newest first; repos without commits (nil timestamp) go last
+      assert Enum.map(sorted_repos, & &1.name) == [
+               "newest_repo",
+               "middle_repo",
+               "oldest_repo",
+               "no_commit_repo"
+             ]
     end
 
     test "truncate_string function coverage" do

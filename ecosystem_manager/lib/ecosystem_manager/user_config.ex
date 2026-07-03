@@ -3,6 +3,10 @@ defmodule EcosystemManager.UserConfig do
   User configuration file support for EcosystemManager.
 
   Loads and manages user-specific configuration from ~/.config/ecosystem-manager/config.exs
+
+  Security note: the config file is evaluated as Elixir code with the
+  privileges of the CLI user. This is acceptable for a tool reading its
+  own per-user config file, but never point it at untrusted input.
   """
 
   @config_dir "~/.config/ecosystem-manager"
@@ -36,8 +40,10 @@ defmodule EcosystemManager.UserConfig do
         e in [CompileError, SyntaxError] ->
           {:error, "Invalid configuration file: #{Exception.message(e)}"}
       catch
-        :error, reason ->
-          {:error, "Failed to load configuration: #{inspect(reason)}"}
+        # Catch every kind (:error, :throw, :exit) so a misbehaving config
+        # file can never crash the CLI at startup.
+        kind, reason ->
+          {:error, "Failed to load configuration: #{inspect({kind, reason})}"}
       end
     else
       :ok
