@@ -47,6 +47,34 @@ defmodule EcosystemManager.UserConfigTest do
       end)
     end
 
+    test "returns error when the config directory cannot be created" do
+      # Point the config dir below a regular file so mkdir_p reliably
+      # fails with :enotdir on every platform
+      temp_dir = System.tmp_dir!()
+      blocker = Path.join(temp_dir, "blocker_#{:rand.uniform(10_000)}")
+      File.write!(blocker, "not a directory")
+
+      original = System.get_env("ECOSYSTEM_MANAGER_CONFIG_DIR")
+
+      try do
+        System.put_env("ECOSYSTEM_MANAGER_CONFIG_DIR", Path.join(blocker, "nested"))
+
+        assert {:error, message} = UserConfig.create_example_config()
+        assert message =~ "config"
+
+        assert {:error, message} = UserConfig.create_default_config("/test/workspace")
+        assert message =~ "config"
+      after
+        if original do
+          System.put_env("ECOSYSTEM_MANAGER_CONFIG_DIR", original)
+        else
+          System.delete_env("ECOSYSTEM_MANAGER_CONFIG_DIR")
+        end
+
+        File.rm(blocker)
+      end
+    end
+
     test "handles file write errors gracefully" do
       # Test error case by trying to write to a read-only directory
       # This is hard to test directly, so we'll test the structure
@@ -219,61 +247,14 @@ defmodule EcosystemManager.UserConfigTest do
   end
 
   describe "create_default_config/1" do
-    test "validates that config creation logic works" do
-      # Test the actual content generation logic without filesystem conflicts
-      workspace = "/test/workspace"
+    test "uses the default workspace placeholder when no path is given" do
+      with_temp_config_dir(fn config_dir ->
+        assert {:ok, config_path} = UserConfig.create_default_config()
+        assert config_path == Path.join(config_dir, "config.exs")
 
-      expected_content = """
-      # EcosystemManager User Configuration
-      # Generated on #{DateTime.utc_now() |> DateTime.to_string()}
-
-      import Config
-
-      # Set your LaTeX ecosystem workspace path
-      config :ecosystem_manager,
-        workspace_path: #{inspect(workspace)},
-        
-        # Optional: Custom repository list
-        # repositories: [
-        #   ".",
-        #   "texlive-ja-textlint",
-        #   "latex-environment",
-        #   "sotsuron-template"
-        # ]
-      """
-
-      # Test that the content structure is correct
-      assert String.contains?(expected_content, workspace)
-      assert String.contains?(expected_content, "import Config")
-      assert String.contains?(expected_content, "repositories:")
-    end
-
-    test "validates default workspace path logic" do
-      # Test default path logic
-      default_workspace = "~/path/to/latex-ecosystem"
-
-      expected_content = """
-      # EcosystemManager User Configuration
-      # Generated on #{DateTime.utc_now() |> DateTime.to_string()}
-
-      import Config
-
-      # Set your LaTeX ecosystem workspace path
-      config :ecosystem_manager,
-        workspace_path: #{inspect(default_workspace)},
-        
-        # Optional: Custom repository list
-        # repositories: [
-        #   ".",
-        #   "texlive-ja-textlint",
-        #   "latex-environment",
-        #   "sotsuron-template"
-        # ]
-      """
-
-      # Test that the content structure is correct
-      assert String.contains?(expected_content, default_workspace)
-      assert String.contains?(expected_content, "import Config")
+        content = File.read!(config_path)
+        assert String.contains?(content, ~s(workspace_path: "~/path/to/latex-ecosystem"))
+      end)
     end
 
     test "creates default config file when none exists" do

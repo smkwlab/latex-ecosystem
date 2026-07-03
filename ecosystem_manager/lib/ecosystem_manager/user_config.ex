@@ -83,9 +83,12 @@ defmodule EcosystemManager.UserConfig do
     config_dir = get_config_dir()
     example_path = Path.join(config_dir, "config.example.exs")
 
-    # Ensure directory exists
-    File.mkdir_p!(config_dir)
+    with :ok <- ensure_config_dir(config_dir) do
+      write_example_config(example_path)
+    end
+  end
 
+  defp write_example_config(example_path) do
     example_content = """
     # EcosystemManager User Configuration
     # Copy this file to config.exs and customize as needed
@@ -135,35 +138,45 @@ defmodule EcosystemManager.UserConfig do
     if File.exists?(config_path) do
       {:error, "Configuration file already exists: #{config_path}"}
     else
-      config_dir = get_config_dir()
-      File.mkdir_p!(config_dir)
-
-      default_content = """
-      # EcosystemManager User Configuration
-      # Generated on #{DateTime.utc_now() |> DateTime.to_string()}
-
-      import Config
-
-      # Set your LaTeX ecosystem workspace path
-      config :ecosystem_manager,
-        workspace_path: #{inspect(workspace_path || "~/path/to/latex-ecosystem")},
-        
-        # Optional: Custom repository list
-        # repositories: [
-        #   ".",
-        #   "texlive-ja-textlint",
-        #   "latex-environment",
-        #   "sotsuron-template"
-        # ]
-      """
-
-      case File.write(config_path, default_content) do
-        :ok ->
-          {:ok, config_path}
-
-        {:error, reason} ->
-          {:error, "Failed to create config: #{reason}"}
+      with :ok <- ensure_config_dir(get_config_dir()) do
+        write_default_config(config_path, workspace_path)
       end
+    end
+  end
+
+  defp write_default_config(config_path, workspace_path) do
+    default_content = """
+    # EcosystemManager User Configuration
+    # Generated on #{DateTime.utc_now() |> DateTime.to_string()}
+
+    import Config
+
+    # Set your LaTeX ecosystem workspace path
+    config :ecosystem_manager,
+      workspace_path: #{inspect(workspace_path || "~/path/to/latex-ecosystem")},
+      
+      # Optional: Custom repository list
+      # repositories: [
+      #   ".",
+      #   "texlive-ja-textlint",
+      #   "latex-environment",
+      #   "sotsuron-template"
+      # ]
+    """
+
+    case File.write(config_path, default_content) do
+      :ok ->
+        {:ok, config_path}
+
+      {:error, reason} ->
+        {:error, "Failed to create config: #{reason}"}
+    end
+  end
+
+  defp ensure_config_dir(config_dir) do
+    case File.mkdir_p(config_dir) do
+      :ok -> :ok
+      {:error, reason} -> {:error, "Failed to create config directory: #{reason}"}
     end
   end
 end
