@@ -70,11 +70,25 @@ gh auth status
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
 ```
 
+This creates a `latex-ecosystem-dev/` directory under the current directory
+and sets up everything inside it.
+
 **Manual clone and setup:**
 ```bash
 gh repo clone smkwlab/latex-ecosystem latex-ecosystem-dev
 cd latex-ecosystem-dev
 ./setup.sh
+```
+
+When run inside an existing latex-ecosystem checkout, `setup.sh` detects it
+and clones the component repositories into that checkout instead of creating
+a nested `latex-ecosystem-dev/`.
+
+**Custom location:**
+```bash
+# Set LATEX_ECOSYSTEM_BASE to control where the ecosystem is set up
+LATEX_ECOSYSTEM_BASE="$HOME/work/latex-ecosystem" \
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
 ```
 
 ### Daily Ecosystem Management
