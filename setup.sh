@@ -133,6 +133,8 @@ setup_base_directory() {
 }
 
 setup_ecosystem_management() {
+    # IMPORTANT: call directly (not via $(...) or (...)) so that
+    # BUILD_FAILED updates are visible to the caller
     echo -e "\nSetting up ecosystem management..."
     
     # Clone latex-ecosystem repository
@@ -165,6 +167,9 @@ setup_ecosystem_management() {
                 BUILD_FAILED=1
             fi
         else
+            # Deliberately NOT counted as a failure: Elixir/Mix is an
+            # optional prerequisite (see check_prerequisites), so a skipped
+            # build only warns and the script can still exit 0
             print_warning "Skipping ecosystem-manager build (Elixir/Mix not found). Build later: cd ecosystem_manager && mix escript.build"
         fi
     else
@@ -174,6 +179,8 @@ setup_ecosystem_management() {
 }
 
 clone_repositories() {
+    # IMPORTANT: call directly (not via $(...) or (...)) so that
+    # FAILED_CLONES updates are visible to the caller
     local repos=("$@")
     for repo in "${repos[@]}"; do
         if [ -d "$repo" ]; then
