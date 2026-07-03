@@ -96,10 +96,9 @@ setup_base_directory() {
     elif is_ecosystem_checkout "$(pwd)"; then
         # Running inside an existing latex-ecosystem checkout (README's
         # "Manual clone and setup" flow): use it as-is instead of nesting
-        # a second latex-ecosystem-dev inside it
+        # a second latex-ecosystem-dev inside it. The common path below
+        # prints the status message and cd is a no-op.
         BASE_DIR="$(pwd)"
-        print_status "Using existing latex-ecosystem checkout: $BASE_DIR"
-        return
     else
         BASE_DIR="$(pwd)/latex-ecosystem-dev"
     fi
