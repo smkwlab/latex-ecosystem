@@ -509,11 +509,13 @@ defmodule EcosystemManager.StatusTest do
     test "performance with large number of options" do
       base_path = File.cwd!()
 
-      # Test with various option combinations
+      # Test with various option combinations. include_github stays false
+      # so the test never depends on the network or the gh CLI; concurrency
+      # variation is what this test is about.
       option_combinations = [
         [include_github: false],
-        [include_github: true, max_concurrency: 1],
-        [include_github: true, max_concurrency: 4],
+        [include_github: false, max_concurrency: 1],
+        [include_github: false, max_concurrency: 4],
         [include_github: false, max_concurrency: 8]
       ]
 

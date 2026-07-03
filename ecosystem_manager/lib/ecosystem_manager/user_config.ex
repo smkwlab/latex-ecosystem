@@ -24,8 +24,10 @@ defmodule EcosystemManager.UserConfig do
       try do
         # Config.Reader.read!/1 is primarily meant for build-time config,
         # but works at runtime since Elixir 1.11. The config file must
-        # start with `import Config`; syntax or compile errors raised while
-        # evaluating it are converted to {:error, reason} below.
+        # start with `import Config` and must not use build-time-only
+        # constructs such as config_env/0 or import_config/1 (documented
+        # in config.example.exs). Any error raised while evaluating it is
+        # converted to {:error, reason} below.
         config_data = Config.Reader.read!(config_path)
 
         # Apply the configuration to the application
@@ -37,11 +39,13 @@ defmodule EcosystemManager.UserConfig do
 
         :ok
       rescue
-        e in [CompileError, SyntaxError] ->
+        # Any raised exception (syntax errors, compile errors, and whatever
+        # else evaluating user code may raise) becomes a readable message
+        e ->
           {:error, "Invalid configuration file: #{Exception.message(e)}"}
       catch
-        # Catch every kind (:error, :throw, :exit) so a misbehaving config
-        # file can never crash the CLI at startup.
+        # Non-raise exits: throw/exit from a misbehaving config file must
+        # not crash the CLI at startup either
         kind, reason ->
           {:error, "Failed to load configuration: #{inspect({kind, reason})}"}
       end
@@ -85,6 +89,10 @@ defmodule EcosystemManager.UserConfig do
     example_content = """
     # EcosystemManager User Configuration
     # Copy this file to config.exs and customize as needed
+    #
+    # This file is evaluated as Elixir code at runtime. Build-time-only
+    # constructs such as config_env/0 and import_config/1 are NOT
+    # available here.
 
     import Config
 

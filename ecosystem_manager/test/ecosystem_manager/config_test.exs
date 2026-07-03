@@ -98,15 +98,27 @@ defmodule EcosystemManager.ConfigTest do
   end
 
   describe "runtime configuration changes" do
-    test "configuration can be changed at runtime" do
-      # Change concurrency
-      original_concurrency = Config.default_concurrency()
+    setup do
+      # Snapshot and always restore, even when an assertion fails midway
+      original = Application.get_env(:ecosystem_manager, :default_concurrency)
+
+      on_exit(fn ->
+        if original do
+          Application.put_env(:ecosystem_manager, :default_concurrency, original)
+        else
+          Application.delete_env(:ecosystem_manager, :default_concurrency)
+        end
+      end)
+
+      %{original_concurrency: Config.default_concurrency()}
+    end
+
+    test "configuration can be changed at runtime", %{original_concurrency: original} do
       Application.put_env(:ecosystem_manager, :default_concurrency, 16)
       assert Config.default_concurrency() == 16
 
-      # Restore original value
-      Application.put_env(:ecosystem_manager, :default_concurrency, original_concurrency)
-      assert Config.default_concurrency() == original_concurrency
+      Application.put_env(:ecosystem_manager, :default_concurrency, original)
+      assert Config.default_concurrency() == original
     end
   end
 end

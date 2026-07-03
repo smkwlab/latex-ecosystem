@@ -143,6 +143,25 @@ defmodule EcosystemManager.UserConfigTest do
       end)
     end
 
+    test "handles config file using build-time-only config_env/0" do
+      with_temp_config_dir(fn config_dir ->
+        config_path = Path.join(config_dir, "config.exs")
+
+        File.write!(config_path, """
+        import Config
+
+        case config_env() do
+          _ -> config :ecosystem_manager, workspace_path: "/test/workspace"
+        end
+        """)
+
+        # config_env/0 is build-time only; loading must fail gracefully
+        # instead of crashing the CLI
+        assert {:error, message} = UserConfig.load()
+        assert message =~ "configuration"
+      end)
+    end
+
     test "handles config file that throws" do
       with_temp_config_dir(fn config_dir ->
         config_path = Path.join(config_dir, "config.exs")
