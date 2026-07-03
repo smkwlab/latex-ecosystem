@@ -9,7 +9,9 @@ defmodule EcosystemManager.Application do
 
   @impl true
   def start(_type, _args) do
-    # Load user configuration
+    # Load user configuration. A broken config file is deliberately
+    # non-fatal: the CLI stays usable with built-in defaults, and the
+    # warning tells the user what to fix.
     case EcosystemManager.UserConfig.load() do
       :ok ->
         :ok

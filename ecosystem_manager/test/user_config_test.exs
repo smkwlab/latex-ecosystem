@@ -20,23 +20,12 @@ defmodule EcosystemManager.UserConfigTest do
 
   describe "create_example_config/0" do
     test "creates example config file successfully" do
-      # Test in a temporary directory by temporarily overriding the config directory
-      temp_dir = System.tmp_dir!()
-      test_home = Path.join(temp_dir, "test_home_#{:rand.uniform(10_000)}")
-      test_config_dir = Path.join(test_home, ".config/ecosystem-manager")
-
-      original_home = System.get_env("HOME")
-
-      try do
-        # Override HOME environment variable
-        System.put_env("HOME", test_home)
-        File.mkdir_p!(test_config_dir)
-
-        # Call the actual function
+      with_temp_config_dir(fn config_dir ->
         result = UserConfig.create_example_config()
 
         case result do
           {:ok, example_path} ->
+            assert Path.dirname(example_path) == config_dir
             assert File.exists?(example_path)
             assert String.ends_with?(example_path, "config.example.exs")
 
@@ -49,16 +38,7 @@ defmodule EcosystemManager.UserConfigTest do
           {:error, reason} ->
             flunk("Expected success but got error: #{reason}")
         end
-      after
-        # Restore original HOME
-        if original_home do
-          System.put_env("HOME", original_home)
-        else
-          System.delete_env("HOME")
-        end
-
-        File.rm_rf!(test_home)
-      end
+      end)
     end
 
     test "handles file write errors gracefully" do
@@ -120,65 +100,81 @@ defmodule EcosystemManager.UserConfigTest do
     end
 
     test "returns :ok when config file doesn't exist" do
-      # Test with non-existent path by overriding the config path temporarily
-      # Create a module attribute override approach or test the logic directly
-      assert UserConfig.load() == :ok
+      with_temp_config_dir(fn _config_dir ->
+        assert UserConfig.load() == :ok
+      end)
     end
 
     test "loads valid config file and applies settings" do
-      # Test valid config parsing logic without creating files that could
-      # interfere with the compilation process during testing
+      with_temp_config_dir(fn config_dir ->
+        config_path = Path.join(config_dir, "config.exs")
 
-      # Test the structure that Config.Reader expects
-      config_content = """
-      import Config
+        File.write!(config_path, """
+        import Config
 
-      config :ecosystem_manager,
-        workspace_path: "/test/workspace",
-        repositories: ["test-repo1", "test-repo2"]
-      """
+        config :ecosystem_manager,
+          workspace_path: "/test/workspace",
+          repositories: ["test-repo1", "test-repo2"]
+        """)
 
-      # Verify the content structure is valid by testing string parsing
-      assert String.contains?(config_content, "workspace_path:")
-      assert String.contains?(config_content, "repositories:")
-      assert String.contains?(config_content, "import Config")
+        assert UserConfig.load() == :ok
+        assert Application.get_env(:ecosystem_manager, :workspace_path) == "/test/workspace"
 
-      # The actual UserConfig.load() would use Config.Reader.read! in practice
-      # Validate test structure
-      assert :ok == :ok
+        assert Application.get_env(:ecosystem_manager, :repositories) == [
+                 "test-repo1",
+                 "test-repo2"
+               ]
+      end)
     end
 
     test "handles invalid config file gracefully" do
-      # Test error handling for invalid syntax without creating actual files
-      # that might be processed by the Elixir compiler during testing
+      with_temp_config_dir(fn config_dir ->
+        config_path = Path.join(config_dir, "config.exs")
+        File.write!(config_path, "invalid elixir syntax {{")
 
-      invalid_syntax = "invalid elixir syntax {{"
-
-      # Test that Code.eval_string would fail as expected
-      assert_raise TokenMissingError, fn ->
-        Code.eval_string(invalid_syntax)
-      end
-
-      # The actual UserConfig.load() handles this gracefully with try/rescue
-      # Validate test structure
-      assert :ok == :ok
+        assert {:error, message} = UserConfig.load()
+        assert message =~ "configuration"
+      end)
     end
 
     test "handles config file with missing import Config" do
-      # Test that UserConfig.load() handles errors gracefully
-      # This validates the error handling structure in the load() function
+      with_temp_config_dir(fn config_dir ->
+        config_path = Path.join(config_dir, "config.exs")
 
-      # The load() function uses try/rescue to handle CompileError and SyntaxError
-      # We test that the error handling logic structure is correct
-      error_types = [CompileError, SyntaxError]
+        File.write!(config_path, """
+        config :ecosystem_manager, workspace_path: "/test/workspace"
+        """)
 
-      # Verify that these are the expected error types for config issues
-      assert CompileError in error_types
-      assert SyntaxError in error_types
+        assert {:error, message} = UserConfig.load()
+        assert message =~ "configuration"
+      end)
+    end
+  end
 
-      # The actual UserConfig.load() handles these errors and returns {:error, message}
-      # Validate test structure
-      assert :ok == :ok
+  # Runs `fun` with ECOSYSTEM_MANAGER_CONFIG_DIR pointing at a fresh
+  # temporary directory so UserConfig never touches the developer's real
+  # ~/.config/ecosystem-manager. Overriding HOME does not work for this:
+  # Path.expand/1 resolves `~` via the home directory cached at VM start.
+  # Passes the created config directory to `fun` and always restores the
+  # environment afterwards.
+  defp with_temp_config_dir(fun) do
+    temp_dir = System.tmp_dir!()
+    test_config_dir = Path.join(temp_dir, "test_config_dir_#{:rand.uniform(10_000)}")
+
+    original = System.get_env("ECOSYSTEM_MANAGER_CONFIG_DIR")
+
+    try do
+      System.put_env("ECOSYSTEM_MANAGER_CONFIG_DIR", test_config_dir)
+      File.mkdir_p!(test_config_dir)
+      fun.(test_config_dir)
+    after
+      if original do
+        System.put_env("ECOSYSTEM_MANAGER_CONFIG_DIR", original)
+      else
+        System.delete_env("ECOSYSTEM_MANAGER_CONFIG_DIR")
+      end
+
+      File.rm_rf!(test_config_dir)
     end
   end
 
@@ -240,22 +236,29 @@ defmodule EcosystemManager.UserConfigTest do
       assert String.contains?(expected_content, "import Config")
     end
 
+    test "creates default config file when none exists" do
+      with_temp_config_dir(fn config_dir ->
+        result = UserConfig.create_default_config("/test/workspace")
+
+        case result do
+          {:ok, config_path} ->
+            assert config_path == Path.join(config_dir, "config.exs")
+
+            content = File.read!(config_path)
+            assert String.contains?(content, ~s(workspace_path: "/test/workspace"))
+            assert String.contains?(content, "import Config")
+
+          {:error, reason} ->
+            flunk("Expected success but got error: #{reason}")
+        end
+      end)
+    end
+
     test "returns error when config file already exists" do
-      temp_dir = System.tmp_dir!()
-      test_home = Path.join(temp_dir, "test_exists_home_#{:rand.uniform(10_000)}")
-      test_config_dir = Path.join(test_home, ".config/ecosystem-manager")
-
-      original_home = System.get_env("HOME")
-
-      try do
-        # Override HOME environment variable and create existing config
-        System.put_env("HOME", test_home)
-        File.mkdir_p!(test_config_dir)
-
-        config_path = Path.join(test_config_dir, "config.exs")
+      with_temp_config_dir(fn config_dir ->
+        config_path = Path.join(config_dir, "config.exs")
         File.write!(config_path, "# existing config")
 
-        # Call the function
         result = UserConfig.create_default_config("/test/workspace")
 
         case result do
@@ -265,16 +268,7 @@ defmodule EcosystemManager.UserConfigTest do
           {:ok, _} ->
             flunk("Expected error when config file already exists")
         end
-      after
-        # Restore original HOME
-        if original_home do
-          System.put_env("HOME", original_home)
-        else
-          System.delete_env("HOME")
-        end
-
-        File.rm_rf!(test_home)
-      end
+      end)
     end
   end
 end

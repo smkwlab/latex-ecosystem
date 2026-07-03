@@ -18,7 +18,10 @@ defmodule EcosystemManager.UserConfig do
 
     if File.exists?(config_path) do
       try do
-        # Read the config file using Config.Reader
+        # Config.Reader.read!/1 is primarily meant for build-time config,
+        # but works at runtime since Elixir 1.11. The config file must
+        # start with `import Config`; syntax or compile errors raised while
+        # evaluating it are converted to {:error, reason} below.
         config_data = Config.Reader.read!(config_path)
 
         # Apply the configuration to the application
@@ -45,14 +48,22 @@ defmodule EcosystemManager.UserConfig do
   Get the full path to the user configuration file.
   """
   def get_config_path do
-    Path.join(Path.expand(@config_dir), @config_file)
+    Path.join(get_config_dir(), @config_file)
   end
 
   @doc """
   Get the user configuration directory path.
+
+  Honors the ECOSYSTEM_MANAGER_CONFIG_DIR environment variable when set
+  (used by tests and useful for CI); falls back to #{@config_dir}.
+  Note: HOME changes at runtime do not affect the fallback because
+  Path.expand/1 resolves `~` via the home directory cached at VM start.
   """
   def get_config_dir do
-    Path.expand(@config_dir)
+    case System.get_env("ECOSYSTEM_MANAGER_CONFIG_DIR") do
+      nil -> Path.expand(@config_dir)
+      dir -> Path.expand(dir)
+    end
   end
 
   @doc """

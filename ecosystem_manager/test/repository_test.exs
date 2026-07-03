@@ -278,9 +278,10 @@ defmodule EcosystemManager.RepositoryTest do
         assert expected in repos1
       end
 
-      # Should be a reasonable number of repositories
+      # Should be a reasonable number of repositories (generous upper bound
+      # so the test does not break as the ecosystem grows)
       assert length(repos1) > 5
-      assert length(repos1) < 20
+      assert length(repos1) < 50
     end
   end
 
