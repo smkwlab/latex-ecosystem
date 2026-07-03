@@ -59,6 +59,8 @@ gh auth status
 
 **Note**: Without GitHub CLI authentication, the ecosystem manager will still work but with limited functionality (no PR/Issue counts).
 
+**Note**: Some ecosystem repositories (e.g. `thesis-student-registry`) are private. `setup.sh` can clone them only with an authenticated GitHub CLI (`gh auth login`) or an SSH key registered on GitHub; the anonymous HTTPS fallback works for public repositories only.
+
 ## Quick Start
 
 ### Initial Setup

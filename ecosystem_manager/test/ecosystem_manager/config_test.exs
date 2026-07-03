@@ -1,0 +1,101 @@
+defmodule EcosystemManager.ConfigTest do
+  use ExUnit.Case
+  doctest EcosystemManager.Config
+
+  alias EcosystemManager.Config
+
+  describe "configuration access" do
+    test "default_concurrency/0 returns configured or default value" do
+      assert Config.default_concurrency() == 8
+    end
+
+    test "github_timeout/0 returns configured or default value" do
+      assert Config.github_timeout() == 15_000
+    end
+
+    test "git_timeout/0 returns configured or default value" do
+      assert Config.git_timeout() == 5_000
+    end
+
+    test "default_format/0 returns configured or default value" do
+      assert Config.default_format() == :compact
+    end
+
+    test "cache_enabled?/0 returns configured or default value" do
+      assert Config.cache_enabled?() == false
+    end
+
+    test "cache_ttl/0 returns configured or default value" do
+      assert Config.cache_ttl() == 300_000
+    end
+
+    test "timing_enabled?/0 returns configured or default value" do
+      assert Config.timing_enabled?() == false
+    end
+
+    test "github_api_base_url/0 returns configured or default value" do
+      assert Config.github_api_base_url() == "https://api.github.com"
+    end
+
+    test "default_include_github/0 returns configured or default value" do
+      assert Config.default_include_github() == true
+    end
+
+    test "all/0 returns all configuration as keyword list" do
+      config = Config.all()
+
+      assert Keyword.has_key?(config, :default_concurrency)
+      assert Keyword.has_key?(config, :github_timeout)
+      assert Keyword.has_key?(config, :git_timeout)
+      assert Keyword.has_key?(config, :default_format)
+      assert Keyword.has_key?(config, :cache_enabled)
+      assert Keyword.has_key?(config, :cache_ttl)
+      assert Keyword.has_key?(config, :timing_enabled)
+      assert Keyword.has_key?(config, :github_api_base_url)
+      assert Keyword.has_key?(config, :default_include_github)
+      assert Keyword.has_key?(config, :workspace_path)
+      assert Keyword.has_key?(config, :repositories)
+    end
+  end
+
+  describe "repositories configuration" do
+    test "repositories/0 returns configured repositories or nil" do
+      result = Config.repositories()
+
+      # Should be either nil or a list
+      assert is_nil(result) or is_list(result)
+    end
+  end
+
+  describe "configuration fallbacks" do
+    test "functions return defaults when application config is missing" do
+      # Test that functions work even when specific config is not set
+      Application.delete_env(:ecosystem_manager, :default_concurrency)
+      assert Config.default_concurrency() == 8
+
+      Application.delete_env(:ecosystem_manager, :github_timeout)
+      assert Config.github_timeout() == 15_000
+
+      Application.delete_env(:ecosystem_manager, :default_format)
+      assert Config.default_format() == :compact
+
+      # Restore configuration
+      Application.put_env(:ecosystem_manager, :default_concurrency, 8)
+      Application.put_env(:ecosystem_manager, :github_timeout, 15_000)
+      Application.put_env(:ecosystem_manager, :default_format, :compact)
+    end
+  end
+
+  describe "runtime configuration changes" do
+    test "configuration can be changed at runtime" do
+      # Change concurrency
+      original_concurrency = Config.default_concurrency()
+      Application.put_env(:ecosystem_manager, :default_concurrency, 16)
+      assert Config.default_concurrency() == 16
+
+      # Restore original value
+      Application.put_env(:ecosystem_manager, :default_concurrency, original_concurrency)
+      assert Config.default_concurrency() == original_concurrency
+    end
+  end
+end
