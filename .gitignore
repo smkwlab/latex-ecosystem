@@ -13,7 +13,12 @@
 !docs/
 
 # Exception: Include ecosystem_manager Elixir project
+# Re-include nested paths too (same pitfall as .github below): the leading
+# */ rule also matches subdirectories such as ecosystem_manager/lib, so a
+# single !ecosystem_manager/ is not enough. Build artifacts stay ignored
+# via ecosystem_manager/.gitignore.
 !ecosystem_manager/
+!ecosystem_manager/**
 
 # Exception: Include .github (workflows, scripts, settings) for this repo
 # Re-include nested paths too: the leading */ rule also matches subdirectories
