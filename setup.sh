@@ -91,7 +91,8 @@ setup_base_directory() {
     echo -e "\nSetting up base directory..."
 
     if [ -n "${LATEX_ECOSYSTEM_BASE:-}" ]; then
-        # Explicit override always wins
+        # Explicit override always wins (checkout detection still applies
+        # to the chosen directory below)
         BASE_DIR="$LATEX_ECOSYSTEM_BASE"
     elif is_ecosystem_checkout "$(pwd)"; then
         # Running inside an existing latex-ecosystem checkout (README's
