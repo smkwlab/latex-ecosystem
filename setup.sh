@@ -82,24 +82,44 @@ check_prerequisites() {
     fi
 }
 
+# Return success if the given directory is a latex-ecosystem checkout
+is_ecosystem_checkout() {
+    [ -d "$1/.git" ] && [ -f "$1/ecosystem_manager/mix.exs" ]
+}
+
 setup_base_directory() {
     echo -e "\nSetting up base directory..."
-    
-    # Use environment variable or current directory
-    BASE_DIR="${LATEX_ECOSYSTEM_BASE:-$(pwd)/latex-ecosystem-dev}"
-    
+
+    if [ -n "${LATEX_ECOSYSTEM_BASE:-}" ]; then
+        # Explicit override always wins
+        BASE_DIR="$LATEX_ECOSYSTEM_BASE"
+    elif is_ecosystem_checkout "$(pwd)"; then
+        # Running inside an existing latex-ecosystem checkout (README's
+        # "Manual clone and setup" flow): use it as-is instead of nesting
+        # a second latex-ecosystem-dev inside it
+        BASE_DIR="$(pwd)"
+        print_status "Using existing latex-ecosystem checkout: $BASE_DIR"
+        return
+    else
+        BASE_DIR="$(pwd)/latex-ecosystem-dev"
+    fi
+
     if [ -d "$BASE_DIR" ]; then
-        print_warning "Directory $BASE_DIR already exists"
-        read -p "Continue anyway? (y/N) " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            exit 1
+        if is_ecosystem_checkout "$BASE_DIR"; then
+            print_status "Using existing latex-ecosystem checkout: $BASE_DIR"
+        else
+            print_warning "Directory $BASE_DIR already exists"
+            read -p "Continue anyway? (y/N) " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                exit 1
+            fi
         fi
     else
         mkdir -p "$BASE_DIR"
         print_status "Created directory: $BASE_DIR"
     fi
-    
+
     cd "$BASE_DIR"
 }
 
