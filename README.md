@@ -14,17 +14,24 @@ latex-ecosystem/
 ├── README.md                 # This file
 ├── docs/                     # Detailed documentation
 │
-├── texlive-ja-textlint/      # Independent Git repository
-├── latex-environment/        # Independent Git repository
-├── sotsuron-template/        # Independent Git repository
-├── thesis-management-tools/  # Independent Git repository
-├── latex-release-action/     # Independent Git repository
-├── ai-academic-paper-reviewer/ # Independent Git repository
-├── aldc/                     # Independent Git repository
-├── wr-template/              # Independent Git repository
-├── latex-template/           # Independent Git repository
-├── sotsuron-report-template/ # Independent Git repository
-└── poster-template/          # Independent Git repository
+│  # Core infrastructure (each an independent Git repository)
+├── texlive-ja-textlint/      # Docker images for Japanese LaTeX + textlint
+├── latex-environment/        # DevContainer template
+├── latex-release-action/     # PDF build / release GitHub Action
+│
+│  # Document templates
+├── sotsuron-template/        # Thesis (undergraduate + graduate)
+├── ise-report-template/      # ISE report (HTML/textlint)
+├── wr-template/              # Weekly report
+├── latex-template/           # General-purpose LaTeX
+├── sotsuron-report-template/ # Thesis report
+├── poster-template/          # Academic poster (A0)
+│
+│  # Management & automation
+├── thesis-management-tools/  # Repository creation / review tooling
+├── thesis-student-registry/  # Student repository registry & monitoring
+├── ai-academic-paper-reviewer/ # AI review Action (ACADEMIC/CODE modes)
+└── aldc/                     # Adds the LaTeX devcontainer to a repository
 ```
 
 ## Prerequisites
@@ -33,7 +40,7 @@ latex-ecosystem/
 
 - **Git**: Version control system
 - **GitHub CLI (gh)**: Required for PR/Issue tracking features
-- **Elixir/Mix** (with Erlang/OTP): Required to build and run the ecosystem-manager escript
+- **Elixir 1.17+** (with Erlang/OTP): Required to build and run the ecosystem-manager escript
 - **Bash**: Shell interpreter (version 4.0+)
 
 ### GitHub CLI Setup
@@ -183,6 +190,7 @@ texlive-ja-textlint (Docker Base)
 latex-environment (DevContainer Template)
     ↓
 ├── sotsuron-template (Student Templates)
+├── ise-report-template (HTML-based quality-focused)
 ├── wr-template
 ├── latex-template
 ├── sotsuron-report-template
@@ -190,9 +198,10 @@ latex-environment (DevContainer Template)
 
 Supporting Infrastructure:
 ├── latex-release-action → (Used by templates)
-├── ai-academic-paper-reviewer → (Used by thesis repos)  
+├── ai-academic-paper-reviewer → (AI review for thesis repos & code review, ACADEMIC/CODE modes)
 ├── aldc → latex-environment (release branch)
-└── thesis-management-tools → (Management workflows)
+├── thesis-management-tools → (Management workflows)
+└── thesis-student-registry → (Student repository registry & monitoring)
 ```
 
 ## Support
