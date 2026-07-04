@@ -163,9 +163,12 @@ repository.
 >
 > The tool also needs `~/.config/registry-manager/config.json` with at least
 > `{"github_org": "smkwlab", "data_repo": "smkwlab/thesis-student-registry"}`.
+> Authentication uses the GitHub CLI (`gh auth login`) — no token key in the
+> config file. See the [registry-manager README](https://github.com/smkwlab/registry-manager#readme)
+> for all configuration keys.
 
 ```bash
-# (run from the directory containing the registry-manager checkout)
+# (run from the parent directory of the registry-manager checkout)
 
 # Check what would be done (dry-run)
 ./registry-manager/registry-manager propagate-workflow k22rs001-sotsuron --dry-run

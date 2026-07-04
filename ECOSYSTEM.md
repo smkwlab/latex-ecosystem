@@ -54,7 +54,7 @@ Supporting Infrastructure:
 ├── aldc → latex-environment (release branch)
 ├── thesis-management-tools → (Management workflows)
 ├── thesis-student-registry → (Student repository registry data, private)
-├── registry-manager → thesis-student-registry (manages registry data via GitHub API)
+├── registry-manager → thesis-student-registry (writes registry data)
 └── thesis-monitor → thesis-student-registry (reads registry data)
 ```
 
