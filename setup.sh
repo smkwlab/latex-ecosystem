@@ -14,6 +14,15 @@ NC='\033[0m' # No Color
 ECOSYSTEM_REPO="https://github.com/smkwlab/latex-ecosystem"
 GITHUB_ORG="smkwlab"
 
+# Failure tracking: individual failures do not stop the run (graceful
+# degradation), but they are summarized at the end and reflected in the
+# exit code so scripted callers can detect a partial setup.
+# NOTE: functions that update these (clone_repositories,
+# setup_ecosystem_management) must be called directly, never via a
+# subshell ($(...) or (...)), or the updates are lost.
+FAILED_CLONES=()
+BUILD_FAILED=0
+
 # Repository lists
 CORE_REPOS=(
     "texlive-ja-textlint"
@@ -124,6 +133,8 @@ setup_base_directory() {
 }
 
 setup_ecosystem_management() {
+    # IMPORTANT: call directly (not via $(...) or (...)) so that
+    # BUILD_FAILED updates are visible to the caller
     echo -e "\nSetting up ecosystem management..."
     
     # Clone latex-ecosystem repository
@@ -153,8 +164,12 @@ setup_ecosystem_management() {
                 print_status "ecosystem-manager is ready"
             else
                 print_warning "Failed to build ecosystem-manager (build it later: cd ecosystem_manager && mix escript.build)"
+                BUILD_FAILED=1
             fi
         else
+            # Deliberately NOT counted as a failure: Elixir/Mix is an
+            # optional prerequisite (see check_prerequisites), so a skipped
+            # build only warns and the script can still exit 0
             print_warning "Skipping ecosystem-manager build (Elixir/Mix not found). Build later: cd ecosystem_manager && mix escript.build"
         fi
     else
@@ -164,6 +179,8 @@ setup_ecosystem_management() {
 }
 
 clone_repositories() {
+    # IMPORTANT: call directly (not via $(...) or (...)) so that
+    # FAILED_CLONES updates are visible to the caller
     local repos=("$@")
     for repo in "${repos[@]}"; do
         if [ -d "$repo" ]; then
@@ -182,6 +199,7 @@ clone_repositories() {
                         print_status "Cloned $repo (HTTPS)"
                     else
                         print_error "Failed to clone $repo"
+                        FAILED_CLONES+=("$repo")
                     fi
                 fi
             else
@@ -192,6 +210,7 @@ clone_repositories() {
                     print_status "Cloned $repo (HTTPS)"
                 else
                     print_error "Failed to clone $repo"
+                    FAILED_CLONES+=("$repo")
                 fi
             fi
         fi
@@ -257,16 +276,33 @@ main() {
     echo -e "\nVerifying setup..."
     if [ -x ecosystem_manager/ecosystem-manager ]; then
         ./ecosystem_manager/ecosystem-manager status
-        print_status "Setup completed successfully!"
-        echo -e "\nNext steps:"
-        echo "  cd $BASE_DIR"
-        echo "  ./ecosystem_manager/ecosystem-manager status --long"
     else
-        print_warning "Setup completed, but ecosystem-manager is not built yet."
+        print_warning "ecosystem-manager is not built yet."
         echo -e "\nTo build it:"
         echo "  cd $BASE_DIR/ecosystem_manager && mix escript.build"
         echo "  ./ecosystem_manager/ecosystem-manager status"
     fi
+
+    # Failure summary: report everything that went wrong during the run
+    # and exit non-zero so scripted callers can detect a partial setup
+    if [ ${#FAILED_CLONES[@]} -gt 0 ] || [ "$BUILD_FAILED" -eq 1 ]; then
+        echo ""
+        if [ ${#FAILED_CLONES[@]} -gt 0 ]; then
+            for repo in "${FAILED_CLONES[@]}"; do
+                print_error "Failed to clone: $repo"
+            done
+        fi
+        if [ "$BUILD_FAILED" -eq 1 ]; then
+            print_error "ecosystem-manager escript build failed"
+        fi
+        print_error "Setup finished with errors (see above)"
+        exit 1
+    fi
+
+    print_status "Setup completed successfully!"
+    echo -e "\nNext steps:"
+    echo "  cd $BASE_DIR"
+    echo "  ./ecosystem_manager/ecosystem-manager status --long"
 }
 
 # Run main function
