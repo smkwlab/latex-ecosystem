@@ -19,7 +19,9 @@ This document describes the architecture and management strategy for the thesis-
 
 ### Management & Automation
 - **thesis-management-tools**: Administrative tools and documentation for thesis supervision
-- **thesis-student-registry**: Student repository registry and monitoring tools (registry-manager / thesis-monitor escripts)
+- **thesis-student-registry**: Student repository registry data (private, data-only)
+- **registry-manager**: Registry data management tool (Elixir escript)
+- **thesis-monitor**: Student repository monitoring tool (Elixir escript)
 - **ai-academic-paper-reviewer**: GitHub Action for automated review via the org-standard AI review workflow; supports both `ACADEMIC` (paper) and `CODE` review modes, so it is the single AI reviewer for the ecosystem
 - **ai-reviewer** (legacy): standalone code-review Action hosted at `toshi0806/ai-reviewer` (a fork of `Nasubikun/ai-reviewer`). Superseded by `ai-academic-paper-reviewer` (`CODE` mode) and no longer used by the migrated workflows; kept for reference only
 - **aldc**: Command-line tool for adding LaTeX devcontainer to repositories
@@ -51,7 +53,9 @@ Supporting Infrastructure:
 ├── ai-academic-paper-reviewer → (AI review for thesis repos & code review, ACADEMIC/CODE modes)
 ├── aldc → latex-environment (release branch)
 ├── thesis-management-tools → (Management workflows)
-└── thesis-student-registry → (Student repository registry & monitoring)
+├── thesis-student-registry → (Student repository registry data, private)
+├── registry-manager → thesis-student-registry (manages registry data via GitHub API)
+└── thesis-monitor → thesis-student-registry (reads registry data)
 ```
 
 ## Version Compatibility
