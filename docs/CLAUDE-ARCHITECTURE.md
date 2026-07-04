@@ -54,14 +54,17 @@ latex-ecosystem/                 # This management repository
 
 #### Templates
 - **sotsuron-template/**: Unified thesis template (undergraduate/graduate)
+- **sotsuron-report-template/**: Thesis report template for practice
 - **wr-template/**: Weekly report template
 - **latex-template/**: Basic LaTeX template
 - **ise-report-template/**: HTML-based report template
+- **poster-template/**: Academic poster template (A0, tikzposter + LuaLaTeX)
 
 #### Tools and Automation
 - **thesis-management-tools/**: Administrative tools and workflows
+- **thesis-student-registry/**: Student repository registry and monitoring
 - **latex-release-action/**: GitHub Action for LaTeX compilation
-- **ai-academic-paper-reviewer/**: GitHub Action for automated paper review
+- **ai-academic-paper-reviewer/**: GitHub Action for automated review (ACADEMIC and CODE modes)
 - **aldc/**: Command-line tool for adding LaTeX devcontainer
 
 ## Design Principles
@@ -86,9 +89,12 @@ texlive-ja-textlint (base images)
     ↓
 latex-environment (devcontainer)
     ↓
-sotsuron-template, wr-template, etc. (templates)
+sotsuron-template, sotsuron-report-template, ise-report-template,
+wr-template, latex-template, poster-template (templates)
     ↓
 thesis-management-tools (student workflows)
+    ↓
+thesis-student-registry (registry & monitoring)
 ```
 
 ### Update Propagation

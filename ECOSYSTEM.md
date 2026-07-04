@@ -61,12 +61,14 @@ Supporting Infrastructure:
 | texlive-ja-textlint | 2026a | TeXLive 2026 | Annual (TeXLive release) |
 | latex-environment | release branch | texlive-ja-textlint:2026a | Auto (on merge to main) |
 | sotsuron-template | Latest | Auto-updated via aldc | No manual updates needed |
+| ise-report-template | Latest | Auto-updated via aldc | No manual updates needed |
 | latex-template | Latest | Auto-updated via aldc | No manual updates needed |
 | wr-template | Latest | Auto-updated via aldc | No manual updates needed |
 | sotsuron-report-template | Latest | Auto-updated via aldc | No manual updates needed |
 | poster-template | Latest | Auto-updated via aldc | No manual updates needed |
 | latex-release-action | v3.3.0 | All templates | Per feature |
 | aldc | Latest | latex-environment:release | No updates needed |
+| ecosystem_manager | Latest | Elixir ~> 1.17 (OTP 27+) | Per feature |
 
 ## Automated Update Chain
 
@@ -253,5 +255,5 @@ Supporting Infrastructure:
 
 ---
 
-*Last Updated: 2026-06-15*  
-*Document Version: 1.1*
+*Last Updated: 2026-07-04*  
+*Document Version: 1.2*
