@@ -14,20 +14,24 @@ latex-ecosystem/
 ├── README.md                 # This file
 ├── docs/                     # Detailed documentation
 │
-│  # Core infrastructure (each an independent Git repository)
+# Everything above is tracked by this management repository
+# (ecosystem_manager is part of it, not cloned).
+# Everything below is a separate repository cloned by setup.sh:
+#
+#   Core infrastructure
 ├── texlive-ja-textlint/      # Docker images for Japanese LaTeX + textlint
 ├── latex-environment/        # DevContainer template
 ├── latex-release-action/     # PDF build / release GitHub Action
-│
-│  # Document templates
+#
+#   Document templates
 ├── sotsuron-template/        # Thesis (undergraduate + graduate)
 ├── ise-report-template/      # ISE report (HTML/textlint)
 ├── wr-template/              # Weekly report
 ├── latex-template/           # General-purpose LaTeX
 ├── sotsuron-report-template/ # Thesis report
 ├── poster-template/          # Academic poster (A0)
-│
-│  # Management & automation
+#
+#   Management & automation
 ├── thesis-management-tools/  # Repository creation / review tooling
 ├── thesis-student-registry/  # Student repository registry & monitoring
 ├── ai-academic-paper-reviewer/ # AI review Action (ACADEMIC/CODE modes)
