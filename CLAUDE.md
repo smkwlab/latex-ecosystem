@@ -81,7 +81,9 @@ This directory contains multiple **independent Git repositories**:
 
 ### Management & Monitoring
 - **thesis-management-tools/**: Repository creation and branch protection automation
-- **thesis-student-registry/**: Secure student repository registry and monitoring tools
+- **thesis-student-registry/**: Secure student repository registry data (private, data-only)
+- **registry-manager/**: Registry data management tool (Elixir escript, separate repo)
+- **thesis-monitor/**: Student repository monitoring tool (Elixir escript, separate repo)
 - **latex-ecosystem/**: This management repository for ecosystem coordination
 
 ### GitHub Actions
@@ -147,32 +149,38 @@ thesis-monitor status --verbose
 #### Correct Procedure (Automated)
 
 Use the `propagate-workflow` command of `registry-manager`, the Elixir escript
-located in the `registry_manager/` directory of the `thesis-student-registry`
+maintained in the [smkwlab/registry-manager](https://github.com/smkwlab/registry-manager)
 repository.
 
-> **Prerequisite**: All commands below are run from the `thesis-student-registry`
-> checkout root. Build the escript first (also from that root):
+> **Prerequisite**: Clone and build the escript first:
 > ```bash
-> (cd registry_manager && mix escript.build)
+> git clone git@github.com:smkwlab/registry-manager.git
+> (cd registry-manager && mix escript.build)
 > ```
-> Without this build step the `./registry_manager/registry-manager` binary does
+> Without this build step the `./registry-manager/registry-manager` binary does
 > not exist yet, so the command fails (the exact wording varies by shell/OS, e.g.
 > "No such file or directory").
+>
+> The tool also needs `~/.config/registry-manager/config.json` with at least
+> `{"github_org": "smkwlab", "data_repo": "smkwlab/thesis-student-registry"}`.
+> Authentication uses the GitHub CLI (`gh auth login`) — no token key in the
+> config file. See the [registry-manager README](https://github.com/smkwlab/registry-manager#readme)
+> for all configuration keys.
 
 ```bash
-# (run from the thesis-student-registry checkout root)
+# (run from the parent directory of the registry-manager checkout)
 
 # Check what would be done (dry-run)
-./registry_manager/registry-manager propagate-workflow k22rs001-sotsuron --dry-run
+./registry-manager/registry-manager propagate-workflow k22rs001-sotsuron --dry-run
 
 # Propagate workflow updates for a single repository
-./registry_manager/registry-manager propagate-workflow k22rs001-sotsuron
+./registry-manager/registry-manager propagate-workflow k22rs001-sotsuron
 
 # Propagate to all thesis repositories at once
-./registry_manager/registry-manager propagate-workflow --all --type thesis
+./registry-manager/registry-manager propagate-workflow --all --type thesis
 
 # Check all repositories first
-./registry_manager/registry-manager propagate-workflow --all --type thesis --dry-run
+./registry-manager/registry-manager propagate-workflow --all --type thesis --dry-run
 ```
 
 #### Manual Procedure (if needed)
@@ -240,5 +248,5 @@ gh pr diff <PR_NUMBER> --repo smkwlab/<repo> | grep -E "\.github/workflows"
 
 - **ai-reviewer**: Fork maintained here due to upstream bugs
 - **ai-academic-paper-reviewer**: Developed based on `ai-reviewer`.
-- **thesis-monitor**: Elixir-based monitoring tool with CSV integration
+- **thesis-monitor**: Elixir-based monitoring tool with CSV integration (own repository: smkwlab/thesis-monitor)
 - **Cross-repository Coordination**: All repositories work together as unified system
