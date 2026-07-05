@@ -145,7 +145,7 @@ Use the **`/propagate` skill** ([.claude/skills/propagate/SKILL.md](.claude/skil
 ## Security & Data Management
 
 - **Registry Data Separation**: student information lives only in the private registry data repository (`thesis-student-registry`), separate from tools and templates
-- **Automated Registry Updates**: GitHub Actions automatically update the registry (`data/repositories.json`)
+- **Automated Registry Updates**: GitHub Actions automatically update the registry (`data/registry.json`)
 - **Branch Protection**: Automatic setup for PR-based review workflows
 - **Access Control**: Fine-grained permissions for different user roles
 

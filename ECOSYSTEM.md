@@ -144,7 +144,8 @@ Supporting Infrastructure:
 
 The ecosystem uses **"registry"** consistently for the student-repository ledger:
 
-- **Registry**: the ledger of student repositories, materialized as `data/repositories.json`
+- **Registry**: the ledger of student repositories, materialized as `data/registry.json`
+  (renamed from `repositories.json` in 2026-07; tools keep a one-generation fallback)
   in the registry data repository. Use "registry (data)" in docs — avoid ad-hoc synonyms
   such as "student data", "student repository list", or "リポジトリ一覧" for the same thing.
 - **Registry data repository**: `thesis-student-registry` (private, data-only).
