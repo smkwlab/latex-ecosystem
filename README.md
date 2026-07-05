@@ -33,7 +33,7 @@ latex-ecosystem/
 #
 #   Management & automation
 ├── thesis-management-tools/  # Repository creation / review tooling
-├── thesis-student-registry/  # Student repository registry & monitoring
+├── thesis-student-registry/  # Student repository registry data (private, data-only)
 ├── ai-academic-paper-reviewer/ # AI review Action (ACADEMIC/CODE modes)
 └── aldc/                     # Adds the LaTeX devcontainer to a repository
 ```
@@ -205,7 +205,7 @@ Supporting Infrastructure:
 ├── ai-academic-paper-reviewer → (AI review for thesis repos & code review, ACADEMIC/CODE modes)
 ├── aldc → latex-environment (release branch)
 ├── thesis-management-tools → (Management workflows)
-└── thesis-student-registry → (Student repository registry & monitoring)
+└── thesis-student-registry → (Student repository registry data; managed by registry-manager, read by thesis-monitor)
 ```
 
 ## Support

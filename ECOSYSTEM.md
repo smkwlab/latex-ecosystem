@@ -140,6 +140,27 @@ Supporting Infrastructure:
 
 ## Cross-Repository Standards
 
+### Terminology: Student Repository Registry
+
+The ecosystem uses **"registry"** consistently for the student-repository ledger:
+
+- **Registry**: the ledger of student repositories, materialized as `data/repositories.json`
+  in the registry data repository. Use "registry (data)" in docs — avoid ad-hoc synonyms
+  such as "student data", "student repository list", or "リポジトリ一覧" for the same thing.
+- **Registry data repository**: `thesis-student-registry` (private, data-only).
+  Test counterpart: `thesis-student-registry-test` (naming rule: `<production-name>-test`).
+- **Tool naming**: prefix = the object the tool operates on, suffix = its role
+  (read = *monitor*, write = *manager*). Hence `registry-manager` writes the registry,
+  while `thesis-monitor` reads the registry as an index to monitor student thesis
+  repositories. The prefix asymmetry is intentional — the two tools operate on
+  different objects.
+- **Data fields**: registry-managed timestamps carry the `registry_` prefix
+  (`registry_created_at`, `registry_updated_at`); bare `created_at`/`updated_at` are
+  legacy fields (see registry-manager data-structure spec for migration status).
+- **Disambiguation**: "registry" in container/image contexts (texlive-ja-textlint,
+  devcontainer docs) means **GitHub Container Registry (ghcr.io)** and is unrelated;
+  always spell it out fully there.
+
 ### File Naming Conventions
 - **CLAUDE.md**: Project-specific Claude Code instructions
 - **README.md**: User-facing documentation  
