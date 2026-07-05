@@ -7,7 +7,14 @@
 !ecosystem-manager.sh
 !README.md
 !CLAUDE.md
+# Re-include nested paths too (same pitfall as ecosystem_manager / .github
+# below): the leading */ rule also matches subdirectories such as
+# .claude/skills, so a single !.claude/ is not enough.
 !.claude/
+!.claude/**
+# ...but keep session-local Claude Code files out
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
 
 # Exception: Include docs directory for ecosystem documentation
 !docs/
