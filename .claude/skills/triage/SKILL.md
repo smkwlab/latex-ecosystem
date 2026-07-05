@@ -33,19 +33,13 @@ ls ecosystem_manager/ecosystem-manager 2>/dev/null || (cd ecosystem_manager && m
 
 ### 3. ドリルダウン
 
-`--long` の結果から要注意リポジトリを特定したら、該当ディレクトリで詳細を確認する:
+`--long` の結果から要注意リポジトリを特定したら、該当ディレクトリで詳細を確認する。各サブディレクトリは独立リポジトリなので、**サブシェル `( ... )` で実行して現在位置のずれを防ぐ**（`cd` して戻る方式は途中エラーで位置がずれる）:
 
 ```bash
-cd <repo>/
-git status                     # dirty の内容確認
-git log --oneline main..HEAD   # main 以外のブランチにいる場合の積み残し
-gh pr list --state open        # PR の状態
-gh pr checks <N>               # CI の状態
-gh issue list                  # Issue の確認
-cd ..
+(cd <repo>/ && pwd && git status && git log --oneline main..HEAD)
+(cd <repo>/ && gh pr list --state open && gh issue list)
+(cd <repo>/ && gh pr checks <N>)   # open PR がある場合の CI 確認
 ```
-
-**注意**: 各サブディレクトリは独立リポジトリ。git 操作の前に必ず `pwd` で現在位置を確認する。
 
 ### 4. 優先順位付きで提示
 
