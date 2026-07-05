@@ -84,8 +84,8 @@ gh workflow run update-release-branch.yml --repo ${OWNER}/latex-environment
 ## 🎓 学生リポジトリへの伝播（latex-ecosystem ルートから）
 
 \`\`\`bash
-git clone git@github.com:smkwlab/registry-manager.git   # 初回のみ
-(cd registry-manager && mix escript.build)              # 初回のみ
+[ -d registry-manager ] || git clone git@github.com:smkwlab/registry-manager.git
+(cd registry-manager && mix escript.build)   # 初回のみ
 ./registry-manager/registry-manager propagate-workflow --all --type thesis --dry-run
 ./registry-manager/registry-manager propagate-workflow --all --type thesis
 \`\`\`
