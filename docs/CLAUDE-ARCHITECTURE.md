@@ -62,7 +62,7 @@ latex-ecosystem/                 # This management repository
 
 #### Tools and Automation
 - **thesis-management-tools/**: Administrative tools and workflows
-- **thesis-student-registry/**: Student repository registry and monitoring
+- **thesis-student-registry/**: Student repository registry data (private, data-only; written by registry-manager, read by thesis-monitor)
 - **latex-release-action/**: GitHub Action for LaTeX compilation
 - **ai-academic-paper-reviewer/**: GitHub Action for automated review (ACADEMIC and CODE modes)
 - **aldc/**: Command-line tool for adding LaTeX devcontainer
@@ -94,7 +94,7 @@ wr-template, latex-template, poster-template (templates)
     ↓
 thesis-management-tools (student workflows)
     ↓
-thesis-student-registry (registry & monitoring)
+thesis-student-registry (registry data)
 ```
 
 ### Update Propagation

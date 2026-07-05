@@ -81,11 +81,12 @@ gh workflow run check-texlive-updates.yml --repo ${OWNER}/latex-environment
 gh workflow run update-release-branch.yml --repo ${OWNER}/latex-environment
 \`\`\`
 
-## 🎓 学生リポジトリへの伝播（thesis-student-registry チェックアウトのルートから）
+## 🎓 学生リポジトリへの伝播（latex-ecosystem ルートから）
 
 \`\`\`bash
-(cd registry_manager && mix escript.build)   # 初回のみ
-./registry_manager/registry-manager propagate-workflow --all --type thesis --dry-run
-./registry_manager/registry-manager propagate-workflow --all --type thesis
+[ -d registry-manager ] || git clone git@github.com:smkwlab/registry-manager.git
+(cd registry-manager && mix escript.build)   # 初回のみ
+./registry-manager/registry-manager propagate-workflow --all --type thesis --dry-run
+./registry-manager/registry-manager propagate-workflow --all --type thesis
 \`\`\`
 EOF

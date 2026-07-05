@@ -234,19 +234,25 @@ git checkout 0th-draft  # または指定されたブランチ
 
 #### B. レジストリ管理
 
-> **前提**: 以下は `thesis-student-registry` チェックアウトのルートから実行する。
-> 初回はその前に escript をビルドしておく（ルートから）:
+> **前提**: registry-manager / thesis-monitor はいずれも独立リポジトリ
+> （[smkwlab/registry-manager](https://github.com/smkwlab/registry-manager) /
+> [smkwlab/thesis-monitor](https://github.com/smkwlab/thesis-monitor)）。
+> latex-ecosystem ルートに clone して escript をビルドしておく（初回のみ）:
 > ```bash
-> (cd registry_manager && mix escript.build)
+> [ -d registry-manager ] || git clone git@github.com:smkwlab/registry-manager.git
+> (cd registry-manager && mix escript.build)
+> [ -d thesis-monitor ] || git clone git@github.com:smkwlab/thesis-monitor.git
+> (cd thesis-monitor && mix deps.get && mix escript.build)
 > ```
-> 未ビルドだと `./registry_manager/registry-manager` が存在せずコマンドが失敗する。
+> 未ビルドだと `./registry-manager/registry-manager` 等が存在せずコマンドが失敗する。
 
 ```bash
-# 進捗監視（thesis-student-registry チェックアウトのルートから実行）
-./registry_manager/registry-manager status
+# レジストリ操作・workflow 伝播（latex-ecosystem ルートから実行）
+./registry-manager/registry-manager propagate-workflow --all --type thesis --dry-run
 
-# 保護状況確認  
-./registry_manager/registry-manager status --show-protection
+# 学生リポジトリの進捗・保護状況の監視は thesis-monitor で行う
+./thesis-monitor/thesis-monitor status
+./thesis-monitor/thesis-monitor status --show-protection
 ```
 
 ### 2. 品質管理システム
@@ -333,7 +339,8 @@ branches:
 - [学生作品例3](http://www-st.is.kyusan-u.ac.jp/~k22rs004/semi3a/)
 
 ### 管理ツール
-- [registry-manager](../thesis-student-registry/registry_manager/)
+- [registry-manager](https://github.com/smkwlab/registry-manager)（レジストリ書き込み・workflow 伝播）
+- [thesis-monitor](https://github.com/smkwlab/thesis-monitor)（学生リポジトリの監視）
 - [thesis-management-tools](../thesis-management-tools/)
 
 ---
