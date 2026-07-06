@@ -204,7 +204,7 @@ The ecosystem uses **"registry"** consistently for the student-repository ledger
 ### Tool Configuration Conventions
 
 The two registry tools share one configuration scheme (decided 2026-07;
-smkwlab/thesis-monitor#14/#16/#18/#20 and registry-manager counterparts):
+smkwlab/thesis-monitor#14/#16/#18/#20 and registry-manager#16/#18/#21):
 
 - **Shared vocabulary** — the same key means the same thing in both tools:
   - `github_org`: the deployment organization (default `smkwlab`)
@@ -216,9 +216,11 @@ smkwlab/thesis-monitor#14/#16/#18/#20 and registry-manager counterparts):
   the effective value keeps coming from runtime derivation, never from a
   stored copy that can drift.
 - **Convention over configuration**: values derivable at runtime are not
-  stored. `registry_repo` defaults to `<github_org>/thesis-student-registry`;
-  `csv_path` defaults to `~/.config/<github_org>/students.csv` when that file
-  exists. The roster CSV itself stays **local-only** (it contains personal
+  stored. For the **reader** (`thesis-monitor`), `registry_repo` defaults to
+  `<github_org>/thesis-student-registry`; in both tools `csv_path` defaults to
+  `~/.config/<github_org>/students.csv` when that file exists (when absent,
+  name resolution is simply skipped — no warning, names show as N/A).
+  The roster CSV itself stays **local-only** (it contains personal
   information — never commit it to any repository or to the registry).
 - **Read = zero config, write = explicit**: `thesis-monitor` (reader) runs with
   no config file at all — `gh auth login` is the only prerequisite.
