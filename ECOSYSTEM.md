@@ -134,6 +134,8 @@ deployment identity lives in the organization, never in the code.
   convention override it per deployment — the org-level Actions variable
   `REGISTRY_REPO` for automation, and per-tool overrides
   (`--registry-repo` flag / environment variable / local config) for CLIs.
+  Setting the variable to an empty string disables the override (falls back
+  to the convention).
 - **Fork-clean guarantee**: cloning or forking the tool repositories into
   another organization must work **without editing distributed code**.
   Committing a deployment's identity into a tool repository is therefore
@@ -186,6 +188,13 @@ The ecosystem uses **"registry"** consistently for the student-repository ledger
 - **Data fields**: registry-managed timestamps carry the `registry_` prefix
   (`registry_created_at`, `registry_updated_at`); bare `created_at`/`updated_at` are
   legacy fields (see registry-manager data-structure spec for migration status).
+- **`repository_type` vocabulary**: `sotsuron` (undergraduate thesis), `master`
+  (master's thesis), `wr`, `ise`/`ise-report`, `latex` (latex-template-derived,
+  branch-tracked — conference papers etc.), `other`. The word `thesis` is **not**
+  a repository_type: it lives in other layers only — the `DOC_TYPE=thesis`
+  document flow, the "all theses" filter (`--type thesis` = sotsuron ∪ master),
+  and historical repo-name suffixes (real master theses are named `*-master`).
+  Decision record: smkwlab/thesis-management-tools#471.
 - **Disambiguation**: "registry" in container/image contexts (texlive-ja-textlint,
   devcontainer docs) means **GitHub Container Registry (ghcr.io)** and is unrelated;
   always spell it out fully there.
