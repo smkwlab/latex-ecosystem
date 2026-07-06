@@ -115,6 +115,34 @@ Supporting Infrastructure:
 - Automated suggestion workflows
 - Minimal manual intervention required
 
+### 5. **Organization-Scoped Deployment**
+
+The ecosystem operates **per GitHub organization**: one organization is one
+deployment unit, holding its own registry data repository, student
+repositories, and automation. The tools are distributed as code; the
+deployment identity lives in the organization, never in the code.
+
+- **Location by convention**: the registry data repository is
+  `<org>/thesis-student-registry`. The organization is always derived from
+  the runtime context — `github.repository_owner` in GitHub Actions,
+  `ORGANIZATION` in create-repo scripts, `github_org` in tool configs.
+  Code must not contain a literal organization name as the effective default —
+  that is, as a value the tools actually fall back to at runtime. Literals in
+  test fixtures, documentation samples, and a clearly-marked local-only
+  fallback (where no runtime context exists) are acceptable.
+- **Deviation by configuration**: deployments that depart from the
+  convention override it per deployment — the org-level Actions variable
+  `REGISTRY_REPO` for automation, and per-tool overrides
+  (`--registry-repo` flag / environment variable / local config) for CLIs.
+- **Fork-clean guarantee**: cloning or forking the tool repositories into
+  another organization must work **without editing distributed code**.
+  Committing a deployment's identity into a tool repository is therefore
+  not allowed (it would force forks to diverge).
+- Local tool configs (`~/.config/registry-manager/config.json`,
+  `~/.thesis-monitor.yml`) are a local record of this decision plus
+  machine-local details (checkout paths); the org context remains the
+  source of truth.
+
 ## Template Specialization
 
 ### Document Format Focus
