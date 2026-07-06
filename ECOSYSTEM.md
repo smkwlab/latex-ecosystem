@@ -140,10 +140,10 @@ deployment identity lives in the organization, never in the code.
   another organization must work **without editing distributed code**.
   Committing a deployment's identity into a tool repository is therefore
   not allowed (it would force forks to diverge).
-- Local tool configs (`~/.config/registry-manager/config.json`,
-  `~/.thesis-monitor.yml`) are a local record of this decision plus
-  machine-local details (checkout paths); the org context remains the
-  source of truth.
+- Local tool configs (`~/.config/registry-manager/config.yml`,
+  `~/.config/thesis-monitor/config.yml`) are a local record of this decision
+  plus machine-local details; the org context remains the source of truth.
+  See "Tool Configuration Conventions" below for the shared vocabulary.
 
 ## Template Specialization
 
@@ -175,8 +175,10 @@ deployment identity lives in the organization, never in the code.
 The ecosystem uses **"registry"** consistently for the student-repository ledger:
 
 - **Registry**: the ledger of student repositories, materialized as `data/registry.json`
-  (renamed from `repositories.json` in 2026-07; tools keep a one-generation fallback)
-  in the registry data repository. Use "registry (data)" in docs — avoid ad-hoc synonyms
+  (renamed from `repositories.json` in 2026-07; the old name is no longer read —
+  all backward-compatibility fallbacks were dropped pre-publication, 2026-07)
+  in the registry data repository. `thesis-monitor` reads it via the GitHub
+  contents API (no local checkout). Use "registry (data)" in docs — avoid ad-hoc synonyms
   such as "student data", "student repository list", or "リポジトリ一覧" for the same thing.
 - **Registry data repository**: `thesis-student-registry` (private, data-only).
   Test counterpart: `thesis-student-registry-test` (naming rule: `<production-name>-test`).
@@ -198,6 +200,37 @@ The ecosystem uses **"registry"** consistently for the student-repository ledger
 - **Disambiguation**: "registry" in container/image contexts (texlive-ja-textlint,
   devcontainer docs) means **GitHub Container Registry (ghcr.io)** and is unrelated;
   always spell it out fully there.
+
+### Tool Configuration Conventions
+
+The two registry tools share one configuration scheme (decided 2026-07;
+smkwlab/thesis-monitor#14/#16/#18/#20 and registry-manager#16/#18/#21):
+
+- **Shared vocabulary** — the same key means the same thing in both tools:
+  - `github_org`: the deployment organization (default `smkwlab`)
+  - `registry_repo`: the registry data repository (`owner/repo`)
+  - `csv_path`: the student roster CSV for name resolution (optional)
+- **File format & location**: annotated YAML at `~/.config/<tool-name>/config.yml`
+  (`registry-manager` / `thesis-monitor`). Comments are part of the design —
+  generated configs show convention-matching defaults as commented lines so
+  the effective value keeps coming from runtime derivation, never from a
+  stored copy that can drift.
+- **Convention over configuration**: values derivable at runtime are not
+  stored. For the **reader** (`thesis-monitor`), `registry_repo` defaults to
+  `<github_org>/thesis-student-registry`; in both tools `csv_path` defaults to
+  `~/.config/<github_org>/students.csv` when that file exists (when absent,
+  name resolution is simply skipped — no warning, names show as N/A).
+  The roster CSV itself stays **local-only** (it contains personal
+  information — never commit it to any repository or to the registry).
+- **Read = zero config, write = explicit**: `thesis-monitor` (reader) runs with
+  no config file at all — `gh auth login` is the only prerequisite.
+  `registry-manager` (writer) requires an explicit `registry_repo`: a write
+  target is never guessed by convention. This asymmetry is a safety feature.
+- **No backward-compatibility fallbacks**: old keys (`data_dir`, `data_repo`,
+  `student_csv`, `registry_dir`), old file names (`repositories.json`), and old
+  config locations (`config.json`, `~/.thesis-monitor.yml`) are not read.
+  Migration is a rename/rewrite, and unmigrated machines fail loudly with an
+  actionable message (pre-publication decision, 2026-07).
 
 ### File Naming Conventions
 - **CLAUDE.md**: Project-specific Claude Code instructions
