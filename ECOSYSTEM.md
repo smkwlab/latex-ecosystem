@@ -189,7 +189,7 @@ The ecosystem uses **"registry"** consistently for the student-repository ledger
   (`registry_created_at`, `registry_updated_at`); bare `created_at`/`updated_at` are
   legacy fields (see registry-manager data-structure spec for migration status).
 - **`repository_type` vocabulary**: `sotsuron` (undergraduate thesis), `master`
-  (master's thesis), `wr`, `ise`/`ise-report`, `latex` (latex-template-derived,
+  (master's thesis), `wr`, `ise` (the stored value; `ise-report` is accepted as an alias), `latex` (latex-template-derived,
   branch-tracked — conference papers etc.), `other`. The word `thesis` is **not**
   a repository_type: it lives in other layers only — the `DOC_TYPE=thesis`
   document flow, the "all theses" filter (`--type thesis` = sotsuron ∪ master),
