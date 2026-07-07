@@ -268,9 +268,10 @@ defmodule EcosystemManager.CLI do
   defp sync_repositories(base_path) do
     repos = Repository.discover(base_path)
 
-    case UserConfig.set_repositories(repos) do
+    case UserConfig.set_repositories(repos, default_workspace_path: base_path) do
       {:ok, path} ->
-        IO.puts("✓ Wrote #{length(repos)} repositories to #{path}\n")
+        IO.puts("✓ Wrote #{length(repos)} repositories to #{path}")
+        IO.puts("  workspace_path: #{base_path}\n")
         Enum.each(repos, fn repo -> IO.puts("  - #{repo}") end)
         IO.puts("\nReview the list and remove any entries that are not part of the")
         IO.puts("ecosystem (unrelated projects, one-off clones, etc.).")

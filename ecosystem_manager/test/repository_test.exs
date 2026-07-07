@@ -4,6 +4,24 @@ defmodule EcosystemManager.RepositoryTest do
 
   alias EcosystemManager.Repository
 
+  # The application loads the developer's real user config at boot, which may
+  # set :repositories / :ecosystem_org. Clear them so discovery-based tests do
+  # not depend on the host machine's configuration.
+  setup do
+    original_repos = Application.get_env(:ecosystem_manager, :repositories)
+    original_org = Application.get_env(:ecosystem_manager, :ecosystem_org)
+    Application.delete_env(:ecosystem_manager, :repositories)
+    Application.delete_env(:ecosystem_manager, :ecosystem_org)
+
+    on_exit(fn ->
+      restore_env(:repositories, original_repos)
+      restore_env(:ecosystem_org, original_org)
+    end)
+  end
+
+  defp restore_env(key, nil), do: Application.delete_env(:ecosystem_manager, key)
+  defp restore_env(key, value), do: Application.put_env(:ecosystem_manager, key, value)
+
   describe "new function" do
     test "creates repository struct for current directory" do
       repo = Repository.new(".", "/test/path")

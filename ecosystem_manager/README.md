@@ -146,6 +146,9 @@ config :ecosystem_manager,
 
 `repos --sync` は検出結果を `~/.config/ecosystem-manager/config.exs` の
 `repositories:` に書き込みます（`workspace_path` など既存の設定は保持）。
+`workspace_path` が未設定なら、検出に使った workspace パスを併せて記録するため、
+workspace ルートで一度 `repos --sync` すれば、どのディレクトリからでも使える
+config.exs がそのまま出来上がります。
 エコシステム外のリポジトリ（無関係なプロジェクト等）が混じっている場合は、
 書き出された一覧から手動で削除してください。新しいリポジトリを workspace に
 追加したら `repos --sync` を再実行するか、`repositories:` を設定から外して

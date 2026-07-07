@@ -367,5 +367,39 @@ defmodule EcosystemManager.UserConfigTest do
         assert message =~ "configuration"
       end)
     end
+
+    test "seeds workspace_path from :default_workspace_path when config is fresh" do
+      with_temp_config_dir(fn _config_dir ->
+        assert {:ok, _path} =
+                 UserConfig.set_repositories([".", "aldc"],
+                   default_workspace_path: "/detected/workspace"
+                 )
+
+        assert UserConfig.load() == :ok
+        assert Application.get_env(:ecosystem_manager, :workspace_path) == "/detected/workspace"
+        assert Application.get_env(:ecosystem_manager, :repositories) == [".", "aldc"]
+      end)
+    end
+
+    test "does not override an existing workspace_path" do
+      with_temp_config_dir(fn config_dir ->
+        config_path = Path.join(config_dir, "config.exs")
+
+        File.write!(config_path, """
+        import Config
+
+        config :ecosystem_manager,
+          workspace_path: "/existing/workspace"
+        """)
+
+        assert {:ok, _path} =
+                 UserConfig.set_repositories([".", "aldc"],
+                   default_workspace_path: "/detected/workspace"
+                 )
+
+        assert UserConfig.load() == :ok
+        assert Application.get_env(:ecosystem_manager, :workspace_path) == "/existing/workspace"
+      end)
+    end
   end
 end
