@@ -32,6 +32,14 @@ defmodule EcosystemManager.Workspace do
   def names, do: Enum.map(list(), & &1.name)
 
   @doc """
+  Whether `name` is a valid workspace name: 1-64 characters of letters, digits,
+  `-` or `_`. Registration converts the name to an atom for the config keyword
+  list, so the accepted set is bounded to keep it a well-formed identifier.
+  """
+  def valid_name?(name) when is_binary(name), do: name =~ ~r/\A[A-Za-z0-9_-]{1,64}\z/
+  def valid_name?(_), do: false
+
+  @doc """
   Resolve which workspace a command operates on.
 
     * an explicit `name` (from `--workspace`) selects that workspace by name
@@ -47,7 +55,7 @@ defmodule EcosystemManager.Workspace do
     if is_binary(name) and name != "" do
       find_by_name(workspaces, name)
     else
-      resolve_by_cwd(workspaces, cwd)
+      resolve_by_cwd(workspaces, Path.expand(cwd))
     end
   end
 
@@ -82,7 +90,7 @@ defmodule EcosystemManager.Workspace do
   Unlike `resolve/2`, this applies no single-workspace fallback: it is used by
   `repos --sync` to register the workspace for the current directory.
   """
-  def containing(cwd), do: deepest_containing(list(), cwd)
+  def containing(cwd), do: deepest_containing(list(), Path.expand(cwd))
 
   defp resolve_by_cwd(workspaces, cwd) do
     case deepest_containing(workspaces, cwd) do

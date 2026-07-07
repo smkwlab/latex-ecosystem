@@ -77,6 +77,23 @@ defmodule EcosystemManager.WorkspaceTest do
     end
   end
 
+  describe "valid_name?/1" do
+    test "accepts identifier-like names" do
+      assert Workspace.valid_name?("latex")
+      assert Workspace.valid_name?("dns")
+      assert Workspace.valid_name?("a-b_c1")
+      assert Workspace.valid_name?(String.duplicate("a", 64))
+    end
+
+    test "rejects empty, whitespace, path separators and overly long names" do
+      refute Workspace.valid_name?("")
+      refute Workspace.valid_name?("my workspace")
+      refute Workspace.valid_name?("a/b")
+      refute Workspace.valid_name?(String.duplicate("a", 65))
+      refute Workspace.valid_name?(nil)
+    end
+  end
+
   describe "resolve/2 by cwd" do
     setup do
       Application.put_env(:ecosystem_manager, :workspaces,
@@ -90,6 +107,11 @@ defmodule EcosystemManager.WorkspaceTest do
     test "selects the workspace that contains cwd" do
       assert {:ok, ws} = Workspace.resolve(nil, "/home/u/latex-ecosystem/aldc")
       assert ws.name == "latex"
+    end
+
+    test "normalizes cwd (trailing slash / relative segments) before matching" do
+      assert {:ok, %{name: "latex"}} = Workspace.resolve(nil, "/home/u/latex-ecosystem/")
+      assert {:ok, %{name: "latex"}} = Workspace.resolve(nil, "/home/u/latex-ecosystem/sub/..")
     end
 
     test "matches when cwd equals the workspace path" do

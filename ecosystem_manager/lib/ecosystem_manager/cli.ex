@@ -119,7 +119,7 @@ defmodule EcosystemManager.CLI do
         IO.puts("Repository Status Overview")
         IO.puts("(no workspaces configured; showing the current directory)")
         IO.puts("")
-        render_status(System.get_env("PWD") || File.cwd!(), opts)
+        render_status(current_dir(), opts)
 
       workspaces ->
         IO.puts("Repository Status Overview (all workspaces)")
@@ -172,31 +172,33 @@ defmodule EcosystemManager.CLI do
   #                          the single configured workspace, or the current
   #                          directory as a last resort.
   defp resolve_base_path(opts) do
-    current_dir = System.get_env("PWD") || File.cwd!()
+    dir = current_dir()
 
-    case Workspace.resolve(opts[:workspace], current_dir) do
-      {:ok, ws} -> validate_workspace_path(ws.path, current_dir)
+    case Workspace.resolve(opts[:workspace], dir) do
+      {:ok, ws} -> validate_workspace_path(ws.path, dir)
       {:error, reason} -> abort(reason)
-      :none -> current_dir
+      :none -> dir
     end
   end
+
+  defp current_dir, do: System.get_env("PWD") || File.cwd!()
 
   # Base path for `repos --sync`: register the current directory's workspace.
   # With --workspace NAME, re-sync that registered workspace instead. Unlike
   # resolve_base_path/1 there is no single-workspace fallback, so syncing from a
   # new ecosystem registers that ecosystem rather than an existing workspace.
   defp sync_base_path(opts) do
-    current_dir = System.get_env("PWD") || File.cwd!()
+    dir = current_dir()
 
     case opts[:workspace] do
       nil ->
-        case Workspace.containing(current_dir) do
-          nil -> {current_dir, nil}
+        case Workspace.containing(dir) do
+          nil -> {dir, nil}
           ws -> {ws.path, ws.name}
         end
 
       name ->
-        case Workspace.resolve(name, current_dir) do
+        case Workspace.resolve(name, dir) do
           {:ok, ws} -> {ws.path, ws.name}
           {:error, reason} -> abort(reason)
         end
@@ -216,7 +218,7 @@ defmodule EcosystemManager.CLI do
   end
 
   defp abort(message) do
-    IO.puts(message)
+    IO.puts(:stderr, message)
     exit({:shutdown, 1})
   end
 
@@ -320,8 +322,15 @@ defmodule EcosystemManager.CLI do
 
   defp sync_repositories(opts) do
     {base_path, resolved_name} = sync_base_path(opts)
-    repos = Repository.discover(base_path)
     name = opts[:name] || resolved_name || Path.basename(base_path)
+
+    unless Workspace.valid_name?(name) do
+      abort(
+        "Invalid workspace name #{inspect(name)}: use letters, digits, '-' or '_' (pass --name to override)."
+      )
+    end
+
+    repos = Repository.discover(base_path)
 
     case UserConfig.sync_workspace(name, base_path, repos) do
       {:ok, path, count} ->
