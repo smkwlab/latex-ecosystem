@@ -37,6 +37,11 @@ defmodule EcosystemManager.RepositoryTest do
       assert Repository.new(".", "/home/u/DNS/ecosystem").display_name == "ecosystem"
     end
 
+    test "current-directory display name is deterministic (independent of cwd)" do
+      # A relative base path must not be resolved against the working directory.
+      assert Repository.new(".", "some/dir").display_name == "dir"
+    end
+
     test "creates repository struct for named directory" do
       repo = Repository.new("test-repo", "/base/path")
       assert repo.name == "test-repo"

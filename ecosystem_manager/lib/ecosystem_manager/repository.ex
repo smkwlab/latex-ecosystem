@@ -227,7 +227,9 @@ defmodule EcosystemManager.Repository do
   # Private functions
 
   # The workspace root ("." ) is shown by its directory name, so each workspace
-  # displays its own name rather than a hardcoded one.
-  defp display_name(".", base_path), do: Path.basename(Path.expand(base_path))
+  # displays its own name rather than a hardcoded one. `base_path` is always an
+  # absolute path from the caller, so `Path.basename/1` is deterministic (no
+  # `Path.expand/1`, which would depend on the current working directory).
+  defp display_name(".", base_path), do: Path.basename(base_path)
   defp display_name(name, _base_path), do: name
 end
