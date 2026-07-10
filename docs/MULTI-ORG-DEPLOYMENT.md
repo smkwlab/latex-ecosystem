@@ -51,7 +51,8 @@ Create these before running any automation:
 
 1. **Repositories**
    - `thesis-student-registry` containing `data/registry.json`
-     (initialize with `registry-manager init`). A non-standard name requires
+     (initialize with `registry-manager init --org your-org`; see
+     [Local tool configuration](#local-tool-configuration)). A non-standard name requires
      setting the `REGISTRY_REPO` org/repo variable on
      `thesis-management-tools`.
    - Forks/copies of `thesis-management-tools` and the templates the org will
@@ -113,7 +114,7 @@ defaults**: until the issues above are fixed, both Elixir tools default to
 
   ```yaml
   github_org: your-org
-  registry_repo: your-org/thesis-student-registry   # explicit; required for writes
+  registry_repo: your-org/thesis-student-registry   # explicit; required for all registry operations
   ```
 
   Or generate it with `registry-manager init --org your-org`.
@@ -131,7 +132,12 @@ After preparing the org and configuration:
 
 1. `registry-manager list` reads the new org's registry (not smkwlab's).
 2. `thesis-monitor status` reports repositories of the new org only.
-3. File a repository-creation issue via the automation flow and confirm:
+3. File a repository-creation request issue on the org's
+   `thesis-management-tools` fork — normally submitted by students via
+   `setup.sh`; until
+   [thesis-management-tools#498](https://github.com/smkwlab/thesis-management-tools/issues/498)
+   is resolved, create the issue manually in the format expected by
+   `process-pending-issues.sh` — and confirm:
    the repository is created in the new org, branch protection is applied,
    and `data/registry.json` in the new org's registry gains the entry.
 4. Open a draft PR in a created student repository and confirm the template
