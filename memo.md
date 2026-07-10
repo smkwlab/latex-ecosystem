@@ -17,10 +17,10 @@
   - 各LaTeX系テンプレートに、latex-environment を統合するスクリプト aldc を提供する
   - aldc は aldc リポジトリで開発している
 - テンプレートリポジトリを元に、各学生用の論文執筆・週報執筆リポジトリを作成するためのスクリプトを提供する
- - 提供されるスクリプトは thesis-management-tools/create-repo/setup*.sh
+ - 提供されるスクリプトは student-repo-management/create-repo/setup*.sh
   - このスクリプトは、リポジトリの作成とともに、Pull Request ベースの添削を支援するためのブランチ保護や、リポジトリ一覧ファイルの更新を行う。
   - リポジトリ一覧ファイルはセキュリティの観点から thesis-student-registry リポジトリに作成される
- - thesis-management-tools リポジトリで、その他関連するスクリプトを開発している
+ - student-repo-management リポジトリで、その他関連するスクリプトを開発している
 - 作成されたリポジトリ一覧ファイルを元に、学生の論文・レポート執筆状況を把握するためのスクリプトを提供する。
  - 執筆状況把握用スクリプトは thesis-student-registry/thesis_monitor
 - ai-reviewer は、各リポジトリの Pull Request を自動レビューするための action

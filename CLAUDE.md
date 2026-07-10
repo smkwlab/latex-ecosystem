@@ -58,7 +58,7 @@ The manager is an Elixir escript. Build it once with
 # Navigate to specific repository
 cd latex-environment/      # DevContainer template
 cd sotsuron-template/      # Thesis template
-cd thesis-management-tools/ # Administrative tools
+cd student-repo-management/ # Administrative tools
 
 # Each has its own Git repository and CLAUDE.md
 ```
@@ -80,7 +80,7 @@ This directory contains multiple **independent Git repositories**:
 - **latex-template/**: General-purpose LaTeX template
 
 ### Management & Monitoring
-- **thesis-management-tools/**: Repository creation and branch protection automation
+- **student-repo-management/**: Repository creation and branch protection automation
 - **thesis-student-registry/**: Secure student repository registry data (private, data-only)
 - **registry-manager/**: Registry data management tool (Elixir escript, separate repo)
 - **thesis-monitor/**: Student repository monitoring tool (Elixir escript, separate repo)

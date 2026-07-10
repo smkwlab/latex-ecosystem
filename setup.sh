@@ -40,7 +40,7 @@ TEMPLATE_REPOS=(
 )
 
 TOOL_REPOS=(
-    "thesis-management-tools"
+    "student-repo-management"
     "thesis-student-registry"
     "ai-academic-paper-reviewer"
     "aldc"

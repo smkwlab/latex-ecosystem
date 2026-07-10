@@ -4,7 +4,7 @@ This document covers Git workflow best practices learned from actual development
 
 ## Critical Lesson: Avoid Main Branch Conflicts (2025-06-22)
 
-**Problem Scenario**: During thesis-management-tools development, local main branch diverged from remote main, causing merge conflicts when PR #75 was merged.
+**Problem Scenario**: During student-repo-management development, local main branch diverged from remote main, causing merge conflicts when PR #75 was merged.
 
 **Root Cause Analysis**:
 ```bash

@@ -18,7 +18,7 @@ This document describes the architecture and management strategy for the thesis-
 - **poster-template**: Academic poster template (A0 size, conference presentations)
 
 ### Management & Automation
-- **thesis-management-tools**: Administrative tools and documentation for thesis supervision
+- **student-repo-management**: Administrative tools and documentation for thesis supervision
 - **thesis-student-registry**: Student repository registry data (private, data-only)
 - **registry-manager**: Registry data management tool (Elixir escript)
 - **thesis-monitor**: Student repository monitoring tool (Elixir escript)
@@ -52,7 +52,7 @@ Supporting Infrastructure:
 ├── latex-release-action → (Used by templates)
 ├── ai-academic-paper-reviewer → (AI review for thesis repos & code review, ACADEMIC/CODE modes)
 ├── aldc → latex-environment (release branch)
-├── thesis-management-tools → (Management workflows)
+├── student-repo-management → (Management workflows)
 ├── thesis-student-registry → (Student repository registry data, private)
 ├── registry-manager → thesis-student-registry (writes registry data)
 └── thesis-monitor → thesis-student-registry (reads registry data)
@@ -216,7 +216,7 @@ The ecosystem uses **"registry"** consistently for the student-repository ledger
   a repository_type: it lives in other layers only — the `DOC_TYPE=thesis`
   document flow, the "all theses" filter (`--type thesis` = sotsuron ∪ master),
   and historical repo-name suffixes (real master theses are named `*-master`).
-  Decision record: smkwlab/thesis-management-tools#471.
+  Decision record: smkwlab/student-repo-management#471.
 - **Disambiguation**: "registry" in container/image contexts (texlive-ja-textlint,
   devcontainer docs) means **GitHub Container Registry (ghcr.io)** and is unrelated;
   always spell it out fully there.

@@ -19,7 +19,7 @@ It is resolved per component, at three different layers:
    `github.repository_owner`. The registry repository defaults to the
    convention `<org>/thesis-student-registry` and can be overridden with the
    org/repo variable `REGISTRY_REPO`
-   (`thesis-management-tools/.github/workflows/student-repo-management.yml`).
+   (`student-repo-management/.github/workflows/student-repo-management.yml`).
    No local configuration is involved.
 2. **Local management tools** — resolved from per-tool config files
    (`~/.config/<tool>/config.yml`) with the same convention defaults. See
@@ -36,7 +36,7 @@ It is resolved per component, at three different layers:
 These components follow the *Organization-Scoped Deployment* principle
 (ECOSYSTEM.md) and need no code changes:
 
-- **Repository creation pipeline** (`thesis-management-tools`):
+- **Repository creation pipeline** (`student-repo-management`):
   `student-repo-management.yml`, `process-pending-issues.sh`, and
   `setup-branch-protection.sh` derive the organization from
   `github.repository_owner` / `GITHUB_REPOSITORY` and resolve the registry as
@@ -62,11 +62,11 @@ following before onboarding students. (Verified against
 | Repository | Purpose | Notes |
 |---|---|---|
 | `<org>/thesis-student-registry` (private) | Holds `data/registry.json` | Initialize with `registry-manager init --org <org>` (see [Local tool configuration](#local-tool-configuration)). A non-standard name requires the `REGISTRY_REPO` variable below. |
-| `<org>/thesis-management-tools` | Hosts the registration workflow and `create-repo` scripts | Fork/copy. Carries the App secrets and the fork configuration below. |
+| `<org>/student-repo-management` | Hosts the registration workflow and `create-repo` scripts | Fork/copy. Carries the App secrets and the fork configuration below. |
 | `<org>/sotsuron-template`, `<org>/wr-template`, `<org>/ise-report-template` | Student document templates | **Must exist in the org** — `create-repo` resolves them as `${ORGANIZATION}/<template>`. |
 | `<org>/latex-template`, `<org>/poster-template` | General LaTeX / poster templates | Default to `smkwlab/...` (shared). Only needed in the org if you point `TEMPLATE_REPO` at your own copy. |
 
-### 2. GitHub App (on `<org>/thesis-management-tools`)
+### 2. GitHub App (on `<org>/student-repo-management`)
 
 `student-repo-management.yml` mints a per-run installation token with
 `actions/create-github-app-token` using `owner: <org>`, so a single App reaches
@@ -75,13 +75,13 @@ this repo, the registry, and the student repositories.
 - **Permissions**: `contents: write` (registry commits and repo content),
   `administration: write` (branch protection), `issues: write` (close
   registration issues).
-- **Installation**: org-wide is simplest (must cover `thesis-management-tools`,
+- **Installation**: org-wide is simplest (must cover `student-repo-management`,
   the registry, and the student repositories).
-- **Secrets on `thesis-management-tools`**: `APP_ID`, `APP_PRIVATE_KEY`.
+- **Secrets on `student-repo-management`**: `APP_ID`, `APP_PRIVATE_KEY`.
 
 ### 3. Actions variable (optional)
 
-- `REGISTRY_REPO` on `thesis-management-tools` — set only when the registry
+- `REGISTRY_REPO` on `student-repo-management` — set only when the registry
   repository name deviates from `<org>/thesis-student-registry`.
 
 ### 4. Secrets
@@ -91,8 +91,8 @@ keys and the ML settings so every student repository inherits them.
 
 | Secret(s) | Consumed by | Where | Required? |
 |---|---|---|---|
-| `APP_ID`, `APP_PRIVATE_KEY` | Registration automation (`student-repo-management.yml`) | `thesis-management-tools` | **Yes** — registration cannot run without them |
-| `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` | `ai-review` / `claude-qa` in student repos, and TMT's own `ai-code-review.yml` | Org (student repos) + `thesis-management-tools` | Optional — the AI jobs skip cleanly when absent |
+| `APP_ID`, `APP_PRIVATE_KEY` | Registration automation (`student-repo-management.yml`) | `student-repo-management` | **Yes** — registration cannot run without them |
+| `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` | `ai-review` / `claude-qa` in student repos, and TMT's own `ai-code-review.yml` | Org (student repos) + `student-repo-management` | Optional — the AI jobs skip cleanly when absent |
 | `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, `LAB_ML_ADDRESS` | `notify-ml-on-pr` reusable (sotsuron / ise / latex templates, `secrets: inherit`) | Org | Required by that workflow — **all six**. To skip ML mail, delete `notify-ml-on-pr.yml` from the templates instead. |
 
 All secret values are plain strings (GitHub secrets are always strings). Set
@@ -103,14 +103,14 @@ so no numeric type is needed.
 
 The forked `create-repo` scripts default every org-specific value to `smkwlab`
 (env vars read by `setup.sh` / `common-lib.sh`; introduced in
-[thesis-management-tools#498](https://github.com/smkwlab/thesis-management-tools/issues/498)
-and [#499](https://github.com/smkwlab/thesis-management-tools/issues/499)). A
+[student-repo-management#498](https://github.com/smkwlab/student-repo-management/issues/498)
+and [#499](https://github.com/smkwlab/student-repo-management/issues/499)). A
 new org overrides:
 
 | Variable | Default | Set to |
 |---|---|---|
 | `DEFAULT_ORG` | `smkwlab` | your org (drives the membership check, target org, and tools owner) |
-| `TOOLS_REPO_OWNER` / `TOOLS_REPO_NAME` / `TOOLS_CLONE_URL` | `<DEFAULT_ORG>` / `thesis-management-tools` / derived | your fork's location |
+| `TOOLS_REPO_OWNER` / `TOOLS_REPO_NAME` / `TOOLS_CLONE_URL` | `<DEFAULT_ORG>` / `student-repo-management` / derived | your fork's location |
 | `TEMPLATE_REPO` | `smkwlab/latex-template`, `smkwlab/poster-template` | your copy (latex/poster only; thesis/wr/ise derive from the org) |
 | `ALDC_URL` | `…/smkwlab/aldc/main/aldc` | your aldc copy (or keep the shared one) |
 | `AUTO_ASSIGN_REVIEWER` | `toshi0806` | your reviewer account (empty disables auto-assign) |
@@ -126,8 +126,8 @@ unchanged; a fork sets the knobs in
 
 | Component | What changed | Issue |
 |---|---|---|
-| `setup.sh` (student entry point) | Membership check, target-org guard, and tools clone URL are `DEFAULT_ORG` / `TOOLS_*` overridable | [thesis-management-tools#498](https://github.com/smkwlab/thesis-management-tools/issues/498) ✅ |
-| `create-repo` collateral | `TEMPLATE_REPO` (latex/poster), `ALDC_URL`, `AUTO_ASSIGN_REVIEWER`, `SETUP_GIT_EMAIL_DOMAIN` overrides | [thesis-management-tools#499](https://github.com/smkwlab/thesis-management-tools/issues/499) ✅ |
+| `setup.sh` (student entry point) | Membership check, target-org guard, and tools clone URL are `DEFAULT_ORG` / `TOOLS_*` overridable | [student-repo-management#498](https://github.com/smkwlab/student-repo-management/issues/498) ✅ |
+| `create-repo` collateral | `TEMPLATE_REPO` (latex/poster), `ALDC_URL`, `AUTO_ASSIGN_REVIEWER`, `SETUP_GIT_EMAIL_DOMAIN` overrides | [student-repo-management#499](https://github.com/smkwlab/student-repo-management/issues/499) ✅ |
 | `aldc` installer | `ALDC_REPOSITORY_OWNER` / `ALDC_REPOSITORY_NAME` env override | [aldc#32](https://github.com/smkwlab/aldc/issues/32) ✅ |
 | `thesis-monitor` defaults | Default `github_org` dropped; derived from `registry_repo` owner, otherwise an explicit error | [thesis-monitor#28](https://github.com/smkwlab/thesis-monitor/issues/28) ✅ |
 | `registry-manager` defaults | Default `github_org` dropped; derived from `registry_repo` owner, otherwise an explicit error | [registry-manager#45](https://github.com/smkwlab/registry-manager/issues/45) ✅ |
@@ -136,7 +136,7 @@ unchanged; a fork sets the knobs in
 
 | Component | Problem | Issue |
 |---|---|---|
-| `thesis-repo-manager.sh` | Fully hardcoded (~20 call sites); unusable outside smkwlab. Manual tool, low priority — deprecation is an option | [thesis-management-tools#500](https://github.com/smkwlab/thesis-management-tools/issues/500) |
+| `thesis-repo-manager.sh` | Fully hardcoded (~20 call sites); unusable outside smkwlab. Manual tool, low priority — deprecation is an option | [student-repo-management#500](https://github.com/smkwlab/student-repo-management/issues/500) |
 
 ## Shared infrastructure: reference strategy
 
@@ -266,7 +266,7 @@ After preparing the org and configuration:
    explicit-error-without-config guarantee).
 3. Have a student run `setup.sh` from the fork (configured per
    [create-repo fork configuration](#5-create-repo-fork-configuration)), or file
-   the repository-creation request issue on the org's `thesis-management-tools`
+   the repository-creation request issue on the org's `student-repo-management`
    directly, and confirm: the repository is created in the new org, branch
    protection is applied, and `data/registry.json` in the new org's registry
    gains the entry.
