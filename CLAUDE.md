@@ -105,26 +105,8 @@ This directory contains multiple **independent Git repositories**:
 
 ## Key Workflows
 
-### Student Repository Creation
-```bash
-# Create student thesis repository (automated)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/v1/create-repo/setup.sh)" bash thesis
-
-# Create weekly report repository
-STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/v1/create-repo/setup.sh)" bash wr
-```
-
-### Student Progress Monitoring
-```bash
-# Monitor all students' thesis progress
-thesis-monitor status
-
-# Show only protection status
-thesis-monitor status --show-protection
-
-# Verbose output
-thesis-monitor status --verbose
-```
+Student repository creation and progress-monitoring command examples live in
+[docs/CLAUDE-WORKFLOWS.md](docs/CLAUDE-WORKFLOWS.md) (Student Repository Workflows section).
 
 ### For Ecosystem-level Changes
 1. Work in this management repository
