@@ -124,11 +124,16 @@ any public reusable workflow). An org that needs to sever the dependency — for
 independence, air-gapping, or per-org customization of the reusable logic
 itself — should fork instead; see [When to fork](#when-to-fork).
 
-**Hardening follow-up (not org-specific).** The legacy `ai-reviewer.yml`
-reusable pins `toshi0806/ai-reviewer` — a *personal account*, not even an org —
-which is a single point of failure independent of multi-org concerns. The
-current path is `ai-review.yml` (→ `smkwlab/ai-academic-paper-reviewer`);
-`ai-reviewer.yml` should be retired or repointed to an org-owned action.
+**Out of scope — the legacy `ai-reviewer.yml` reusable.** `smkwlab/.github`
+also ships a legacy `ai-reviewer.yml` reusable that pins `toshi0806/ai-reviewer`
+(a personal account). It is **not part of the deployment path**: no template
+(`sotsuron` / `wr` / `ise-report` / `sotsuron-report` / `latex` / `poster`)
+references it, and `scripts/callers/` ships no caller for it, so newly-created
+repositories and new-org deployments never pick it up — the current AI-review
+path is `ai-review.yml` (→ `smkwlab/ai-academic-paper-reviewer`). Only
+pre-existing repos that still call it are affected. Retiring it (or repointing
+to an org-owned action) is therefore a smkwlab-internal cleanup item for those
+legacy repos, not a multi-org concern.
 
 ### When to fork
 
