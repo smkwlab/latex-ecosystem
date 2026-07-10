@@ -145,6 +145,26 @@ deployment identity lives in the organization, never in the code.
   plus machine-local details; the org context remains the source of truth.
   See "Tool Configuration Conventions" below for the shared vocabulary.
 
+**Deployment identity vs. shared infrastructure.** The org-scoping rule above
+governs *deployment identity* — registry data, student repositories, rosters,
+notification targets. A second, distinct category is *shared infrastructure*:
+the reusable GitHub Actions workflows (`smkwlab/.github`), composite actions
+(`smkwlab/latex-release-action`, `smkwlab/ai-academic-paper-reviewer`), and the
+DevContainer image (`ghcr.io/smkwlab/texlive-ja-textlint`) that every
+deployment consumes. These are **published as public shared services** and
+referenced literally, because a GitHub Actions `uses:`/`container:` reference
+cannot contain an expression — `${{ github.repository_owner }}` is not
+resolvable there, so a workflow cannot dynamically point at "my own org's"
+copy. The distinction is deliberate: deployment identity must never be a code
+literal (§ above), but a *literal reference to shared infrastructure* is not
+a deployment identity — it is the address of a shared service, and org-specific
+values are injected into it through Actions secrets and variables, never baked
+into the shared workflow. An org that wants to sever this dependency may fork
+the infrastructure and rewrite the references, but the default and recommended
+posture is shared use. See
+[docs/MULTI-ORG-DEPLOYMENT.md](docs/MULTI-ORG-DEPLOYMENT.md) for the concrete
+reference strategy.
+
 ## Template Specialization
 
 ### Document Format Focus
