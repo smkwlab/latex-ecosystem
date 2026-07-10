@@ -85,24 +85,64 @@ before student-facing flows work in another org:
 | `registry-manager` defaults | Default `github_org: "smkwlab"` can silently target smkwlab student repos; `init` embeds smkwlab links | [registry-manager#45](https://github.com/smkwlab/registry-manager/issues/45) |
 | `thesis-repo-manager.sh` | Fully hardcoded (~20 call sites); unusable outside smkwlab (manual tool, low priority) | [thesis-management-tools#500](https://github.com/smkwlab/thesis-management-tools/issues/500) |
 
-## Shared infrastructure decisions
+## Shared infrastructure: reference strategy
 
-Two pieces of infrastructure are referenced literally from every template and
-need an explicit policy per deployment (discussion in
-[#105](https://github.com/smkwlab/latex-ecosystem/issues/105)):
+Some infrastructure is referenced *literally* (with `smkwlab/` in the string)
+from every template, and — unlike deployment identity — this **cannot** be made
+dynamic: a GitHub Actions `uses:`/`container:` reference may not contain an
+expression, so `${{ github.repository_owner }}` is not resolvable there. A
+workflow therefore cannot point at "my own org's" copy of a reusable workflow
+or action; the org is fixed at the moment the string is written.
 
-- **`smkwlab/.github` reusable workflows** — all template workflows use
-  `uses: smkwlab/.github/.github/workflows/<name>.yml@v1` (draft-chain
-  automation, ML notification, AI review, LaTeX build). Options:
-  - *Shared use*: keep referencing `smkwlab/.github` (requires it to stay
-    public; org-specific values such as notification targets must be
-    externalized).
-  - *Fork*: copy `.github` into the new org and rewrite every `uses:` line
-    in every template.
-- **`ghcr.io/smkwlab/texlive-ja-textlint`** — the DevContainer image
-  referenced by `latex-environment/.devcontainer/devcontainer.json` and the
-  build workflows. Public pulls work as-is; forking the image pipeline is only
-  needed if the org wants independent image maintenance.
+**Decision (#105): treat this as public shared infrastructure.** The following
+are published as public shared services; any organization consumes them by
+referencing `smkwlab/...` directly, and injects its own values through Actions
+secrets and variables rather than editing the shared code:
+
+| Shared service | Referenced by | Per-org input |
+|---|---|---|
+| `smkwlab/.github` reusable workflows (`.github/workflows/<name>.yml@v1`) | template caller workflows (draft-chain, ML notify, AI review, LaTeX build, QA) | secrets / `secrets: inherit` |
+| `smkwlab/latex-release-action@v3` | `latex-build` / `latex-build-modified` reusables | — |
+| `smkwlab/ai-academic-paper-reviewer@v1` | `ai-review` reusable | `ANTHROPIC_API_KEY` / `GEMINI_API_KEY` |
+| `ghcr.io/smkwlab/texlive-ja-textlint` | `devcontainer.json`, build workflows | — |
+
+Why shared use is the default, not fork:
+
+- The reusable **bodies** are already org-agnostic — org derivation uses
+  `github.repository_owner`, and org-specific values (mailing-list address,
+  SMTP, API keys) are consumed through secrets, not hardcoded. Only the
+  *addresses* above carry `smkwlab`.
+- Because `uses:` cannot be templated, forking means rewriting every caller in
+  every template (7 workflows × 5 templates) and re-syncing them on every
+  upstream change. That cost buys independence but nothing else for a
+  deployment that trusts the shared services.
+
+**Accepted trade-offs.** Shared use means a permanent dependency on the
+`smkwlab` org staying public, and template PRs in another org execute
+smkwlab-owned reusable code with that org's secrets (the normal trust model for
+any public reusable workflow). An org that needs to sever the dependency — for
+independence, air-gapping, or per-org customization of the reusable logic
+itself — should fork instead; see [When to fork](#when-to-fork).
+
+**Hardening follow-up (not org-specific).** The legacy `ai-reviewer.yml`
+reusable pins `toshi0806/ai-reviewer` — a *personal account*, not even an org —
+which is a single point of failure independent of multi-org concerns. The
+current path is `ai-review.yml` (→ `smkwlab/ai-academic-paper-reviewer`);
+`ai-reviewer.yml` should be retired or repointed to an org-owned action.
+
+### When to fork
+
+Choose the fork path only when shared use is unacceptable (independence
+requirement, or you need to change the reusable logic per org). Then:
+
+- Copy `smkwlab/.github`, `latex-release-action`, `ai-academic-paper-reviewer`,
+  and the image pipeline into the org, and rewrite `uses:`/`container:`
+  references to the org.
+- Note the two distribution-side seams that assume `smkwlab`: the caller
+  templates in `smkwlab/.github/scripts/callers/*.yml` hardcode the
+  `smkwlab/.github` owner (only the `@__REF__` version is tokenized), and
+  `scripts/distribute-workflow.sh` defaults `ORG="smkwlab"` with no `--org`
+  flag. Both need org parameterization for a fork workflow to be maintainable.
 
 ## Local tool configuration
 
