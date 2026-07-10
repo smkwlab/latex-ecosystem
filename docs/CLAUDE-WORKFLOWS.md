@@ -255,6 +255,29 @@ for repo in "${repositories[@]}"; do
 done
 ```
 
+## Student Repository Workflows
+
+### Student Repository Creation
+```bash
+# Create student thesis repository (automated)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/v1/create-repo/setup.sh)" bash thesis
+
+# Create weekly report repository
+STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/v1/create-repo/setup.sh)" bash wr
+```
+
+### Student Progress Monitoring
+```bash
+# Monitor all students' thesis progress
+thesis-monitor status
+
+# Show only protection status
+thesis-monitor status --show-protection
+
+# Verbose output
+thesis-monitor status --verbose
+```
+
 ## Best Practices
 
 ### Repository Boundary Management
