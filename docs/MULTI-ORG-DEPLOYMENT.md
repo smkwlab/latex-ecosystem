@@ -188,6 +188,36 @@ pre-existing repos that still call it are affected. Retiring it (or repointing
 to an org-owned action) is therefore a smkwlab-internal cleanup item for those
 legacy repos, not a multi-org concern.
 
+### DevContainer image maintenance
+
+The `ghcr.io/smkwlab/texlive-ja-textlint` image (TeXLive + textlint, tagged by
+TeXLive year, e.g. `2026a`) is the default shared image. Public GHCR allows
+anonymous pulls, and `latex-environment`'s `check-texlive-updates.yml` bumps the
+`devcontainer.json` tag automatically when a new image is published — so a
+consuming org needs no image maintenance at all.
+
+Fork the image only for an independent update cadence, to pin or patch TeX
+packages, or to satisfy a registry / air-gap policy. The build pipeline is
+already org-agnostic on publish: `texlive-ja-textlint`'s `build-tag.yml` pushes
+to `ghcr.io/<owner>/texlive-ja-textlint` via `github.repository_owner`, so a
+fork publishes to its own namespace with no code change (make the package
+public, or provide pull credentials). What a fork must then repoint to
+`ghcr.io/<org>/...`:
+
+- **`latex-environment` fork** — the `image` in `devcontainer.json`, **and** the
+  `IMAGE=` constant in `check-texlive-updates.yml`, so the auto-bump tracks the
+  org's image. `aldc` injects this devcontainer, so also point `aldc` at the
+  org's `latex-environment`
+  ([aldc#32](https://github.com/smkwlab/aldc/issues/32)'s
+  `ALDC_REPOSITORY_OWNER`).
+- **The CI build image** — `latex-build-modified.yml` pins the *same* image and
+  tag with `container: ghcr.io/smkwlab/texlive-ja-textlint:2026a` (deliberately
+  matching the DevContainer so PDF builds reproduce the dev environment), while
+  `latex-build.yml` reaches the image indirectly through
+  `smkwlab/latex-release-action`. Both live in `smkwlab/.github`, so repointing
+  them means forking `.github` (and the action) too — see
+  [When to fork](#when-to-fork).
+
 ### When to fork
 
 Choose the fork path only when shared use is unacceptable (independence
