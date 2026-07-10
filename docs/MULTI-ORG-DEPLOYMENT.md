@@ -210,9 +210,13 @@ public, or provide pull credentials). What a fork must then repoint to
   org's `latex-environment`
   ([aldc#32](https://github.com/smkwlab/aldc/issues/32)'s
   `ALDC_REPOSITORY_OWNER`).
-- **The `latex-build` / `latex-build-modified` `container:`** — this lives in
-  `smkwlab/.github`, so repointing it means forking `.github` too (see
-  [When to fork](#when-to-fork)).
+- **The CI build image** — `latex-build-modified.yml` pins the *same* image and
+  tag with `container: ghcr.io/smkwlab/texlive-ja-textlint:2026a` (deliberately
+  matching the DevContainer so PDF builds reproduce the dev environment), while
+  `latex-build.yml` reaches the image indirectly through
+  `smkwlab/latex-release-action`. Both live in `smkwlab/.github`, so repointing
+  them means forking `.github` (and the action) too — see
+  [When to fork](#when-to-fork).
 
 ### When to fork
 
