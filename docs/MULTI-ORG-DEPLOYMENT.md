@@ -95,6 +95,10 @@ keys and the ML settings so every student repository inherits them.
 | `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` | `ai-review` / `claude-qa` in student repos, and TMT's own `ai-code-review.yml` | Org (student repos) + `thesis-management-tools` | Optional — the AI jobs skip cleanly when absent |
 | `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, `LAB_ML_ADDRESS` | `notify-ml-on-pr` reusable (sotsuron / ise / latex templates, `secrets: inherit`) | Org | Required by that workflow — **all six**. To skip ML mail, delete `notify-ml-on-pr.yml` from the templates instead. |
 
+All secret values are plain strings (GitHub secrets are always strings). Set
+`SMTP_PORT` to e.g. `587`; `notify-ml-on-pr` passes it to the mail action as-is,
+so no numeric type is needed.
+
 ### 5. create-repo fork configuration
 
 The forked `create-repo` scripts default every org-specific value to `smkwlab`
