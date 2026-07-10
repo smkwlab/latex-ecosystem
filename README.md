@@ -32,7 +32,7 @@ latex-ecosystem/
 ├── poster-template/          # Academic poster (A0)
 #
 #   Management & automation
-├── thesis-management-tools/  # Repository creation / review tooling
+├── student-repo-management/  # Repository creation / review tooling
 ├── thesis-student-registry/  # Student repository registry data (private, data-only)
 ├── ai-academic-paper-reviewer/ # AI review Action (ACADEMIC/CODE modes)
 └── aldc/                     # Adds the LaTeX devcontainer to a repository
@@ -126,17 +126,17 @@ Students should use the automated repository creation process:
 
 **Basic setup (zero dependencies required):**
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/v1/create-repo/setup.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)"
 ```
 
 **With student ID specified:**
 ```bash
-STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/thesis-management-tools/v1/create-repo/setup.sh)"
+STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)"
 ```
 
 ### For Faculty
 
-Review workflow documentation is available in `thesis-management-tools/docs/`.
+Review workflow documentation is available in `student-repo-management/docs/`.
 
 ## Documentation
 
@@ -204,7 +204,7 @@ Supporting Infrastructure:
 ├── latex-release-action → (Used by templates)
 ├── ai-academic-paper-reviewer → (AI review for thesis repos & code review, ACADEMIC/CODE modes)
 ├── aldc → latex-environment (release branch)
-├── thesis-management-tools → (Management workflows)
+├── student-repo-management → (Management workflows)
 └── thesis-student-registry → (Student repository registry data; managed by registry-manager, read by thesis-monitor)
 ```
 

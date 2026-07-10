@@ -341,7 +341,7 @@ branches:
 ### 管理ツール
 - [registry-manager](https://github.com/smkwlab/registry-manager)（レジストリ書き込み・workflow 伝播）
 - [thesis-monitor](https://github.com/smkwlab/thesis-monitor)（学生リポジトリの監視）
-- [thesis-management-tools](../thesis-management-tools/)
+- [student-repo-management](../student-repo-management/)
 
 ---
 

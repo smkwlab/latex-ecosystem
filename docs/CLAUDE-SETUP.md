@@ -69,7 +69,7 @@ git clone https://github.com/smkwlab/latex-ecosystem.git .
 # - texlive-ja-textlint
 # - latex-environment
 # - sotsuron-template
-# - thesis-management-tools
+# - student-repo-management
 # - latex-release-action
 # - ai-academic-paper-reviewer
 # - aldc
@@ -110,7 +110,7 @@ Supporting Infrastructure:
 ├── latex-release-action → (Used by templates)
 ├── ai-academic-paper-reviewer → (Used by thesis repos)  
 ├── aldc → latex-environment (release branch)
-└── thesis-management-tools → (Management workflows)
+└── student-repo-management → (Management workflows)
 ```
 
 ### Standard Update Process
@@ -254,7 +254,7 @@ gh issue create --title "Release Planning: texlive-ja-textlint 2025d" --body "
 ./ecosystem_manager/ecosystem-manager status --long
 
 # Test critical workflows
-cd thesis-management-tools/
+cd student-repo-management/
 ./thesis-repo-manager.sh --test-mode
 
 # Student workflow verification

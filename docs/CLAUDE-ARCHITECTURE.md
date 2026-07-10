@@ -61,7 +61,7 @@ latex-ecosystem/                 # This management repository
 - **poster-template/**: Academic poster template (A0, tikzposter + LuaLaTeX)
 
 #### Tools and Automation
-- **thesis-management-tools/**: Administrative tools and workflows
+- **student-repo-management/**: Administrative tools and workflows
 - **thesis-student-registry/**: Student repository registry data (private, data-only; written by registry-manager, read by thesis-monitor)
 - **latex-release-action/**: GitHub Action for LaTeX compilation
 - **ai-academic-paper-reviewer/**: GitHub Action for automated review (ACADEMIC and CODE modes)
@@ -92,7 +92,7 @@ latex-environment (devcontainer)
 sotsuron-template, sotsuron-report-template, ise-report-template,
 wr-template, latex-template, poster-template (templates)
     ↓
-thesis-management-tools (student workflows)
+student-repo-management (student workflows)
     ↓
 thesis-student-registry (registry data)
 ```
