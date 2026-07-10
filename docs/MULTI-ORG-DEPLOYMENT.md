@@ -92,7 +92,7 @@ keys and the ML settings so every student repository inherits them.
 | Secret(s) | Consumed by | Where | Required? |
 |---|---|---|---|
 | `APP_ID`, `APP_PRIVATE_KEY` | Registration automation (`student-repo-management.yml`) | `student-repo-management` | **Yes** — registration cannot run without them |
-| `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` | `ai-review` / `claude-qa` in student repos, and TMT's own `ai-code-review.yml` | Org (student repos) + `student-repo-management` | Optional — the AI jobs skip cleanly when absent |
+| `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` | `ai-review` / `claude-qa` in student repos, and `student-repo-management`'s own `ai-code-review.yml` | Org (student repos) + `student-repo-management` | Optional — the AI jobs skip cleanly when absent |
 | `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, `LAB_ML_ADDRESS` | `notify-ml-on-pr` reusable (sotsuron / ise / latex templates, `secrets: inherit`) | Org | Required by that workflow — **all six**. To skip ML mail, delete `notify-ml-on-pr.yml` from the templates instead. |
 
 All secret values are plain strings (GitHub secrets are always strings). Set
