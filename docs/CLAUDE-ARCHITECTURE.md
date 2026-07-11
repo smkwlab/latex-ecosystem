@@ -99,7 +99,10 @@ wr-template, latex-template, poster-template (templates)
 student-repo-management (student workflows)
     ↓
 thesis-student-registry (registry data)
-    ↑ writes: registry-manager   ↓ reads: thesis-monitor
+
+Registry tools (cross-cutting, not part of the build/deploy chain):
+    registry-manager → writes thesis-student-registry
+    thesis-monitor   → reads  thesis-student-registry
 ```
 
 ### Update Propagation

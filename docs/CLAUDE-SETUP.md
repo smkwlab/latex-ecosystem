@@ -260,8 +260,9 @@ gh issue create --title "Release Planning: texlive-ja-textlint 2025d" --body "
 ./ecosystem_manager/ecosystem-manager status --long
 
 # Test critical workflows
-cd student-repo-management/
-./thesis-repo-manager.sh --test-mode
+# (thesis-repo-manager.sh was removed in student-repo-management#503;
+#  use thesis-monitor to verify registry / repository health instead)
+./thesis-monitor/thesis-monitor status --show-protection
 
 # Student workflow verification
 cd test-repos/

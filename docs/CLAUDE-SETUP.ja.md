@@ -262,8 +262,9 @@ gh issue create --title "Release Planning: texlive-ja-textlint 2025d" --body "
 ./ecosystem_manager/ecosystem-manager status --long
 
 # 重要なワークフローのテスト
-cd student-repo-management/
-./thesis-repo-manager.sh --test-mode
+# (thesis-repo-manager.sh は student-repo-management#503 で削除済み。
+#  代わりに thesis-monitor でレジストリ／リポジトリの状態を検証する)
+./thesis-monitor/thesis-monitor status --show-protection
 
 # 学生ワークフローの検証
 cd test-repos/

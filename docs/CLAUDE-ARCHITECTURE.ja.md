@@ -101,7 +101,10 @@ wr-template, latex-template, poster-template (テンプレート群)
 student-repo-management (学生ワークフロー)
     ↓
 thesis-student-registry (レジストリデータ)
-    ↑ 書き込み: registry-manager   ↓ 読み取り: thesis-monitor
+
+レジストリツール (依存チェーン外の横断的ツール):
+    registry-manager → thesis-student-registry に書き込み
+    thesis-monitor   → thesis-student-registry を読み取り
 ```
 
 ### 更新の伝播
