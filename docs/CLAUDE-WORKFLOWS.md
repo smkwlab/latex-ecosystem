@@ -24,8 +24,26 @@ The manager is an Elixir escript. Build it once with
 ./ecosystem_manager/ecosystem-manager status --with-prs
 ./ecosystem_manager/ecosystem-manager status --needs-review
 
+# Status across every configured workspace, or a specific one by name
+./ecosystem_manager/ecosystem-manager status --all
+./ecosystem_manager/ecosystem-manager status -w dns   # or --workspace NAME
+
+# Tune parallelism (default: 8)
+./ecosystem_manager/ecosystem-manager status --max-concurrency 4
+
 # Show repository configuration and sources
 ./ecosystem_manager/ecosystem-manager repos
+
+# Auto-discover ecosystem repositories, record them in the user config,
+# and register the workspace
+./ecosystem_manager/ecosystem-manager repos --sync
+
+# Show the resolved workspace path / list all configured workspaces
+./ecosystem_manager/ecosystem-manager workspace
+./ecosystem_manager/ecosystem-manager workspace --list
+
+# Create example user configuration files
+./ecosystem_manager/ecosystem-manager init-config
 
 # Show current configuration
 ./ecosystem_manager/ecosystem-manager config
@@ -260,22 +278,25 @@ done
 ### Student Repository Creation
 ```bash
 # Create student thesis repository (automated)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash thesis
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash thesis
 
 # Create weekly report repository
-STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash wr
+STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash wr
+
+# The final argument selects the document type. setup.sh supports five types:
+# thesis, wr, latex, ise, poster.
 ```
 
 ### Student Progress Monitoring
 ```bash
 # Monitor all students' thesis progress
-thesis-monitor status
+./thesis-monitor/thesis-monitor status
 
 # Show only protection status
-thesis-monitor status --show-protection
+./thesis-monitor/thesis-monitor status --show-protection
 
 # Verbose output
-thesis-monitor status --verbose
+./thesis-monitor/thesis-monitor status --verbose
 ```
 
 ## Best Practices
@@ -296,3 +317,9 @@ thesis-monitor status --verbose
 - Create coordinated issues for cross-repository changes
 - Document compatibility matrices and update procedures
 - Maintain clear separation between ecosystem and component concerns
+
+## Related Documentation
+
+- [CLAUDE-ARCHITECTURE.md](CLAUDE-ARCHITECTURE.md) - Ecosystem structure, dependencies, repository boundaries
+- [CLAUDE-SETUP.md](CLAUDE-SETUP.md) - Environment setup for ecosystem management
+- [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) - Pull Request review guidelines
