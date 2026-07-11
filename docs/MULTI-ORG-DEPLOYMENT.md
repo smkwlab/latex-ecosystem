@@ -57,11 +57,22 @@ following before onboarding students. (Verified against
 `student-repo-management.yml`, `ai-code-review.yml`, `notify-ml-on-pr.yml`, and
 `create-repo/*.sh`.)
 
+> **Organization plan requirement.** Thesis repositories are created **private**
+> (`create-repo/main.sh` sets `VISIBILITY="private"`) and the registration
+> workflow applies branch protection to them. Branch protection on *private*
+> repositories requires a paid GitHub plan (Team or Enterprise) — on the **Free**
+> plan the protection step fails with HTTP 403 (`Upgrade to GitHub Pro or make
+> this repository public to enable this feature`) and the registration run ends in
+> failure. Put the new org on a plan that allows branch protection on private
+> repositories before onboarding students. (Verified 2026-07-11 on a Free test
+> org: every other step — App token, registry write, issue close — succeeded; only
+> the private-repo branch-protection call was rejected.)
+
 ### 1. Repositories
 
 | Repository | Purpose | Notes |
 |---|---|---|
-| `<org>/thesis-student-registry` (private) | Holds `data/registry.json` | Initialize with `registry-manager init --org <org>` (see [Local tool configuration](#local-tool-configuration)). A non-standard name requires the `REGISTRY_REPO` variable below. |
+| `<org>/thesis-student-registry` (private) | Holds `data/registry.json` | Initialize with `registry-manager init --org <org>` (add `--force` if a config already exists; see [Local tool configuration](#local-tool-configuration)). A non-standard name requires the `REGISTRY_REPO` variable below. |
 | `<org>/student-repo-management` | Hosts the registration workflow and `create-repo` scripts | Fork/copy. Carries the App secrets and the fork configuration below. |
 | `<org>/sotsuron-template`, `<org>/wr-template`, `<org>/ise-report-template` | Student document templates | **Must exist in the org** — `create-repo` resolves them as `${ORGANIZATION}/<template>`. |
 | `<org>/latex-template`, `<org>/poster-template` | General LaTeX / poster templates | Default to `smkwlab/...` (shared). Only needed in the org if you point `TEMPLATE_REPO` at your own copy. |
@@ -245,9 +256,12 @@ defaults**: until the issues above are fixed, both Elixir tools default to
   registry_repo: your-org/thesis-student-registry   # explicit; required for all registry operations
   ```
 
-  Or generate it with `registry-manager init --org your-org`.
+  Or generate it with `registry-manager init --org your-org`. If a config file
+  already exists it is **not** overwritten — add `--force` (the command still
+  creates/repairs the registry repo either way).
 - **thesis-monitor**: run `thesis-monitor init --org your-org` (the `--org`
-  flag works **only** on `init`; runtime commands read the config file).
+  flag works **only** on `init`; runtime commands read the config file). As with
+  registry-manager, an existing config requires `--force` to overwrite.
 - **Student roster (optional)**: place the CSV at
   `~/.config/<your-org>/students.csv` — the convention path follows
   `github_org` automatically.
@@ -268,8 +282,13 @@ After preparing the org and configuration:
    [create-repo fork configuration](#5-create-repo-fork-configuration)), or file
    the repository-creation request issue on the org's `student-repo-management`
    directly, and confirm: the repository is created in the new org, branch
-   protection is applied, and `data/registry.json` in the new org's registry
-   gains the entry.
+   protection is applied (requires a paid plan — see the plan note under
+   [Prerequisites](#prerequisites-in-the-new-organization)), and
+   `data/registry.json` in the new org's registry gains the entry.
+   `setup.sh` runs the creator in an interactive container (`docker run -it`), so
+   it needs a real terminal — for a headless/automated check, run
+   `create-repo/main.sh` directly instead, e.g.
+   `TARGET_ORG=<org> DOC_TYPE=thesis ./main.sh <student-id>`.
 4. Open a draft PR in a created student repository and confirm the template
    workflows (build, draft-chain, review) run without referencing missing
    secrets or private `smkwlab` resources.
