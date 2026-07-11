@@ -26,6 +26,8 @@ This document covers the architecture, dependencies, and coordination patterns f
 latex-ecosystem/                 # This management repository
 ├── .git/                       # Git for management files only
 ├── ECOSYSTEM.md                # Tracked - ecosystem overview
+├── README.md                   # Tracked - repository overview
+├── setup.sh                    # Tracked - ecosystem setup script
 ├── ecosystem_manager/          # Tracked - coordination tool (Elixir escript)
 ├── CLAUDE.md                   # Tracked - this file
 ├── .claude/                    # Tracked - claude configuration
@@ -62,7 +64,9 @@ latex-ecosystem/                 # This management repository
 
 #### Tools and Automation
 - **student-repo-management/**: Administrative tools and workflows
-- **thesis-student-registry/**: Student repository registry data (private, data-only; written by registry-manager, read by thesis-monitor)
+- **thesis-student-registry/**: Student repository registry data (private, primarily registry data; written by registry-manager, read by thesis-monitor)
+- **registry-manager/**: Registry data management tool (Elixir escript; writes data/registry.json in thesis-student-registry)
+- **thesis-monitor/**: Student repository monitoring tool (Elixir escript; reads the registry)
 - **latex-release-action/**: GitHub Action for LaTeX compilation
 - **ai-academic-paper-reviewer/**: GitHub Action for automated review (ACADEMIC and CODE modes)
 - **aldc/**: Command-line tool for adding LaTeX devcontainer
@@ -70,7 +74,7 @@ latex-ecosystem/                 # This management repository
 ## Design Principles
 
 ### Management Repository Principles
-- **Tracks files only**: No subdirectory content except docs/
+- **Tracks files only**: No subdirectory content except docs/ and ecosystem_manager/
 - **Coordination focus**: Cross-repository coordination and documentation
 - **Independent components**: Each subdirectory is a separate Git repository
 - **Exception for docs/**: Ecosystem-wide documentation is centrally managed
@@ -95,6 +99,7 @@ wr-template, latex-template, poster-template (templates)
 student-repo-management (student workflows)
     ↓
 thesis-student-registry (registry data)
+    ↑ writes: registry-manager   ↓ reads: thesis-monitor
 ```
 
 ### Update Propagation

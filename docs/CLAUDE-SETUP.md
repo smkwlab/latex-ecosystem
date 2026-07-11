@@ -8,7 +8,7 @@ This comprehensive guide covers setup, dependency management, and release proces
 - **Git**: Version control system
 - **GitHub CLI (`gh`)**: Required for PR/Issue tracking, recommended for easier cloning
 - **Elixir/Mix** (with Erlang/OTP): Required to build and run the `ecosystem-manager` escript
-- **Bash**: Shell interpreter (version 4.0+)
+- **Bash**: Shell interpreter (version 3.2+)
 
 ### Optional Tools
 - **Docker**: For testing Docker images
@@ -66,16 +66,22 @@ git clone https://github.com/smkwlab/latex-ecosystem.git .
 ./setup.sh
 
 # This will clone all component repositories:
+# Core infrastructure:
 # - texlive-ja-textlint
 # - latex-environment
-# - sotsuron-template
-# - student-repo-management
 # - latex-release-action
-# - ai-academic-paper-reviewer
-# - aldc
+# Document templates:
+# - sotsuron-template
 # - wr-template
 # - latex-template
+# - sotsuron-report-template
 # - ise-report-template
+# - poster-template
+# Tools:
+# - student-repo-management
+# - thesis-student-registry
+# - ai-academic-paper-reviewer
+# - aldc
 ```
 
 ### 3. Verify Installation

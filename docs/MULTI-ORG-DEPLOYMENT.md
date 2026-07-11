@@ -7,8 +7,11 @@ How to deploy the LaTeX thesis ecosystem to a GitHub organization other than
 **Status**: The automation core is organization-scoped, and the student-facing
 entry points that used to hardcode `smkwlab` are now parameterized with
 `smkwlab` defaults (see [Resolved blockers](#resolved-blockers)). This guide
-documents what a new organization must provision, the exact resources and
-secrets the automation consumes, and the one remaining low-priority blocker.
+documents what a new organization must provision and the exact resources and
+secrets the automation consumes. **There are no remaining blockers** — the last
+item, `thesis-repo-manager.sh`, was removed from `main` in
+[student-repo-management#503](https://github.com/smkwlab/student-repo-management/pull/503),
+resolving [#500](https://github.com/smkwlab/student-repo-management/issues/500).
 
 ## Architecture: how the org ↔ registry relationship is resolved
 
@@ -122,9 +125,9 @@ new org overrides:
 |---|---|---|
 | `DEFAULT_ORG` | `smkwlab` | your org (drives the membership check, target org, and tools owner) |
 | `TOOLS_REPO_OWNER` / `TOOLS_REPO_NAME` / `TOOLS_CLONE_URL` | `<DEFAULT_ORG>` / `student-repo-management` / derived | your fork's location |
-| `TEMPLATE_REPO` | `smkwlab/latex-template`, `smkwlab/poster-template` | your copy (latex/poster only; thesis/wr/ise derive from the org) |
+| `TEMPLATE_REPO` | `smkwlab/latex-template`, `smkwlab/poster-template` | your copy — overrides the template for any doc type ([#517](https://github.com/smkwlab/student-repo-management/issues/517)); the default shown drives latex/poster, while thesis/wr/ise derive from the org |
 | `ALDC_URL` | `…/smkwlab/aldc/main/aldc` | your aldc copy (or keep the shared one) |
-| `AUTO_ASSIGN_REVIEWER` | `toshi0806` | your reviewer account (empty disables auto-assign) |
+| `AUTO_ASSIGN_REVIEWER` | `toshi0806` | your reviewer account (defaults to `toshi0806`; auto-assign is skipped only when the reviewer is outside the org) |
 | `SETUP_GIT_EMAIL_DOMAIN` | `smkwlab.github.io` | your domain |
 
 ## Resolved blockers
@@ -142,12 +145,11 @@ unchanged; a fork sets the knobs in
 | `aldc` installer | `ALDC_REPOSITORY_OWNER` / `ALDC_REPOSITORY_NAME` env override | [aldc#32](https://github.com/smkwlab/aldc/issues/32) ✅ |
 | `thesis-monitor` defaults | Default `github_org` dropped; derived from `registry_repo` owner, otherwise an explicit error | [thesis-monitor#28](https://github.com/smkwlab/thesis-monitor/issues/28) ✅ |
 | `registry-manager` defaults | Default `github_org` dropped; derived from `registry_repo` owner, otherwise an explicit error | [registry-manager#45](https://github.com/smkwlab/registry-manager/issues/45) ✅ |
+| `thesis-repo-manager.sh` | Fully hardcoded (~20 call sites) and unusable outside smkwlab; a manual, low-priority tool — removed from `main` rather than parameterized | [student-repo-management#503](https://github.com/smkwlab/student-repo-management/pull/503) removed it, resolving [#500](https://github.com/smkwlab/student-repo-management/issues/500) ✅ |
 
 ## Remaining blocker
 
-| Component | Problem | Issue |
-|---|---|---|
-| `thesis-repo-manager.sh` | Fully hardcoded (~20 call sites); unusable outside smkwlab. Manual tool, low priority — deprecation is an option | [student-repo-management#500](https://github.com/smkwlab/student-repo-management/issues/500) |
+None.
 
 ## Shared infrastructure: reference strategy
 
@@ -245,9 +247,10 @@ requirement, or you need to change the reusable logic per org). Then:
 
 ## Local tool configuration
 
-Faculty machines in the new org need per-tool configuration. **Do not rely on
-defaults**: until the issues above are fixed, both Elixir tools default to
-`github_org: "smkwlab"` and will silently operate on smkwlab data.
+Faculty machines in the new org need per-tool configuration. **Configure each
+tool explicitly**: neither Elixir tool has an org default anymore — they derive
+the org from the `registry_repo` owner and, when it is unset, fail with an
+explicit error instead of silently falling back to smkwlab. Set them as below.
 
 - **registry-manager**: `~/.config/registry-manager/config.yml`
 
