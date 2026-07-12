@@ -140,6 +140,8 @@ Review workflow documentation is available in `student-repo-management/docs/`.
 
 ## Documentation
 
+- **[docs/README.md](docs/README.md)**: Documentation guide — start here to find the right document for your role
+- **[docs/GETTING-STARTED.md](docs/GETTING-STARTED.md)**: Single-path guide for starting ecosystem operations
 - **[ECOSYSTEM.md](ECOSYSTEM.md)**: Comprehensive ecosystem architecture and management guide
 - **[docs/](docs/)**: Detailed documentation
   - **[SETUP-AND-RELEASE.md](docs/SETUP-AND-RELEASE.md)**: Comprehensive setup, dependency management, and release processes
