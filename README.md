@@ -142,10 +142,10 @@ Review workflow documentation is available in `student-repo-management/docs/`.
 
 - **[ECOSYSTEM.md](ECOSYSTEM.md)**: Comprehensive ecosystem architecture and management guide
 - **[docs/](docs/)**: Detailed documentation
-  - **[CLAUDE-SETUP.md](docs/CLAUDE-SETUP.md)**: Comprehensive setup, dependency management, and release processes
-  - **[CLAUDE-ARCHITECTURE.md](docs/CLAUDE-ARCHITECTURE.md)**: Architecture guide and repository boundaries
-  - **[CLAUDE-WORKFLOWS.md](docs/CLAUDE-WORKFLOWS.md)**: Ecosystem management workflows and coordination
-  - **[CLAUDE-GIT-WORKFLOW.md](docs/CLAUDE-GIT-WORKFLOW.md)**: Git best practices and conflict resolution
+  - **[SETUP-AND-RELEASE.md](docs/SETUP-AND-RELEASE.md)**: Comprehensive setup, dependency management, and release processes
+  - **[MANAGEMENT-REPOSITORY.md](docs/MANAGEMENT-REPOSITORY.md)**: This management repository's structure and boundaries (ecosystem-wide architecture is in ECOSYSTEM.md above)
+  - **[MANAGEMENT-WORKFLOWS.md](docs/MANAGEMENT-WORKFLOWS.md)**: Ecosystem management workflows and coordination
+  - **[GIT-WORKFLOW.md](docs/GIT-WORKFLOW.md)**: Git best practices and conflict resolution
 - **Individual repositories**: Each has its own README.md and CLAUDE.md documentation
 
 ## Repository Management

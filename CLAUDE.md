@@ -106,7 +106,7 @@ This directory contains multiple **independent Git repositories**:
 ## Key Workflows
 
 Student repository creation and progress-monitoring command examples live in
-[docs/CLAUDE-WORKFLOWS.md](docs/CLAUDE-WORKFLOWS.md) (Student Repository Workflows section).
+[docs/MANAGEMENT-WORKFLOWS.md](docs/MANAGEMENT-WORKFLOWS.md) (Student Repository Workflows section).
 
 ### For Ecosystem-level Changes
 1. Work in this management repository
@@ -133,8 +133,9 @@ Use the **`/propagate` skill** ([.claude/skills/propagate/SKILL.md](.claude/skil
 
 ## Detailed Documentation
 
-- **[Architecture Guide](docs/CLAUDE-ARCHITECTURE.md)** - Ecosystem structure, dependencies, repository boundaries
-- **[Workflows & Examples](docs/CLAUDE-WORKFLOWS.md)** - Detailed command examples, cross-repository coordination
+- **[ECOSYSTEM.md](ECOSYSTEM.md)** - Ecosystem-wide architecture, dependencies, version compatibility
+- **[Management Repository Guide](docs/MANAGEMENT-REPOSITORY.md)** - This management repository's structure and boundaries
+- **[Workflows & Examples](docs/MANAGEMENT-WORKFLOWS.md)** - Detailed command examples, cross-repository coordination
 
 ## Development Notes
 

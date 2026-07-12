@@ -1,6 +1,6 @@
 # エコシステム管理ワークフロー
 
-> 🌐 English version: [CLAUDE-WORKFLOWS.md](CLAUDE-WORKFLOWS.md)
+> 🌐 English version: [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md)
 
 このドキュメントは、LaTeX エコシステム管理リポジトリを用いたエコシステム管理タスクに特化したワークフロー例を提供する。
 
@@ -109,7 +109,7 @@ git status  # まったく別の Git 履歴
 ```bash
 # エコシステムドキュメントの更新
 vim ECOSYSTEM.md  # エコシステム概要を編集
-vim docs/CLAUDE-ARCHITECTURE.md  # アーキテクチャの詳細を編集
+vim docs/MANAGEMENT-REPOSITORY.md  # 管理リポジトリの構造・境界を編集
 
 # エコシステムの変更をコミット
 git add ECOSYSTEM.md docs/
@@ -323,6 +323,7 @@ STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com
 
 ## 関連ドキュメント
 
-- [CLAUDE-ARCHITECTURE.ja.md](CLAUDE-ARCHITECTURE.ja.md) - エコシステム構造、依存関係、リポジトリ境界
-- [CLAUDE-SETUP.ja.md](CLAUDE-SETUP.ja.md) - エコシステム管理のための環境セットアップ
+- [ECOSYSTEM.md](../ECOSYSTEM.md) - エコシステム全体のアーキテクチャ、依存関係、バージョン互換性
+- [MANAGEMENT-REPOSITORY.ja.md](MANAGEMENT-REPOSITORY.ja.md) - 本管理リポジトリの構造と境界
+- [SETUP-AND-RELEASE.ja.md](SETUP-AND-RELEASE.ja.md) - エコシステム管理のための環境セットアップ
 - [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) - Pull Request レビューガイドライン

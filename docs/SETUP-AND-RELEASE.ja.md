@@ -1,6 +1,6 @@
 # LaTeX エコシステム セットアップ・管理ガイド
 
-> 🌐 English version: [CLAUDE-SETUP.md](CLAUDE-SETUP.md)
+> 🌐 English version: [SETUP-AND-RELEASE.md](SETUP-AND-RELEASE.md)
 
 本ガイドは、九州産業大学の LaTeX エコシステムにおけるセットアップ、依存関係管理、リリースプロセスを包括的に解説します。
 
@@ -302,7 +302,7 @@ gh release create 2025d --title "TeXLive 2025d Release" --notes "
 - Node.js 18 → 20 (update your local development)
 
 ## Migration Guide
-See docs/CLAUDE-SETUP.md for update instructions
+See docs/SETUP-AND-RELEASE.md for update instructions
 "
 
 # 関係者への通知
@@ -443,4 +443,4 @@ git tag -l | grep 2025
 # 参照: https://github.com/orgs/smkwlab/packages
 ```
 
-追加のトラブルシューティングについては、各リポジトリのドキュメントおよび [CLAUDE-WORKFLOWS.md](CLAUDE-WORKFLOWS.ja.md) を参照してください。
+追加のトラブルシューティングについては、各リポジトリのドキュメントおよび [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.ja.md) を参照してください。

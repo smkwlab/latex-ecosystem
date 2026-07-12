@@ -106,7 +106,7 @@ git status  # Completely separate Git history
 ```bash
 # Update ecosystem documentation
 vim ECOSYSTEM.md  # Edit ecosystem overview
-vim docs/CLAUDE-ARCHITECTURE.md  # Edit architecture details
+vim docs/MANAGEMENT-REPOSITORY.md  # Edit management-repo structure/boundaries
 
 # Commit ecosystem changes
 git add ECOSYSTEM.md docs/
@@ -320,6 +320,7 @@ STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com
 
 ## Related Documentation
 
-- [CLAUDE-ARCHITECTURE.md](CLAUDE-ARCHITECTURE.md) - Ecosystem structure, dependencies, repository boundaries
-- [CLAUDE-SETUP.md](CLAUDE-SETUP.md) - Environment setup for ecosystem management
+- [ECOSYSTEM.md](../ECOSYSTEM.md) - Ecosystem-wide architecture, dependencies, version compatibility
+- [MANAGEMENT-REPOSITORY.md](MANAGEMENT-REPOSITORY.md) - This management repository's structure and boundaries
+- [SETUP-AND-RELEASE.md](SETUP-AND-RELEASE.md) - Environment setup for ecosystem management
 - [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) - Pull Request review guidelines
