@@ -2,29 +2,11 @@
 
 > 🌐 English version: [CLAUDE-GIT-WORKFLOW.md](CLAUDE-GIT-WORKFLOW.md)
 
-このドキュメントは、LaTeX エコシステムでの実際の開発経験から得られた Git ワークフローのベストプラクティスを扱います。
+このドキュメントは、LaTeX エコシステムでの Git ワークフロー、すなわち「すべての変更を feature ブランチで行い、main ブランチのコンフリクトを避ける」方法を扱います。
 
-## 重要な教訓: main ブランチのコンフリクトを避ける (2025-06-22)
+## なぜ feature ブランチを使うか
 
-**問題のシナリオ**: student-repo-management の開発中に、ローカル main ブランチがリモート main から乖離し、PR #75 をマージした際にマージコンフリクトが発生しました。
-
-**根本原因の分析**:
-```bash
-# 何が問題だったか
-git status
-# → Your branch and 'origin/main' have diverged,
-#   and have 9 and 1 different commits each, respectively.
-
-# ローカル main にはリモートに存在しない 9 個の commit があった
-# リモート main には新しい commit が 1 個あった (PR #75 のマージ)
-# → setup-branch-protection.sh で自動マージコンフリクトが発生
-```
-
-**なぜこれが起きたか**:
-- 複数の変更がローカル main ブランチに直接 commit されていた
-- feature 作業が feature ブランチに分離されていなかった
-- ローカル main がリモート main と同期されていなかった
-- PR 作業と直接 commit が混在していた
+ローカル `main` に直接 commit し、リモートで PR がマージされる間にローカル `main` を `origin/main` から乖離させると、避けられたはずのマージコンフリクトが生じます。以下のルールは、すべての変更を feature ブランチに載せ、`main` をリモートのクリーンなミラーに保つことで、`git pull` を常に fast-forward にします。
 
 ## 正しい Git ワークフロー
 
@@ -35,7 +17,7 @@ git checkout main
 git add . && git commit -m "Add feature X"
 git add . && git commit -m "Fix bug Y"
 # ... 複数の直接 commit ...
-# 後で: PR #75 がリモートでマージされる
+# 後で: 別の PR がリモートでマージされる
 git pull origin main  # → コンフリクト!
 ```
 
@@ -134,7 +116,7 @@ git checkout -b feature/recovered-work
 # 変更を適用する...
 ```
 
-このワークフローは PR #75 で経験したようなマージコンフリクトを防ぎ、エコシステム全体でのスムーズな協働を保証します。
+このワークフローは main ブランチのコンフリクト発生を防ぎ、エコシステム全体でのスムーズな協働を保証します。
 
 ## エコシステムワークフローとの統合
 

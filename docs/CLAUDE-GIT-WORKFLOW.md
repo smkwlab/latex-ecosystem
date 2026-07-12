@@ -1,28 +1,10 @@
 # Git Workflow Best Practices
 
-This document covers Git workflow best practices learned from actual development experiences in the LaTeX ecosystem.
+This document covers the Git workflow for the LaTeX ecosystem: how to keep every change on a feature branch and avoid main-branch conflicts.
 
-## Critical Lesson: Avoid Main Branch Conflicts (2025-06-22)
+## Why feature branches
 
-**Problem Scenario**: During student-repo-management development, local main branch diverged from remote main, causing merge conflicts when PR #75 was merged.
-
-**Root Cause Analysis**:
-```bash
-# What went wrong
-git status
-# → Your branch and 'origin/main' have diverged,
-#   and have 9 and 1 different commits each, respectively.
-
-# Local main had 9 commits that weren't in remote
-# Remote main had 1 new commit (PR #75 merge)
-# → Automatic merge conflict in setup-branch-protection.sh
-```
-
-**Why This Happened**:
-- Multiple changes were committed directly to local main branch
-- Feature work was not isolated in feature branches
-- Local main was not kept in sync with remote main
-- PR work was mixed with direct commits
+Committing directly to a local `main` — and letting it drift from `origin/main` while PRs merge remotely — creates avoidable merge conflicts. The rules below keep every change on a feature branch and keep `main` a clean mirror of the remote, so `git pull` is always a fast-forward.
 
 ## Correct Git Workflow
 
@@ -33,7 +15,7 @@ git checkout main
 git add . && git commit -m "Add feature X"
 git add . && git commit -m "Fix bug Y"
 # ... multiple direct commits ...
-# Later: PR #75 gets merged remotely
+# Later: another PR gets merged remotely
 git pull origin main  # → CONFLICT!
 ```
 
@@ -132,7 +114,7 @@ git checkout -b feature/recovered-work
 # Apply changes...
 ```
 
-This workflow prevents the merge conflicts experienced in PR #75 and ensures smooth collaboration across the ecosystem.
+This workflow keeps main-branch conflicts from occurring and ensures smooth collaboration across the ecosystem.
 
 ## Integration with Ecosystem Workflows
 
