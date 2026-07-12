@@ -52,6 +52,9 @@ initial (初期状態) ← レビュー用PRのベース
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash thesis
 ```
 
+> 上記 URL は **smkwlab デプロイの**エントリポイントです。他の org に展開した環境では、fork 設定済みの**自 org の `setup.sh`**（[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の fork 設定表を参照）を学生に案内してください。
+> **注意**: smkwlab の URL のままでは smkwlab の既定値でリポジトリが作成されます。
+
 **自動実行される内容**：
 1. GitHub認証（ブラウザ経由）
 2. リポジトリ作成（テンプレートから）
