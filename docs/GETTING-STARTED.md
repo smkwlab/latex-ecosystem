@@ -22,10 +22,10 @@ only want to *write* a thesis or *review* one, see the
 Tool installation details: see the Prerequisites section of
 [SETUP-AND-RELEASE.md](SETUP-AND-RELEASE.md#prerequisites).
 
-## 3. Path A: join the existing deployment (smkwlab)
+## 3. Path A: the organization is already provisioned
 
-The `smkwlab` organization is already provisioned; you only need a local
-workspace.
+If the target organization already runs this ecosystem (e.g. `smkwlab`, the
+original deployment), you only need a local workspace.
 
 ```bash
 # One-line workspace setup (clones all component repositories)
@@ -68,6 +68,12 @@ Two ways to create one:
    ```bash
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash thesis
    ```
+
+   > The URL above is the **smkwlab deployment's** entry point. In any other
+   > deployment, have the student run **your org's fork** of `setup.sh`
+   > (configured per the fork-configuration table in
+   > [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)) — the smkwlab URL
+   > would create the repository against smkwlab's defaults.
 
 2. **Via registration issue** — file the repository-creation request issue on
    the org's `student-repo-management`; GitHub Actions does the rest.
