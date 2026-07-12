@@ -2,9 +2,11 @@
 
 ## このガイドについて
 
-本エコシステム（GitHub Pull Request ベースの論文添削ワークフロー）で**初めて論文指導を始める教員**向けの最初の一本道ガイドです。初回セットアップから最初のレビュー完了までを、最短経路で説明します。
+本エコシステム（GitHub Pull Request ベースの論文添削ワークフロー）で**初めて論文指導を始める教員**向けの入門ガイドです。初回セットアップから最初のレビュー完了までの手順を、順を追って説明します。
 
 日常の添削操作の詳細は [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md)、提出期の管理・スクリプト運用は [TEACHER-GUIDE.md](TEACHER-GUIDE.md) を参照してください。本ガイドは両者への入口です。
+
+> 本ガイド中の org 名・URL・連絡先は **smkwlab organization での運用を例**に記述しています。他の org に展開した環境では、自 org の値に読み替えてください（展開方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)）。
 
 ### ワークフローの全体像
 
@@ -24,8 +26,8 @@
 
 ## 前提条件
 
-- **GitHub アカウント**があり、**smkwlab organization のメンバー**であること
-  - まだメンバーでない場合は、管理者（smkwlabML）に GitHub ユーザ名を伝えて招待を依頼してください
+- **GitHub アカウント**があり、**デプロイ先 organization のメンバー**であること（例: smkwlab）
+  - まだメンバーでない場合は、管理者（smkwlab では smkwlabML）に GitHub ユーザ名を伝えて招待を依頼してください
 - GitHub CLI (`gh`) は**必須ではありません**。レビュー作業は GitHub の Web UI だけで完結できます
   - スクリプトによる一括管理を行う場合のみ [INSTALL-GH.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/INSTALL-GH.md)（student-repo-management）を参照
 
@@ -47,18 +49,21 @@
 
 ## Step 2: 最初の PR（0th-draft）が来る
 
-学生が目次案を書いて PR を作成すると、GitHub からメール通知が届きます：
+リポジトリ作成時に、教員をレビュアーへ自動アサインする設定（環境変数 `AUTO_ASSIGN_REVIEWER` で指定された GitHub アカウント）が組み込まれます。このため、学生が目次案を書いて PR を作成すると、その教員へレビュー依頼が通知されます：
 
 ```
 [GitHub] k21rs001 opened PR #1: 0th-draft
 ```
 
-通知メール内のリンクをクリックすると PR 画面が開きます（初回のみ GitHub へのログインが必要です）。
+通知がメールで届くかどうかは、各自の GitHub [Settings] → [Notifications] の設定に依存します。通知メール内のリンクをクリックすると PR 画面が開きます（初回のみ GitHub へのログインが必要です）。
 
 **通知が届かない場合**:
 
 - GitHub の [Settings] → [Notifications] でメール通知が有効になっているか確認してください
 - レビュアーにアサインされた PR は「Pull requests」の [Review requests](https://github.com/pulls/review-requested/@me) 画面からも一覧できます
+- 通知に依らない確認手段として、学生リポジトリを **Watch** しておく方法もあります
+
+> **他 org 展開時の注意**: `AUTO_ASSIGN_REVIEWER` を自 org の教員アカウントに設定していない場合、自動アサインは行われず**通知は届きません**（既定値が org 外のアカウントのため、アサイン設定ごとスキップされます）。設定方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の「create-repo fork configuration」を参照してください。
 
 **0th-draft で見るべき観点は「構成・章立てのみ」です。** 章立て・研究範囲・論理構成が妥当かを確認します。文章表現や詳細には踏み込みません（それは 1st-draft 以降の観点です）。
 
@@ -90,4 +95,4 @@
 - [TEACHER-GUIDE.md](TEACHER-GUIDE.md) — 初期設定・スクリプト・提出プロセス管理の正典
 - [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) — エコシステム全体の添削ルールの正典（段階別レビュー観点など）
 
-質問があれば smkwlabML で共有してください。
+質問があれば管理者へ共有してください（smkwlab では smkwlabML）。

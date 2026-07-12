@@ -6,13 +6,13 @@
 
 ### 1. エコシステムの運用を新しく始める人
 
-1. [GETTING-STARTED.ja.md](GETTING-STARTED.ja.md) — 運用開始までの一本道ガイド
+1. [GETTING-STARTED.ja.md](GETTING-STARTED.ja.md) — 運用開始までの手順ガイド
 2. （新しい org に展開する場合）[MULTI-ORG-DEPLOYMENT.ja.md](MULTI-ORG-DEPLOYMENT.ja.md)
 3. [MANAGEMENT-WORKFLOWS.ja.md](MANAGEMENT-WORKFLOWS.ja.md) — 日常運用のワークフロー
 
 ### 2. 論文指導を始める教員
 
-1. [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) — 初回セットアップから最初のレビューまでの一本道ガイド
+1. [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) — 初回セットアップから最初のレビュー完了までの手順ガイド
 2. [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) — 日常のレビュー操作の正典
 3. [TEACHER-GUIDE.md](TEACHER-GUIDE.md) — 初期設定・スクリプト・提出プロセス管理の正典
 4. ルールの正典: [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md)
