@@ -33,7 +33,7 @@ PR ベースの添削フロー、学生レジストリの管理を担う人 — 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
 
 # ecosystem manager のビルド（初回のみ）
-cd latex-ecosystem-dev
+cd latex-ecosystem-dev   # setup.sh が既定で作成するディレクトリ（既存チェックアウト内で実行した場合は作成されない）
 (cd ecosystem_manager && mix escript.build)
 
 # 動作確認: 全リポジトリの状態表示

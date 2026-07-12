@@ -178,9 +178,9 @@ GitHub 設定、通知管理、レビュー遅延時の対応は、[PR-REVIEW-GU
 #### 1. レビュー用PRでコンフリクト
 
 ```bash
-# review-branchをリセット
+# review-branchをリセット（レビュー用PRのベースである initial に合わせる）
 git checkout review-branch
-git reset --hard 0th-draft
+git reset --hard initial
 git merge origin/{latest-student-branch}
 git push --force-with-lease
 ```

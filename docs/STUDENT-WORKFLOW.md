@@ -49,10 +49,8 @@
 準備ができたら、ターミナル（macOS のターミナル、または Windows の WSL）で次のワンライナーを実行してリポジトリを作成します（例は卒業論文・修士論文の `thesis`。文書タイプは担当教員の指示に従ってください）。
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash thesis
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash thesis
 ```
-
-> 💡 `v1` は安定版（最新の v1 系）を指す移動タグです。最新の開発版を試す場合は URL の `v1` を `main` に置き換えてください。
 
 学籍番号を入力すると、文書リポジトリの作成とセットアップ（`0th-draft` ブランチの作成を含む）が自動で完了します。
 

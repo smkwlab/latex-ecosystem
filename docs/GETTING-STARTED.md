@@ -32,7 +32,7 @@ workspace.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
 
 # Build the ecosystem manager (once)
-cd latex-ecosystem-dev
+cd latex-ecosystem-dev   # default directory created by setup.sh (skipped when run inside an existing checkout)
 (cd ecosystem_manager && mix escript.build)
 
 # Verify: status of every repository
