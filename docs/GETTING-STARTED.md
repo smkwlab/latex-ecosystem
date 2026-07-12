@@ -1,6 +1,6 @@
 # Getting Started with Ecosystem Operations
 
-A single-path guide for taking over (or newly starting) the operation of the
+A step-by-step guide for taking over (or newly starting) the operation of the
 LaTeX thesis ecosystem. Details live in the linked documents — this guide only
 tells you which steps to take and in what order.
 
