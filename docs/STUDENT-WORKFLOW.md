@@ -6,6 +6,8 @@
 - LaTeX や GitHub Desktop の具体的な操作 → 使用中のテンプレートの執筆ガイド（例: [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md)）
 - 本書 → 執筆プロセス全体の流れとルール（全テンプレート共通）
 
+> 本ガイド中の org 名・URL は **smkwlab organization での運用を例**に記述しています。所属する研究室の運用が異なる場合は、担当教員の指示に従ってください。
+
 ## 1. 全体像
 
 文書は一度に書き上げるのではなく、**段階的に稿を重ねて**完成させます。
@@ -42,7 +44,7 @@
 以下を済ませておいてください。
 
 1. **GitHub アカウントの作成** — アカウントを持っていなければ [github.com](https://github.com/) で作成する
-2. **org 招待の受諾** — smkwlab organization への招待メールが届いたら受諾する
+2. **org 招待の受諾** — 所属研究室の organization（例: smkwlab）への招待メールが届いたら受諾する
 3. **Docker Desktop のインストール** — LaTeX 環境の実行に必要
 4. **GitHub CLI (gh) のインストール** — リポジトリ作成スクリプトの実行に必要。入っていない場合は [インストール方法](https://github.com/smkwlab/student-repo-management/blob/main/docs/INSTALL-GH.md) を参照する
 
@@ -51,6 +53,8 @@
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash thesis
 ```
+
+> 担当教員から**別の URL やコマンドを指示された場合は、必ずそちらを使ってください**（上記は smkwlab での実行例です）。
 
 学籍番号を入力すると、文書リポジトリの作成とセットアップ（`0th-draft` ブランチの作成を含む）が自動で完了します。
 
@@ -130,7 +134,7 @@ PR を作成する前に、毎回次の3点を確認してください。
 - **自動作成されたはずの次稿ブランチが見えない** — GitHub Desktop で `Fetch origin` してからブランチ一覧を開き直す
 - **PDF が生成されない** — VS Code の「問題」タブでコンパイルエラーの内容を確認する
 
-解決しないときは smkwlabML で質問するか、担当教員に相談してください。
+解決しないときは担当教員に相談してください（smkwlab では smkwlabML でも質問できます）。
 
 ## 10. 参考リンク
 

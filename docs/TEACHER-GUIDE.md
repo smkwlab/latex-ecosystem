@@ -2,6 +2,8 @@
 
 > **本書の位置づけ**: 初期設定・スクリプト・提出プロセス管理・セキュリティは本書が正典です。
 > 日常のレビュー操作（コメント・Suggestion・複数教員レビュー）は [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md)、初回の全体像は [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) を参照してください。
+>
+> 本ガイド中の org 名・URL・コマンド例・連絡先は **smkwlab organization での運用を例**に記述しています。他の org に展開した環境では、自 org の値に読み替えてください（展開方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)）。
 
 ## 概要
 
@@ -392,7 +394,7 @@ gh repo archive smkwlab/{student-repo}
 - ✅ 結論の方向性が固まっている
 - ❌ まだ大きな構成変更の可能性がある
 
-質問がある場合は smkwlabML で共有し、ノウハウを蓄積していきましょう。
+質問がある場合は管理者へ共有し（smkwlab では smkwlabML）、ノウハウを蓄積していきましょう。
 
 ## 関連ドキュメント
 
