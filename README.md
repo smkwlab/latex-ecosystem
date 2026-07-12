@@ -122,7 +122,9 @@ LATEX_ECOSYSTEM_BASE="$HOME/work/latex-ecosystem" \
 
 ### For Students
 
-Students should use the automated repository creation process:
+Students should use the automated repository creation process (the full
+writing workflow is described in
+[docs/STUDENT-WORKFLOW.md](docs/STUDENT-WORKFLOW.md)):
 
 **Basic setup (zero dependencies required):**
 ```bash
@@ -133,6 +135,15 @@ Students should use the automated repository creation process:
 ```bash
 STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)"
 ```
+
+> `v1` is a moving tag that always points at the **latest stable release** of
+> the creation tooling — student-facing commands reference it (not `main`) so
+> that unreleased changes never reach students.
+>
+> The URLs above are also the **smkwlab deployment's** entry point. In any
+> other deployment, students must run **your org's fork** of `setup.sh`
+> (configured per [docs/MULTI-ORG-DEPLOYMENT.md](docs/MULTI-ORG-DEPLOYMENT.md))
+> — the smkwlab URL creates the repository against smkwlab's defaults.
 
 ### For Faculty
 
