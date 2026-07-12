@@ -281,10 +281,10 @@ done
 ### 学生リポジトリの作成
 ```bash
 # 学生の卒論リポジトリを作成(自動化)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash thesis
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash thesis
 
 # 週報リポジトリを作成
-STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash wr
+STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash wr
 
 # 末尾の引数で文書タイプを選択する。setup.sh は 5 種類に対応:
 # thesis, wr, latex, ise, poster。

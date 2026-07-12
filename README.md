@@ -128,18 +128,22 @@ writing workflow is described in
 
 **Basic setup (zero dependencies required):**
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)"
 ```
 
 **With student ID specified:**
 ```bash
-STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)"
+STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)"
 ```
 
-> The URLs above are the **smkwlab deployment's** entry point. In any other
-> deployment, students must run **your org's fork** of `setup.sh` (configured
-> per [docs/MULTI-ORG-DEPLOYMENT.md](docs/MULTI-ORG-DEPLOYMENT.md)) — the
-> smkwlab URL creates the repository against smkwlab's defaults.
+> `v1` is a moving tag that always points at the **latest stable release** of
+> the creation tooling — student-facing commands reference it (not `main`) so
+> that unreleased changes never reach students.
+>
+> The URLs above are also the **smkwlab deployment's** entry point. In any
+> other deployment, students must run **your org's fork** of `setup.sh`
+> (configured per [docs/MULTI-ORG-DEPLOYMENT.md](docs/MULTI-ORG-DEPLOYMENT.md))
+> — the smkwlab URL creates the repository against smkwlab's defaults.
 
 ### For Faculty
 

@@ -63,10 +63,10 @@ come back here.
 Two ways to create one:
 
 1. **Student-driven (normal path)** — have the student run the one-liner from
-   [student-repo-management/create-repo/setup.sh](https://github.com/smkwlab/student-repo-management/blob/main/create-repo/setup.sh):
+   [student-repo-management/create-repo/setup.sh](https://github.com/smkwlab/student-repo-management/blob/v1/create-repo/setup.sh):
 
    ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash thesis
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash thesis
    ```
 
    > The URL above is the **smkwlab deployment's** entry point. In any other

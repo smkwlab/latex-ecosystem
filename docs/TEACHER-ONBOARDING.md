@@ -36,7 +36,7 @@
 学生自身に以下のワンライナーを実行してもらいます（卒業論文・修士論文の場合）：
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/main/create-repo/setup.sh)" bash thesis
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash thesis
 ```
 
 > 上記 URL は **smkwlab デプロイの**エントリポイントです。他の org に展開した環境では、fork 設定済みの**自 org の `setup.sh`**（[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の fork 設定表を参照）を学生に案内してください。
