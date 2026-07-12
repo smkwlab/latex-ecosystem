@@ -12,14 +12,15 @@
 
 ### 2. 論文指導を始める教員
 
-1. [TEACHER-ONBOARDING.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/TEACHER-ONBOARDING.md)（student-repo-management）
-2. [PR-REVIEW-GUIDE.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/PR-REVIEW-GUIDE.md)（student-repo-management）
-3. ルールの正典: [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md)
+1. [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) — 初回セットアップから最初のレビューまでの一本道ガイド
+2. [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) — 日常のレビュー操作の正典
+3. [TEACHER-GUIDE.md](TEACHER-GUIDE.md) — 初期設定・スクリプト・提出プロセス管理の正典
+4. ルールの正典: [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md)
 
 ### 3. 論文指導を受ける学生
 
 1. 自分のリポジトリの README
-2. テンプレートの元: [sotsuron-template の STUDENT-WORKFLOW.md](https://github.com/smkwlab/sotsuron-template/blob/main/STUDENT-WORKFLOW.md)
+2. [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) — 執筆プロセス全体の流れとルール
 
 ### 4. エコシステムの維持運用者
 
@@ -40,4 +41,8 @@
 | [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md) / [.ja](MANAGEMENT-WORKFLOWS.ja.md) | 維持運用者 | 英 / 日 |
 | [GIT-WORKFLOW.md](GIT-WORKFLOW.md) / [.ja](GIT-WORKFLOW.ja.md) | 維持運用者 | 英 / 日 |
 | [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) | 学生・教員・管理者（ルールの正典） | 日 |
+| [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) | 論文指導を始める教員 | 日 |
+| [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) | 教員（日常のレビュー操作） | 日 |
+| [TEACHER-GUIDE.md](TEACHER-GUIDE.md) | 教員（運用・提出プロセス管理） | 日 |
+| [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) | 学生 | 日 |
 | [../ECOSYSTEM.md](../ECOSYSTEM.md) | 維持運用者 | 英 |

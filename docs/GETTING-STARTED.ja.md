@@ -89,11 +89,9 @@ cd latex-ecosystem-dev
 ## 6. 教員と学生のオンボーディング
 
 - **教員** →
-  [TEACHER-ONBOARDING.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/TEACHER-ONBOARDING.md)
-  （student-repo-management）
+  [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md)
 - **学生** → 各学生リポジトリに生成される README、および
-  [STUDENT-WORKFLOW.md](https://github.com/smkwlab/sotsuron-template/blob/main/STUDENT-WORKFLOW.md)
-  （sotsuron-template）
+  [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md)
 
 ## 7. 日常運用（Day-2 operations）
 

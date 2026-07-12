@@ -87,11 +87,9 @@ If either check fails, see the automation setup guide:
 ## 6. Onboard your faculty and students
 
 - **Faculty** →
-  [TEACHER-ONBOARDING.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/TEACHER-ONBOARDING.md)
-  (student-repo-management)
+  [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md)
 - **Students** → the README generated in each student repository, and
-  [STUDENT-WORKFLOW.md](https://github.com/smkwlab/sotsuron-template/blob/main/STUDENT-WORKFLOW.md)
-  (sotsuron-template)
+  [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md)
 
 ## 7. Day-2 operations
 

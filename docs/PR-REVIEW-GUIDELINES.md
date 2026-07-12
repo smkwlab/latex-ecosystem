@@ -120,8 +120,7 @@ protected_patterns:
 対応完了後は自分で PR をクローズし、次の draft ブランチで執筆を継続する。
 
 具体的な操作手順（ブランチの切り替え、PR の作り方、レビュー対応の詳細）は
-[sotsuron-template の STUDENT-WORKFLOW.md](https://github.com/smkwlab/sotsuron-template/blob/main/STUDENT-WORKFLOW.md)
-を参照。
+[STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) を参照。
 
 ### 2. 品質管理遵守
 
@@ -165,11 +164,9 @@ protected_patterns:
 個別の指摘は該当行へのファイル内コメントで、全体的なフィードバックは
 PR の総合コメントで行う。
 
-コメントの具体的な書き方・操作手順は student-repo-management の
-[PR-REVIEW-GUIDE.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/PR-REVIEW-GUIDE.md)
-と
-[TEACHER-ONBOARDING.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/TEACHER-ONBOARDING.md)
-を参照。
+コメントの具体的な書き方・操作手順は
+[PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) と
+[TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) を参照。
 
 ### 3. レビュー承認基準
 
