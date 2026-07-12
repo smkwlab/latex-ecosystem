@@ -1,17 +1,13 @@
 # Multi-Org Deployment Guide
 
 How to deploy the LaTeX thesis ecosystem to a GitHub organization other than
-`smkwlab`. Based on the cross-repository audit of 2026-07-10
-([#105](https://github.com/smkwlab/latex-ecosystem/issues/105)).
+`smkwlab`.
 
-**Status**: The automation core is organization-scoped, and the student-facing
-entry points that used to hardcode `smkwlab` are now parameterized with
-`smkwlab` defaults (see [Resolved blockers](#resolved-blockers)). This guide
-documents what a new organization must provision and the exact resources and
-secrets the automation consumes. **There are no remaining blockers** — the last
-item, `thesis-repo-manager.sh`, was removed from `main` in
-[student-repo-management#503](https://github.com/smkwlab/student-repo-management/pull/503),
-resolving [#500](https://github.com/smkwlab/student-repo-management/issues/500).
+The automation core is organization-scoped, and the student-facing entry points
+are parameterized with `smkwlab` defaults, so a fork rehomes itself by setting a
+handful of knobs. This guide documents what a new organization must provision,
+the exact resources and secrets the automation consumes, and how the org ↔
+registry relationship is resolved.
 
 ## Architecture: how the org ↔ registry relationship is resolved
 
@@ -116,10 +112,7 @@ so no numeric type is needed.
 ### 5. create-repo fork configuration
 
 The forked `create-repo` scripts default every org-specific value to `smkwlab`
-(env vars read by `setup.sh` / `common-lib.sh`; introduced in
-[student-repo-management#498](https://github.com/smkwlab/student-repo-management/issues/498)
-and [#499](https://github.com/smkwlab/student-repo-management/issues/499)). A
-new org overrides:
+(env vars read by `setup.sh` / `common-lib.sh`). A new org overrides:
 
 | Variable | Default | Set to |
 |---|---|---|
@@ -129,27 +122,6 @@ new org overrides:
 | `ALDC_URL` | `…/smkwlab/aldc/main/aldc` | your aldc copy (or keep the shared one) |
 | `AUTO_ASSIGN_REVIEWER` | `toshi0806` | your reviewer account (defaults to `toshi0806`; auto-assign is skipped only when the reviewer is outside the org) |
 | `SETUP_GIT_EMAIL_DOMAIN` | `smkwlab.github.io` | your domain |
-
-## Resolved blockers
-
-The `smkwlab` hardcodes that used to block other-org deployment are fixed. Each
-is now parameterized with a `smkwlab` default, so smkwlab behaviour is
-unchanged; a fork sets the knobs in
-[create-repo fork configuration](#5-create-repo-fork-configuration) and the
-[local tool configuration](#local-tool-configuration).
-
-| Component | What changed | Issue |
-|---|---|---|
-| `setup.sh` (student entry point) | Membership check, target-org guard, and tools clone URL are `DEFAULT_ORG` / `TOOLS_*` overridable | [student-repo-management#498](https://github.com/smkwlab/student-repo-management/issues/498) ✅ |
-| `create-repo` collateral | `TEMPLATE_REPO` (latex/poster), `ALDC_URL`, `AUTO_ASSIGN_REVIEWER`, `SETUP_GIT_EMAIL_DOMAIN` overrides | [student-repo-management#499](https://github.com/smkwlab/student-repo-management/issues/499) ✅ |
-| `aldc` installer | `ALDC_REPOSITORY_OWNER` / `ALDC_REPOSITORY_NAME` env override | [aldc#32](https://github.com/smkwlab/aldc/issues/32) ✅ |
-| `thesis-monitor` defaults | Default `github_org` dropped; derived from `registry_repo` owner, otherwise an explicit error | [thesis-monitor#28](https://github.com/smkwlab/thesis-monitor/issues/28) ✅ |
-| `registry-manager` defaults | Default `github_org` dropped; derived from `registry_repo` owner, otherwise an explicit error | [registry-manager#45](https://github.com/smkwlab/registry-manager/issues/45) ✅ |
-| `thesis-repo-manager.sh` | Fully hardcoded (~20 call sites) and unusable outside smkwlab; a manual, low-priority tool — removed from `main` rather than parameterized | [student-repo-management#503](https://github.com/smkwlab/student-repo-management/pull/503) removed it, resolving [#500](https://github.com/smkwlab/student-repo-management/issues/500) ✅ |
-
-## Remaining blocker
-
-None.
 
 ## Shared infrastructure: reference strategy
 
@@ -220,9 +192,9 @@ public, or provide pull credentials). What a fork must then repoint to
 - **`latex-environment` fork** — the `image` in `devcontainer.json`, **and** the
   `IMAGE=` constant in `check-texlive-updates.yml`, so the auto-bump tracks the
   org's image. `aldc` injects this devcontainer, so also point `aldc` at the
-  org's `latex-environment`
-  ([aldc#32](https://github.com/smkwlab/aldc/issues/32)'s
-  `ALDC_REPOSITORY_OWNER`).
+  org's `latex-environment` via aldc's `ALDC_REPOSITORY_OWNER` /
+  `ALDC_REPOSITORY_NAME` env overrides
+  ([aldc#32](https://github.com/smkwlab/aldc/issues/32)).
 - **The CI build image** — `latex-build-modified.yml` pins the *same* image and
   tag with `container: ghcr.io/smkwlab/texlive-ja-textlint:2026a` (deliberately
   matching the DevContainer so PDF builds reproduce the dev environment), while
