@@ -227,7 +227,9 @@ The two registry tools share one configuration scheme (decided 2026-07;
 smkwlab/thesis-monitor#14/#16/#18/#20 and registry-manager#16/#18/#21):
 
 - **Shared vocabulary** — the same key means the same thing in both tools:
-  - `github_org`: the deployment organization (default `smkwlab`)
+  - `github_org`: the deployment organization (no default — derived from the
+    `registry_repo` owner when unset, otherwise an explicit error;
+    thesis-monitor#28 / registry-manager#45)
   - `registry_repo`: the registry data repository (`owner/repo`)
   - `csv_path`: the student roster CSV for name resolution (optional)
 - **File format & location**: annotated YAML at `~/.config/<tool-name>/config.yml`
@@ -242,10 +244,14 @@ smkwlab/thesis-monitor#14/#16/#18/#20 and registry-manager#16/#18/#21):
   name resolution is simply skipped — no warning, names show as N/A).
   The roster CSV itself stays **local-only** (it contains personal
   information — never commit it to any repository or to the registry).
-- **Read = zero config, write = explicit**: `thesis-monitor` (reader) runs with
-  no config file at all — `gh auth login` is the only prerequisite.
-  `registry-manager` (writer) requires an explicit `registry_repo`: a write
-  target is never guessed by convention. This asymmetry is a safety feature.
+- **Read = org only, write = explicit**: `thesis-monitor` (reader) needs only
+  the organization (`thesis-monitor init --org <org>` generates the config;
+  `registry_repo` then derives by convention) — beyond that, `gh auth login`
+  is the only prerequisite. `registry-manager` (writer) requires an explicit
+  `registry_repo`: a write target is never guessed by convention. This
+  asymmetry is a safety feature. Neither tool falls back to a default
+  organization: missing org context is an explicit error
+  (thesis-monitor#28 / registry-manager#45).
 - **No backward-compatibility fallbacks**: old keys (`data_dir`, `data_repo`,
   `student_csv`, `registry_dir`), old file names (`repositories.json`), and old
   config locations (`config.json`, `~/.thesis-monitor.yml`) are not read.
@@ -371,5 +377,5 @@ smkwlab/thesis-monitor#14/#16/#18/#20 and registry-manager#16/#18/#21):
 
 ---
 
-*Last Updated: 2026-07-04*  
-*Document Version: 1.2*
+*Last Updated: 2026-07-13*  
+*Document Version: 1.3*
