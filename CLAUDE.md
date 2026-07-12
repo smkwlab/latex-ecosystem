@@ -133,6 +133,7 @@ Use the **`/propagate` skill** ([.claude/skills/propagate/SKILL.md](.claude/skil
 
 ## Detailed Documentation
 
+- **[Getting Started](docs/GETTING-STARTED.md)** - Single-path guide for starting ecosystem operations
 - **[ECOSYSTEM.md](ECOSYSTEM.md)** - Ecosystem-wide architecture, dependencies, version compatibility
 - **[Management Repository Guide](docs/MANAGEMENT-REPOSITORY.md)** - This management repository's structure and boundaries
 - **[Workflows & Examples](docs/MANAGEMENT-WORKFLOWS.md)** - Detailed command examples, cross-repository coordination

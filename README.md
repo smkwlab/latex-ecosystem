@@ -136,10 +136,13 @@ STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com
 
 ### For Faculty
 
-Review workflow documentation is available in `student-repo-management/docs/`.
+Review workflow documentation is consolidated in [docs/](docs/) — start with [docs/TEACHER-ONBOARDING.md](docs/TEACHER-ONBOARDING.md).
 
 ## Documentation
 
+- **[docs/README.md](docs/README.md)**: Documentation guide — start here to find the right document for your role
+- **Teacher / student guides** are consolidated in docs/: [docs/TEACHER-ONBOARDING.md](docs/TEACHER-ONBOARDING.md) (faculty) and [docs/STUDENT-WORKFLOW.md](docs/STUDENT-WORKFLOW.md) (students)
+- **[docs/GETTING-STARTED.md](docs/GETTING-STARTED.md)**: Single-path guide for starting ecosystem operations
 - **[ECOSYSTEM.md](ECOSYSTEM.md)**: Comprehensive ecosystem architecture and management guide
 - **[docs/](docs/)**: Detailed documentation
   - **[SETUP-AND-RELEASE.md](docs/SETUP-AND-RELEASE.md)**: Comprehensive setup, dependency management, and release processes
