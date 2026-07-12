@@ -329,8 +329,8 @@ branches:
 ## 📚 関連リソース
 
 ### ドキュメント
-- [エコシステム全体構成](CLAUDE-ARCHITECTURE.md)
-- [ワークフロー詳細](CLAUDE-WORKFLOWS.md)
+- [エコシステム全体構成](../ECOSYSTEM.md)
+- [ワークフロー詳細](MANAGEMENT-WORKFLOWS.ja.md)
 - [学生向け使用方法](../sotsuron-template/README.md)
 
 ### 完成レポート例

@@ -1,6 +1,6 @@
 # Git ワークフローのベストプラクティス
 
-> 🌐 English version: [CLAUDE-GIT-WORKFLOW.md](CLAUDE-GIT-WORKFLOW.md)
+> 🌐 English version: [GIT-WORKFLOW.md](GIT-WORKFLOW.md)
 
 このドキュメントは、LaTeX エコシステムでの Git ワークフロー、すなわち「すべての変更を feature ブランチで行い、main ブランチのコンフリクトを避ける」方法を扱います。
 

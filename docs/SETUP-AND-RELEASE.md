@@ -300,7 +300,7 @@ gh release create 2025d --title "TeXLive 2025d Release" --notes "
 - Node.js 18 → 20 (update your local development)
 
 ## Migration Guide
-See docs/CLAUDE-SETUP.md for update instructions
+See docs/SETUP-AND-RELEASE.md for update instructions
 "
 
 # Notify stakeholders
@@ -441,4 +441,4 @@ git tag -l | grep 2025
 # Visit: https://github.com/orgs/smkwlab/packages
 ```
 
-For additional troubleshooting, see individual repository documentation and [CLAUDE-WORKFLOWS.md](CLAUDE-WORKFLOWS.md).
+For additional troubleshooting, see individual repository documentation and [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md).
