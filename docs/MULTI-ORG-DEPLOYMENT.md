@@ -192,9 +192,9 @@ public, or provide pull credentials). What a fork must then repoint to
 - **`latex-environment` fork** — the `image` in `devcontainer.json`, **and** the
   `IMAGE=` constant in `check-texlive-updates.yml`, so the auto-bump tracks the
   org's image. `aldc` injects this devcontainer, so also point `aldc` at the
-  org's `latex-environment`
-  ([aldc#32](https://github.com/smkwlab/aldc/issues/32)'s
-  `ALDC_REPOSITORY_OWNER`).
+  org's `latex-environment` via aldc's `ALDC_REPOSITORY_OWNER` /
+  `ALDC_REPOSITORY_NAME` env overrides
+  ([aldc#32](https://github.com/smkwlab/aldc/issues/32)).
 - **The CI build image** — `latex-build-modified.yml` pins the *same* image and
   tag with `container: ghcr.io/smkwlab/texlive-ja-textlint:2026a` (deliberately
   matching the DevContainer so PDF builds reproduce the dev environment), while

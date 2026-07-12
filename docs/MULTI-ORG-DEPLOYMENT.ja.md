@@ -201,9 +201,9 @@ org — 独立性、エアギャップ、または再利用可能ロジックそ
 - **`latex-environment` フォーク** — `devcontainer.json` の `image`、**および**
   `check-texlive-updates.yml` の `IMAGE=` 定数（自動更新が org のイメージを
   追跡するように）。`aldc` はこの devcontainer を注入するため、`aldc` も org の
-  `latex-environment` に向ける
-  （[aldc#32](https://github.com/smkwlab/aldc/issues/32) の
-  `ALDC_REPOSITORY_OWNER`）。
+  `latex-environment` に、aldc の `ALDC_REPOSITORY_OWNER` /
+  `ALDC_REPOSITORY_NAME` 環境変数で向ける
+  （[aldc#32](https://github.com/smkwlab/aldc/issues/32)）。
 - **CI ビルドイメージ** — `latex-build-modified.yml` は
   `container: ghcr.io/smkwlab/texlive-ja-textlint:2026a` で *同じ* イメージと
   タグを固定します（PDF ビルドが開発環境を再現するよう、意図的に DevContainer に
