@@ -9,13 +9,11 @@ This directory contains multiple independent Git repositories that work together
 ```
 latex-ecosystem/
 ├── ECOSYSTEM.md              # This management repository
-├── ecosystem_manager/        # Cross-repository management tool (Elixir escript)
 ├── setup.sh                  # Automated setup script
 ├── README.md                 # This file
 ├── docs/                     # Detailed documentation
 │
-# Everything above is tracked by this management repository
-# (ecosystem_manager is part of it, not cloned).
+# Everything above is tracked by this management repository.
 # Everything below is a separate repository cloned by setup.sh:
 #
 #   Core infrastructure
@@ -32,6 +30,7 @@ latex-ecosystem/
 ├── poster-template/          # Academic poster (A0)
 #
 #   Management & automation
+├── ecosystem-manager/        # Cross-repository management tool (Elixir escript)
 ├── student-repo-management/  # Repository creation / review tooling
 ├── thesis-student-registry/  # Student repository registry data (private, data-only)
 ├── ai-academic-paper-reviewer/ # AI review Action (ACADEMIC/CODE modes)
@@ -104,20 +103,20 @@ LATEX_ECOSYSTEM_BASE="$HOME/work/latex-ecosystem" \
 
 ### Daily Ecosystem Management
 
-> **First time?** Build the escript once: `(cd ecosystem_manager && mix escript.build)`
+> **First time?** Build the escript once: `(cd ecosystem-manager && mix escript.build)`
 
 ```bash
 # Check status of all repositories
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 
 # Detailed status (branch, uncommitted changes, last commit, PRs, issues)
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # Fast status without GitHub API calls
-./ecosystem_manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager status --fast
 
 # Show repository configuration and sources
-./ecosystem_manager/ecosystem-manager repos
+./ecosystem-manager/ecosystem-manager repos
 ```
 
 ### For Students
@@ -169,9 +168,10 @@ Review workflow documentation is consolidated in [docs/](docs/) — start with [
 This management repository contains:
 - **ECOSYSTEM.md**: Comprehensive ecosystem architecture documentation
 - **docs/**: Detailed documentation directory with specialized guides
-- **ecosystem_manager/**: Cross-repository management tool (Elixir escript)
 - **setup.sh**: Automated setup script for cloning all repositories
 - **README.md**: This overview file
+
+The `ecosystem-manager` tool is a separate repository (`smkwlab/ecosystem-manager`) cloned alongside the other components by setup.sh.
 
 All subdirectories are independent Git repositories cloned by setup.sh and are **not** included in this repository's version control.
 
@@ -188,7 +188,7 @@ Each subdirectory is a separate Git repository with its own:
 ### For Ecosystem-wide Changes
 
 1. Update documentation in this repository
-2. Use ecosystem_manager/ecosystem-manager to coordinate changes
+2. Use ecosystem-manager/ecosystem-manager to coordinate changes
 3. Create issues in relevant individual repositories
 4. Test changes across the ecosystem
 

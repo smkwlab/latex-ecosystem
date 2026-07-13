@@ -33,10 +33,10 @@ original deployment), you only need a local workspace.
 
 # Build the ecosystem manager (once)
 cd latex-ecosystem-dev   # default directory created by setup.sh (skipped when run inside an existing checkout)
-(cd ecosystem_manager && mix escript.build)
+(cd ecosystem-manager && mix escript.build)
 
 # Verify: status of every repository
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 ```
 
 Setup variants (custom location, manual clone) are described in

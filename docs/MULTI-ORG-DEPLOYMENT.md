@@ -44,7 +44,7 @@ These components follow the *Organization-Scoped Deployment* principle
 - **Registry auto-registration**: `data/registry.json` updates go through the
   GitHub API using the resolved registry repository. Authentication uses a
   GitHub App installation token minted per run — no PAT.
-- **ecosystem_manager**: fully org-agnostic. The organization is derived from
+- **ecosystem-manager**: fully org-agnostic. The organization is derived from
   the `origin` remote of the workspace root; repository auto-discovery filters
   by that owner.
 
@@ -240,7 +240,7 @@ explicit error instead of silently falling back to smkwlab. Set them as below.
 - **Student roster (optional)**: place the CSV at
   `~/.config/<your-org>/students.csv` — the convention path follows
   `github_org` automatically.
-- **ecosystem_manager**: no org setting needed; configure workspace paths in
+- **ecosystem-manager**: no org setting needed; configure workspace paths in
   `~/.config/ecosystem-manager/config.exs` if you use multiple workspaces.
 
 ## Verification checklist

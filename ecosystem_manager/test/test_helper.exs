@@ -1,2 +1,0 @@
-# Start ExUnit
-ExUnit.start()

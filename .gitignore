@@ -7,9 +7,9 @@
 !ecosystem-manager.sh
 !README.md
 !CLAUDE.md
-# Re-include nested paths too (same pitfall as ecosystem_manager / .github
-# below): the leading */ rule also matches subdirectories such as
-# .claude/skills, so a single !.claude/ is not enough.
+# Re-include nested paths too (same pitfall as .github below): the leading
+# */ rule also matches subdirectories such as .claude/skills, so a single
+# !.claude/ is not enough.
 !.claude/
 !.claude/**
 # ...but keep session-local Claude Code files out
@@ -18,14 +18,6 @@
 
 # Exception: Include docs directory for ecosystem documentation
 !docs/
-
-# Exception: Include ecosystem_manager Elixir project
-# Re-include nested paths too (same pitfall as .github below): the leading
-# */ rule also matches subdirectories such as ecosystem_manager/lib, so a
-# single !ecosystem_manager/ is not enough. Build artifacts stay ignored
-# via ecosystem_manager/.gitignore.
-!ecosystem_manager/
-!ecosystem_manager/**
 
 # Exception: Include .github (workflows, scripts, settings) for this repo
 # Re-include nested paths too: the leading */ rule also matches subdirectories

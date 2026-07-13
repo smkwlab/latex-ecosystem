@@ -7,56 +7,56 @@ This document provides workflow examples specifically for ecosystem management t
 ### Comprehensive Command Reference
 
 The manager is an Elixir escript. Build it once with
-`(cd ecosystem_manager && mix escript.build)`, then:
+`(cd ecosystem-manager && mix escript.build)`, then:
 
 ```bash
 # Show status of all repositories (default command)
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 
 # Detailed status: branch, uncommitted changes, last commit, PRs, issues
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # Fast status without GitHub API calls
-./ecosystem_manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager status --fast
 
 # Filter: urgent issues / open PRs / PRs needing review
-./ecosystem_manager/ecosystem-manager status --urgent-issues
-./ecosystem_manager/ecosystem-manager status --with-prs
-./ecosystem_manager/ecosystem-manager status --needs-review
+./ecosystem-manager/ecosystem-manager status --urgent-issues
+./ecosystem-manager/ecosystem-manager status --with-prs
+./ecosystem-manager/ecosystem-manager status --needs-review
 
 # Status across every configured workspace, or a specific one by name
-./ecosystem_manager/ecosystem-manager status --all
-./ecosystem_manager/ecosystem-manager status -w dns   # or --workspace NAME
+./ecosystem-manager/ecosystem-manager status --all
+./ecosystem-manager/ecosystem-manager status -w dns   # or --workspace NAME
 
 # Tune parallelism (default: 8)
-./ecosystem_manager/ecosystem-manager status --max-concurrency 4
+./ecosystem-manager/ecosystem-manager status --max-concurrency 4
 
 # Show repository configuration and sources
-./ecosystem_manager/ecosystem-manager repos
+./ecosystem-manager/ecosystem-manager repos
 
 # Auto-discover ecosystem repositories, record them in the user config,
 # and register the workspace
-./ecosystem_manager/ecosystem-manager repos --sync
+./ecosystem-manager/ecosystem-manager repos --sync
 
 # Show the resolved workspace path / list all configured workspaces
-./ecosystem_manager/ecosystem-manager workspace
-./ecosystem_manager/ecosystem-manager workspace --list
+./ecosystem-manager/ecosystem-manager workspace
+./ecosystem-manager/ecosystem-manager workspace --list
 
 # Create example user configuration files
-./ecosystem_manager/ecosystem-manager init-config
+./ecosystem-manager/ecosystem-manager init-config
 
 # Show current configuration
-./ecosystem_manager/ecosystem-manager config
+./ecosystem-manager/ecosystem-manager config
 ```
 
 ### Status Monitoring Examples
 ```bash
 # Quick ecosystem health check (rows with branch/commit/change info)
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # Show only repositories that need attention
-./ecosystem_manager/ecosystem-manager status --urgent-issues
-./ecosystem_manager/ecosystem-manager status --needs-review
+./ecosystem-manager/ecosystem-manager status --urgent-issues
+./ecosystem-manager/ecosystem-manager status --needs-review
 
 # Version compatibility is tracked in ECOSYSTEM.md (compatibility matrix)
 ```
@@ -117,7 +117,7 @@ git push origin main
 #### Cross-repository Coordination
 ```bash
 # Check current state
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 
 # Coordinate updates
 vim ECOSYSTEM.md  # Document planned changes
@@ -190,7 +190,7 @@ done
 ### Issue Tracking and Coordination
 ```bash
 # Track progress across repositories
-./ecosystem_manager/ecosystem-manager status --with-prs
+./ecosystem-manager/ecosystem-manager status --with-prs
 
 # Check issue status across ecosystem
 for repo in */; do
@@ -208,7 +208,7 @@ done
 ### Ecosystem-wide Testing
 ```bash
 # Validate all repositories (branches, uncommitted changes)
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # Test compilation across templates
 templates=("sotsuron-template" "wr-template" "latex-template")
@@ -242,7 +242,7 @@ grep -r "latex-environment" .devcontainer/
 ### Cross-Repository Documentation Updates
 ```bash
 # When CLAUDE.md structure changes across ecosystem
-./ecosystem_manager/ecosystem-manager status  # Check current state
+./ecosystem-manager/ecosystem-manager status  # Check current state
 
 # Plan documentation updates
 for repo in texlive-ja-textlint latex-environment sotsuron-template; do
@@ -253,7 +253,7 @@ for repo in texlive-ja-textlint latex-environment sotsuron-template; do
 done
 
 # Track progress
-./ecosystem_manager/ecosystem-manager status  # Verify updates
+./ecosystem-manager/ecosystem-manager status  # Verify updates
 ```
 
 ### Issue Coordination

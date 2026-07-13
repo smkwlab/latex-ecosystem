@@ -78,6 +78,7 @@ git clone https://github.com/smkwlab/latex-ecosystem.git .
 # - ise-report-template
 # - poster-template
 # Tools:
+# - ecosystem-manager
 # - student-repo-management
 # - thesis-student-registry
 # - ai-academic-paper-reviewer
@@ -88,13 +89,13 @@ git clone https://github.com/smkwlab/latex-ecosystem.git .
 
 ```bash
 # Build the manager once (Elixir escript)
-(cd ecosystem_manager && mix escript.build)
+(cd ecosystem-manager && mix escript.build)
 
 # Check ecosystem status
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 
 # Show repository configuration and sources
-./ecosystem_manager/ecosystem-manager repos
+./ecosystem-manager/ecosystem-manager repos
 ```
 
 ## Dependency Management
@@ -257,7 +258,7 @@ gh issue create --title "Release Planning: texlive-ja-textlint 2025d" --body "
 
 ```bash
 # Ecosystem-wide status check (branches, uncommitted changes, PRs)
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # Test critical workflows
 # (thesis-repo-manager.sh was removed in student-repo-management#503;
@@ -361,7 +362,7 @@ Investigation ongoing.
 
 ```bash
 # Weekly maintenance
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # Monthly maintenance
 # Pull the latest changes in each repository as needed (git pull)
@@ -384,7 +385,7 @@ Investigation ongoing.
 # - Compilation failures in templates
 
 # Use ecosystem-manager for status checks (e.g. in cron / CI)
-./ecosystem_manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager status --fast
 ```
 
 ## Development Best Practices

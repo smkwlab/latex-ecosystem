@@ -13,8 +13,8 @@
 
 `latex-ecosystem` は LaTeX 卒業論文環境の連携ハブです。コンポーネントそのものは
 **含みません** — 各コンポーネントは独立した Git リポジトリです — が、エコシステム
-レベルの連携用資材（概要、ドキュメント、`ecosystem_manager` ツール）を追跡し、
-コンポーネントリポジトリを横に並べて clone するためのワークスペースを提供します。
+レベルの連携用資材（概要・ドキュメント）を追跡し、`ecosystem-manager` ツールを
+含むコンポーネントリポジトリを横に並べて clone するためのワークスペースを提供します。
 
 ## Git リポジトリの境界
 
@@ -26,13 +26,16 @@ latex-ecosystem/                 # この管理リポジトリ
 ├── ECOSYSTEM.md                # 追跡対象 - エコシステム概要
 ├── README.md                   # 追跡対象 - リポジトリ概要
 ├── setup.sh                    # 追跡対象 - エコシステムセットアップスクリプト
-├── ecosystem_manager/          # 追跡対象 - 連携ツール (Elixir escript)
 ├── CLAUDE.md                   # 追跡対象 - 管理リポジトリ向け指示
 ├── .claude/                    # 追跡対象 - claude 設定
 ├── docs/                       # 追跡対象 - エコシステムドキュメント
 │   ├── MANAGEMENT-REPOSITORY.md   # このファイル
 │   ├── MANAGEMENT-WORKFLOWS.md    # 管理ワークフロー例
 │   └── ...                        # その他のガイド (setup, git, multi-org, review)
+│
+├── ecosystem-manager/          # 独立したリポジトリ (横に clone; Elixir escript 連携ツール)
+│   ├── .git/                  # 別個の Git リポジトリ
+│   └── ...
 │
 ├── latex-environment/          # 独立したリポジトリ (横に clone)
 │   ├── .git/                  # 別個の Git リポジトリ
@@ -53,7 +56,7 @@ latex-ecosystem/                 # この管理リポジトリ
 ## 設計原則
 
 ### 管理リポジトリの原則
-- **ファイルのみを追跡**: `docs/` と `ecosystem_manager/` を除きサブディレクトリの内容は追跡しない
+- **ファイルのみを追跡**: `docs/` を除きサブディレクトリの内容は追跡しない
 - **連携重視**: リポジトリ横断の連携とドキュメント管理に注力する
 - **独立したコンポーネント**: 各サブディレクトリは別個の Git リポジトリである
 - **docs/ の例外**: エコシステム全体のドキュメントはここで一元管理する
