@@ -57,7 +57,7 @@ Supporting Infrastructure:
 ├── thesis-student-registry → (Student repository registry data, private)
 ├── registry-manager → thesis-student-registry (writes registry data)
 ├── thesis-monitor → thesis-student-registry (reads registry data)
-└── ecosystem-manager → (reads git / PR / issue status of all ecosystem repos)
+└── ecosystem-manager → (reads status of all ecosystem repos)
 ```
 
 ## Version Compatibility
