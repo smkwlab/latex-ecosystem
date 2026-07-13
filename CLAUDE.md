@@ -13,17 +13,6 @@ This ecosystem supports **thesis writing with LaTeX** through a structured learn
 
 All documents use **Pull Request-based review** for collaborative improvement and educational feedback.
 
-## Educational Philosophy
-
-The system implements a **progressive learning approach**:
-
-- **Step 1**: Students practice LaTeX with weekly reports
-- **Step 2**: Students create thesis reports to learn document structure  
-- **Step 3**: Students learn collaborative review through ISE reports
-- **Step 4**: Students write thesis with full PR-based review support
-
-Each step builds upon previous knowledge while introducing new collaborative writing skills.
-
 ## Quick Start
 
 ### Ecosystem Management Commands
