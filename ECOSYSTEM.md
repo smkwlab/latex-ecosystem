@@ -22,6 +22,7 @@ This document describes the architecture and management strategy for the thesis-
 - **thesis-student-registry**: Student repository registry data (private, data-only)
 - **registry-manager**: Registry data management tool (Elixir escript)
 - **thesis-monitor**: Student repository monitoring tool (Elixir escript)
+- **ecosystem-manager**: Cross-repository status tool for the ecosystem workspace (Elixir escript)
 - **ai-academic-paper-reviewer**: GitHub Action for automated review via the org-standard AI review workflow; supports both `ACADEMIC` (paper) and `CODE` review modes, so it is the single AI reviewer for the ecosystem
 - **ai-reviewer** (legacy): standalone code-review Action hosted at `toshi0806/ai-reviewer` (a fork of `Nasubikun/ai-reviewer`). Superseded by `ai-academic-paper-reviewer` (`CODE` mode) and no longer used by the migrated workflows; kept for reference only
 - **aldc**: Command-line tool for adding LaTeX devcontainer to repositories
@@ -55,7 +56,8 @@ Supporting Infrastructure:
 ├── student-repo-management → (Management workflows)
 ├── thesis-student-registry → (Student repository registry data, private)
 ├── registry-manager → thesis-student-registry (writes registry data)
-└── thesis-monitor → thesis-student-registry (reads registry data)
+├── thesis-monitor → thesis-student-registry (reads registry data)
+└── ecosystem-manager → (reads status of all ecosystem repos)
 ```
 
 ## Version Compatibility
@@ -302,6 +304,7 @@ smkwlab/thesis-monitor#14/#16/#18/#20 and registry-manager#16/#18/#21):
 - **Templates**: Sample document compilation, textlint validation
   - **ise-report-template**: HTML5/CSS quality validation, accessibility checks, Japanese academic writing standards
 - **Actions**: Integration tests with sample repositories
+- **Elixir tools** (ecosystem-manager, registry-manager, thesis-monitor): org-standard Elixir CI (mix test, Credo, Dialyzer) via `smkwlab/.github`
 
 ### Manual Validation
 - Student workflow end-to-end testing
