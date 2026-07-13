@@ -80,6 +80,7 @@ git clone https://github.com/smkwlab/latex-ecosystem.git .
 # - ise-report-template
 # - poster-template
 # ツール:
+# - ecosystem-manager
 # - student-repo-management
 # - thesis-student-registry
 # - ai-academic-paper-reviewer
@@ -90,13 +91,13 @@ git clone https://github.com/smkwlab/latex-ecosystem.git .
 
 ```bash
 # マネージャを一度ビルドする (Elixir escript)
-(cd ecosystem_manager && mix escript.build)
+(cd ecosystem-manager && mix escript.build)
 
 # エコシステムの状態を確認
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 
 # リポジトリ構成とソースを表示
-./ecosystem_manager/ecosystem-manager repos
+./ecosystem-manager/ecosystem-manager repos
 ```
 
 ## 依存関係管理
@@ -259,7 +260,7 @@ gh issue create --title "Release Planning: texlive-ja-textlint 2025d" --body "
 
 ```bash
 # エコシステム全体の状態チェック (ブランチ、未コミット変更、PR)
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # 重要なワークフローのテスト
 # (thesis-repo-manager.sh は student-repo-management#503 で削除済み。
@@ -363,7 +364,7 @@ Investigation ongoing.
 
 ```bash
 # 週次の保守
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # 月次の保守
 # 必要に応じて各リポジトリの最新変更を取得する (git pull)
@@ -386,7 +387,7 @@ Investigation ongoing.
 # - テンプレートのコンパイル失敗
 
 # 状態チェックには ecosystem-manager を利用する (cron / CI など)
-./ecosystem_manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager status --fast
 ```
 
 ## 開発のベストプラクティス

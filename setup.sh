@@ -40,6 +40,7 @@ TEMPLATE_REPOS=(
 )
 
 TOOL_REPOS=(
+    "ecosystem-manager"
     "student-repo-management"
     "thesis-student-registry"
     "ai-academic-paper-reviewer"
@@ -91,9 +92,11 @@ check_prerequisites() {
     fi
 }
 
-# Return success if the given directory is a latex-ecosystem checkout
+# Return success if the given directory is a latex-ecosystem checkout.
+# ECOSYSTEM.md is a tracked, top-level marker unique to the management repo
+# (the ecosystem-manager tool now lives in its own repository).
 is_ecosystem_checkout() {
-    [ -d "$1/.git" ] && [ -f "$1/ecosystem_manager/mix.exs" ]
+    [ -d "$1/.git" ] && [ -f "$1/ECOSYSTEM.md" ]
 }
 
 setup_base_directory() {
@@ -133,10 +136,8 @@ setup_base_directory() {
 }
 
 setup_ecosystem_management() {
-    # IMPORTANT: call directly (not via $(...) or (...)) so that
-    # BUILD_FAILED updates are visible to the caller
     echo -e "\nSetting up ecosystem management..."
-    
+
     # Clone latex-ecosystem repository
     if [ ! -d .git ]; then
         # Try gh first, then git clone
@@ -155,26 +156,32 @@ setup_ecosystem_management() {
     else
         print_warning "Directory already contains a git repository"
     fi
-    
-    # Build the ecosystem-manager escript (Elixir)
-    if [ -f ecosystem_manager/mix.exs ]; then
+}
+
+build_ecosystem_manager() {
+    # IMPORTANT: call directly (not via $(...) or (...)) so that
+    # BUILD_FAILED updates are visible to the caller. Runs after
+    # clone_repositories, since ecosystem-manager is now cloned as a
+    # separate repository (smkwlab/ecosystem-manager) rather than bundled.
+    if [ -f ecosystem-manager/mix.exs ]; then
         if command -v mix &> /dev/null; then
-            echo "Building ecosystem-manager (Elixir escript)..."
-            if ( cd ecosystem_manager && mix deps.get && mix escript.build ); then
+            echo -e "\nBuilding ecosystem-manager (Elixir escript)..."
+            if ( cd ecosystem-manager && mix deps.get && mix escript.build ); then
                 print_status "ecosystem-manager is ready"
             else
-                print_warning "Failed to build ecosystem-manager (build it later: cd ecosystem_manager && mix escript.build)"
+                print_warning "Failed to build ecosystem-manager (build it later: cd ecosystem-manager && mix escript.build)"
                 BUILD_FAILED=1
             fi
         else
             # Deliberately NOT counted as a failure: Elixir/Mix is an
             # optional prerequisite (see check_prerequisites), so a skipped
             # build only warns and the script can still exit 0
-            print_warning "Skipping ecosystem-manager build (Elixir/Mix not found). Build later: cd ecosystem_manager && mix escript.build"
+            print_warning "Skipping ecosystem-manager build (Elixir/Mix not found). Build later: cd ecosystem-manager && mix escript.build"
         fi
     else
-        print_error "ecosystem_manager/mix.exs not found"
-        exit 1
+        # ecosystem-manager was not cloned (e.g. --only core|templates, or a
+        # clone failure already recorded in FAILED_CLONES); nothing to build
+        print_warning "ecosystem-manager/ not found; skipping build"
     fi
 }
 
@@ -271,16 +278,19 @@ main() {
         echo -e "\nCloning tool repositories..."
         clone_repositories "${TOOL_REPOS[@]}"
     fi
-    
+
+    # Build the ecosystem-manager escript now that its repository is cloned
+    build_ecosystem_manager
+
     # Final verification
     echo -e "\nVerifying setup..."
-    if [ -x ecosystem_manager/ecosystem-manager ]; then
-        ./ecosystem_manager/ecosystem-manager status
+    if [ -x ecosystem-manager/ecosystem-manager ]; then
+        ./ecosystem-manager/ecosystem-manager status
     else
         print_warning "ecosystem-manager is not built yet."
         echo -e "\nTo build it:"
-        echo "  cd $BASE_DIR/ecosystem_manager && mix escript.build"
-        echo "  ./ecosystem_manager/ecosystem-manager status"
+        echo "  cd $BASE_DIR/ecosystem-manager && mix escript.build"
+        echo "  ./ecosystem-manager/ecosystem-manager status"
     fi
 
     # Failure summary: report everything that went wrong during the run
@@ -302,7 +312,7 @@ main() {
     print_status "Setup completed successfully!"
     echo -e "\nNext steps:"
     echo "  cd $BASE_DIR"
-    echo "  ./ecosystem_manager/ecosystem-manager status --long"
+    echo "  ./ecosystem-manager/ecosystem-manager status --long"
 }
 
 # Run main function

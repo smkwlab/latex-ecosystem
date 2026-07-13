@@ -12,9 +12,9 @@ dependency matrix, version compatibility, and update chains — see
 
 `latex-ecosystem` is the coordination hub for the LaTeX thesis environment. It
 does **not** contain the components themselves — each is an independent Git
-repository — but it tracks ecosystem-level coordination material (the overview,
-documentation, and the `ecosystem_manager` tool) and provides a workspace where
-the component repositories are cloned side by side.
+repository — but it tracks ecosystem-level coordination material (the overview
+and documentation) and provides a workspace where the component repositories,
+including the `ecosystem-manager` tool, are cloned side by side.
 
 ## Git Repository Boundaries
 
@@ -26,13 +26,16 @@ latex-ecosystem/                 # This management repository
 ├── ECOSYSTEM.md                # Tracked - ecosystem overview
 ├── README.md                   # Tracked - repository overview
 ├── setup.sh                    # Tracked - ecosystem setup script
-├── ecosystem_manager/          # Tracked - coordination tool (Elixir escript)
 ├── CLAUDE.md                   # Tracked - management-repo instructions
 ├── .claude/                    # Tracked - claude configuration
 ├── docs/                       # Tracked - ecosystem documentation
 │   ├── MANAGEMENT-REPOSITORY.md   # This file
 │   ├── MANAGEMENT-WORKFLOWS.md    # Management workflow examples
 │   └── ...                        # Other guides (setup, git, multi-org, review)
+│
+├── ecosystem-manager/          # Independent repository (cloned alongside; Elixir escript coordination tool)
+│   ├── .git/                  # Separate Git repository
+│   └── ...
 │
 ├── latex-environment/          # Independent repository (cloned alongside)
 │   ├── .git/                  # Separate Git repository
@@ -54,7 +57,7 @@ track their content.
 ## Design Principles
 
 ### Management Repository Principles
-- **Tracks files only**: No subdirectory content except `docs/` and `ecosystem_manager/`
+- **Tracks files only**: No subdirectory content except `docs/`
 - **Coordination focus**: Cross-repository coordination and documentation
 - **Independent components**: Each subdirectory is a separate Git repository
 - **Exception for docs/**: Ecosystem-wide documentation is centrally managed here

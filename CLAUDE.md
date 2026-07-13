@@ -29,28 +29,28 @@ Each step builds upon previous knowledge while introducing new collaborative wri
 ### Ecosystem Management Commands
 
 The manager is an Elixir escript. Build it once with
-`(cd ecosystem_manager && mix escript.build)`, then:
+`(cd ecosystem-manager && mix escript.build)`, then:
 
 ```bash
 # Show status of all repositories (default command)
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 
 # Detailed status: branch, uncommitted changes, last commit, PRs, issues
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # Fast status without GitHub API calls
-./ecosystem_manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager status --fast
 
 # Show only repositories with urgent issues / open PRs / PRs needing review
-./ecosystem_manager/ecosystem-manager status --urgent-issues
-./ecosystem_manager/ecosystem-manager status --with-prs
-./ecosystem_manager/ecosystem-manager status --needs-review
+./ecosystem-manager/ecosystem-manager status --urgent-issues
+./ecosystem-manager/ecosystem-manager status --with-prs
+./ecosystem-manager/ecosystem-manager status --needs-review
 
 # Show repository configuration and sources
-./ecosystem_manager/ecosystem-manager repos
+./ecosystem-manager/ecosystem-manager repos
 
 # Show current configuration
-./ecosystem_manager/ecosystem-manager config
+./ecosystem-manager/ecosystem-manager config
 ```
 
 ### Working with Components
@@ -80,6 +80,7 @@ This directory contains multiple **independent Git repositories**:
 - **latex-template/**: General-purpose LaTeX template
 
 ### Management & Monitoring
+- **ecosystem-manager/**: Cross-repository status tool for the ecosystem workspace (Elixir escript, separate repo)
 - **student-repo-management/**: Repository creation and branch protection automation
 - **thesis-student-registry/**: Secure student repository registry data (private, data-only)
 - **registry-manager/**: Registry data management tool (Elixir escript, separate repo)
@@ -94,8 +95,8 @@ This directory contains multiple **independent Git repositories**:
 ## Important Conventions
 
 ### This Management Repository
-- **Tracks**: ECOSYSTEM.md, ecosystem_manager/, README.md, CLAUDE.md, .claude/, docs/
-- **Excludes**: All subdirectories except docs/ (they are independent repositories)
+- **Tracks**: ECOSYSTEM.md, README.md, CLAUDE.md, .claude/, docs/
+- **Excludes**: All subdirectories except docs/ (they are independent repositories, including ecosystem-manager/)
 - **Purpose**: Cross-repository coordination and documentation
 
 ### Working with Components
@@ -111,7 +112,7 @@ Student repository creation and progress-monitoring command examples live in
 ### For Ecosystem-level Changes
 1. Work in this management repository
 2. Update ECOSYSTEM.md for architectural changes
-3. Use ecosystem_manager/ecosystem-manager for coordination
+3. Use ecosystem-manager/ecosystem-manager for coordination
 
 ### For Component-specific Changes
 1. Navigate to the specific repository directory

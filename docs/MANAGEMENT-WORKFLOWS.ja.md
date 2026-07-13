@@ -9,57 +9,57 @@
 ### コマンドリファレンス
 
 manager は Elixir escript である。最初に
-`(cd ecosystem_manager && mix escript.build)`
+`(cd ecosystem-manager && mix escript.build)`
 で一度ビルドしておき、その後は以下を実行する:
 
 ```bash
 # 全リポジトリの状態を表示(デフォルトコマンド)
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 
 # 詳細な状態: ブランチ、未コミットの変更、最新コミット、PR、issue
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # GitHub API 呼び出しなしの高速な状態表示
-./ecosystem_manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager status --fast
 
 # フィルタ: 緊急 issue / オープンな PR / レビュー待ちの PR
-./ecosystem_manager/ecosystem-manager status --urgent-issues
-./ecosystem_manager/ecosystem-manager status --with-prs
-./ecosystem_manager/ecosystem-manager status --needs-review
+./ecosystem-manager/ecosystem-manager status --urgent-issues
+./ecosystem-manager/ecosystem-manager status --with-prs
+./ecosystem-manager/ecosystem-manager status --needs-review
 
 # 全ワークスペースの状態、または名前指定で特定のワークスペースの状態
-./ecosystem_manager/ecosystem-manager status --all
-./ecosystem_manager/ecosystem-manager status -w dns   # または --workspace NAME
+./ecosystem-manager/ecosystem-manager status --all
+./ecosystem-manager/ecosystem-manager status -w dns   # または --workspace NAME
 
 # 並列度を調整(デフォルト: 8)
-./ecosystem_manager/ecosystem-manager status --max-concurrency 4
+./ecosystem-manager/ecosystem-manager status --max-concurrency 4
 
 # リポジトリ設定とソースを表示
-./ecosystem_manager/ecosystem-manager repos
+./ecosystem-manager/ecosystem-manager repos
 
 # ワークスペースのリポジトリを自動探索し、ユーザ設定に記録して
 # ワークスペースを登録
-./ecosystem_manager/ecosystem-manager repos --sync
+./ecosystem-manager/ecosystem-manager repos --sync
 
 # 解決されるワークスペースパスを表示 / 全ワークスペースを一覧表示
-./ecosystem_manager/ecosystem-manager workspace
-./ecosystem_manager/ecosystem-manager workspace --list
+./ecosystem-manager/ecosystem-manager workspace
+./ecosystem-manager/ecosystem-manager workspace --list
 
 # サンプルのユーザ設定ファイルを作成
-./ecosystem_manager/ecosystem-manager init-config
+./ecosystem-manager/ecosystem-manager init-config
 
 # 現在の設定を表示
-./ecosystem_manager/ecosystem-manager config
+./ecosystem-manager/ecosystem-manager config
 ```
 
 ### 状態監視の例
 ```bash
 # エコシステムの簡易ヘルスチェック(ブランチ/コミット/変更情報を含む行)
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # 対応が必要なリポジトリのみを表示
-./ecosystem_manager/ecosystem-manager status --urgent-issues
-./ecosystem_manager/ecosystem-manager status --needs-review
+./ecosystem-manager/ecosystem-manager status --urgent-issues
+./ecosystem-manager/ecosystem-manager status --needs-review
 
 # バージョン互換性は ECOSYSTEM.md(互換性マトリクス)で管理している
 ```
@@ -120,7 +120,7 @@ git push origin main
 #### リポジトリ横断の連携
 ```bash
 # 現在の状態を確認
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 
 # 更新の調整
 vim ECOSYSTEM.md  # 予定している変更を記録
@@ -193,7 +193,7 @@ done
 ### issue の追跡と連携
 ```bash
 # リポジトリ横断で進捗を追跡
-./ecosystem_manager/ecosystem-manager status --with-prs
+./ecosystem-manager/ecosystem-manager status --with-prs
 
 # エコシステム全体で issue の状態を確認
 for repo in */; do
@@ -211,7 +211,7 @@ done
 ### エコシステム全体のテスト
 ```bash
 # 全リポジトリを検証(ブランチ、未コミットの変更)
-./ecosystem_manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager status --long
 
 # テンプレート横断でコンパイルをテスト
 templates=("sotsuron-template" "wr-template" "latex-template")
@@ -245,7 +245,7 @@ grep -r "latex-environment" .devcontainer/
 ### リポジトリ横断のドキュメント更新
 ```bash
 # エコシステム全体で CLAUDE.md の構成が変わったとき
-./ecosystem_manager/ecosystem-manager status  # 現在の状態を確認
+./ecosystem-manager/ecosystem-manager status  # 現在の状態を確認
 
 # ドキュメント更新を計画
 for repo in texlive-ja-textlint latex-environment sotsuron-template; do
@@ -256,7 +256,7 @@ for repo in texlive-ja-textlint latex-environment sotsuron-template; do
 done
 
 # 進捗を追跡
-./ecosystem_manager/ecosystem-manager status  # 更新を確認
+./ecosystem-manager/ecosystem-manager status  # 更新を確認
 ```
 
 ### issue の連携

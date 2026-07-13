@@ -34,10 +34,10 @@ PR ベースの添削フロー、学生レジストリの管理を担う人 — 
 
 # ecosystem manager のビルド（初回のみ）
 cd latex-ecosystem-dev   # setup.sh が既定で作成するディレクトリ（既存チェックアウト内で実行した場合は作成されない）
-(cd ecosystem_manager && mix escript.build)
+(cd ecosystem-manager && mix escript.build)
 
 # 動作確認: 全リポジトリの状態表示
-./ecosystem_manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager status
 ```
 
 セットアップの変種（カスタム配置、手動 clone）は

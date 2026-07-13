@@ -72,7 +72,7 @@ Supporting Infrastructure:
 | poster-template | Latest | Auto-updated via aldc | No manual updates needed |
 | latex-release-action | v3.3.0 | All templates | Per feature |
 | aldc | Latest | latex-environment:release | No updates needed |
-| ecosystem_manager | Latest | Elixir ~> 1.17 (OTP 27+) | Per feature |
+| ecosystem-manager | Latest | Elixir ~> 1.17 (OTP 27+) | Per feature |
 
 ## Automated Update Chain
 
