@@ -103,8 +103,8 @@ initial (初期状態) ← レビュー用PRのベース
 
 Suggestion 提示後は学生の適用と Re-request review を待ち、確認後に承認コメントします。
 **教員はPRをマージしません。学生が自分でクローズします。**
-適用された Suggestion は次稿ブランチへも自動で merge されます（`sync-next-draft.yml`。
-コンフリクト時は前稿→次稿の同期 PR が自動作成され、学生がブラウザで解決します）。
+適用された Suggestion は次稿ブランチへも自動で merge されます（`sync-next-draft.yml`）。
+コンフリクト時は前稿→次稿の同期 PR が自動作成され、学生がブラウザで解決します。
 詳細フローは [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の「Suggestion対応フロー」を参照。
 
 ### 3. 並行作業時のサポート
