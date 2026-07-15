@@ -115,6 +115,7 @@ Supporting Infrastructure:
 ### 4. **Faculty Workflow Integration**
 - Review system built into GitHub
 - Automated suggestion workflows
+- Accepted suggestions propagate automatically to later draft branches
 - Minimal manual intervention required
 
 ### 5. **Organization-Scoped Deployment**
