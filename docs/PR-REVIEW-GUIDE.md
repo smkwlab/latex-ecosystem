@@ -278,6 +278,8 @@ gh api repos/smkwlab/{repo}/branches/main/protection \
 学生: 自分でPRをクローズ → 次稿執筆へ ✅
 ```
 
+**次稿への自動反映**: 学生が Suggestion を適用すると、その修正は次稿ブランチへも自動で merge されます（`sync-next-draft.yml`）。教員・学生とも追加操作は不要です。学生が次稿で同じ箇所を既に書き換えていた場合は、前稿→次稿の同期 PR が自動作成され、学生がブラウザの「Resolve conflicts」で解決します。
+
 ## レビュー用PRの活用
 
 ### 自動更新の仕組み

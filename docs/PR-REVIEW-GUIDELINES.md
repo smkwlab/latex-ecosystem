@@ -102,7 +102,25 @@ protected_patterns:
 - 学生は常に次の段階に進める
 - ブランチ管理の手間を削減
 
-### 3. 最終提出処理
+### 3. suggestion の次稿自動反映
+
+**ファイル**: `.github/workflows/sync-next-draft.yml`
+
+**動作例**:
+```
+1st-draft PR で suggestion を受け入れ（= 1st-draft へ push）
+→ 2nd-draft（存在すれば 3rd-draft 以降も）へ自動 merge
+```
+
+**効果**:
+- 受け入れた修正が、執筆中の次稿ブランチへ即座に反映される
+- 学生は次稿ブランチで `git pull` するだけ
+
+**コンフリクト時**: 前稿→次稿の同期 PR が自動作成される。
+学生がブラウザの「Resolve conflicts」で解決すると同期は自動で再開する
+（解決後、同期 PR は自動的に merged になる）。
+
+### 4. 最終提出処理
 
 **ファイル**: `.github/workflows/auto-final-merge.yml`
 
@@ -252,6 +270,7 @@ gh run view <run-id> --log
 # .github/workflows/必須ファイル
 - prevent-draft-merge.yml     # draft保護
 - create-next-draft.yml       # 次稿自動作成
+- sync-next-draft.yml         # suggestion の次稿自動反映
 - auto-final-merge.yml        # 最終提出処理
 ```
 
