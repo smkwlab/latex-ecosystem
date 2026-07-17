@@ -141,6 +141,9 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 bash <(curl -fsSL https://raw.githubusercontent.com/your-org/student-repo-management/v1/create-repo/setup.sh) thesis
 ```
 
+A fresh fork has no `v1` tag yet, so the raw URL above 404s until you create
+one — cut a release before handing this command to students.
+
 `v1` is a moving tag pointing at the latest stable release of your fork (tag
 it following the release process in
 [RELEASE](https://github.com/smkwlab/student-repo-management/blob/main/docs/RELEASE.md)).

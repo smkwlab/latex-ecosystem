@@ -146,6 +146,9 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 bash <(curl -fsSL https://raw.githubusercontent.com/your-org/student-repo-management/v1/create-repo/setup.sh) thesis
 ```
 
+フォーク直後は `v1` タグがまだ存在せず、上記 raw URL は 404 になります。学生に
+案内する前に一度リリースを作成してタグを打ってください。
+
 `v1` は自分のフォークの最新安定版リリースを指す移動タグです（[RELEASE](https://github.com/smkwlab/student-repo-management/blob/main/docs/RELEASE.md)
 のリリース運用に従ってタグを打ちます）。短縮 URL を独自に用意したい場合は、
 smkwlab の [Pages ワークフロー](https://github.com/smkwlab/student-repo-management/blob/main/.github/workflows/pages.yml)

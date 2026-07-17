@@ -56,6 +56,10 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 
 > 担当教員から**別の URL やコマンドを指示された場合は、必ずそちらを使ってください**（上記は smkwlab での実行例です）。
 
+> 実行前にスクリプトの中身を確認したい場合は、配信されているものと同じ内容を
+> [student-repo-management/create-repo/setup.sh](https://github.com/smkwlab/student-repo-management/blob/v1/create-repo/setup.sh)
+> で読めます。
+
 学籍番号を入力すると、文書リポジトリの作成とセットアップ（`0th-draft` ブランチの作成を含む）が自動で完了します。
 
 ## 3. 環境を起動する
