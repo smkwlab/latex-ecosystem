@@ -278,10 +278,10 @@ done
 ### Student Repository Creation
 ```bash
 # Create student thesis repository (automated)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash thesis
+bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 
 # Create weekly report repository
-STUDENT_ID=k21rs001 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash wr
+STUDENT_ID=k21rs001 bash <(curl -fsSL https://repo-setup.smkwlab.net) wr
 
 # The final argument selects the document type. setup.sh supports five types:
 # thesis, wr, latex, ise, poster.

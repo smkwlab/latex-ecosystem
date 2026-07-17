@@ -123,6 +123,31 @@ The forked `create-repo` scripts default every org-specific value to `smkwlab`
 | `AUTO_ASSIGN_REVIEWER` | `toshi0806` | your reviewer account (defaults to `toshi0806`; auto-assign is skipped only when the reviewer is outside the org) |
 | `SETUP_GIT_EMAIL_DOMAIN` | `smkwlab.github.io` | your domain |
 
+#### The command you hand to students
+
+The smkwlab-facing docs point students at the short URL
+`https://repo-setup.smkwlab.net`. That short URL serves **smkwlab's fork of
+`setup.sh` only**, so it does not work for another org (it would create the
+repository against smkwlab's defaults).
+
+In your own org, replace the short URL with a **raw URL to your fork's
+`setup.sh`**:
+
+```bash
+# As printed in the smkwlab docs
+bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
+
+# Rewritten for your org (e.g. your-org)
+bash <(curl -fsSL https://raw.githubusercontent.com/your-org/student-repo-management/v1/create-repo/setup.sh) thesis
+```
+
+`v1` is a moving tag pointing at the latest stable release of your fork (tag
+it following the release process in
+[RELEASE](https://github.com/smkwlab/student-repo-management/blob/main/docs/RELEASE.md)).
+If you want a short URL of your own, mirror smkwlab's
+[Pages workflow](https://github.com/smkwlab/student-repo-management/blob/main/.github/workflows/pages.yml)
+to publish the same way from your org.
+
 ## Shared infrastructure: reference strategy
 
 Some infrastructure is referenced *literally* (with `smkwlab/` in the string)
