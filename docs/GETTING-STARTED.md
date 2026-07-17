@@ -66,7 +66,7 @@ Two ways to create one:
    [student-repo-management/create-repo/setup.sh](https://github.com/smkwlab/student-repo-management/blob/v1/create-repo/setup.sh):
 
    ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/student-repo-management/v1/create-repo/setup.sh)" bash thesis
+   bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
    ```
 
    > The URL above is the **smkwlab deployment's** entry point. In any other
