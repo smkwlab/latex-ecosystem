@@ -277,6 +277,7 @@ GitHub Release を作成します。
 ```bash
 # PR内容を確認・承認のうえ、教員がマージ
 gh pr review {pr-number} --approve --body "最終版として承認します。"
+# マージ方式はリポジトリ設定に従う（merge が許可されていなければ --squash 等に読み替え）
 gh pr merge {pr-number} --merge
 ```
 

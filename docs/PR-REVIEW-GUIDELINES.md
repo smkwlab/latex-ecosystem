@@ -260,7 +260,7 @@ gh run view <run-id> --log
 - `gaiyou-1st`, `gaiyou-2nd`: 日本語概要
 
 #### 提出タグ（ブランチではなくタグで運用）
-- `submit`: 論文本体の提出許可版（main にはマージされない）
+- `submit`: 論文本体の提出許可版。提出許可の記録用で、main への自動処理は無い（タグ push により PDF 付き Release は作成される）
 - `final`, `final-*`: 最終提出（main への提出 PR が自動作成され、教員がマージ）
 
 ### 2. ワークフロー設定
