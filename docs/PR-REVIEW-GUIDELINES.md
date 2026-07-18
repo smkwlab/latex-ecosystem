@@ -86,7 +86,7 @@ protected_patterns:
 - ✅ 1つ以上の承認レビューが必要
 - ✅ 新コミット時に古いレビューを無効化  
 - ✅ フォースプッシュとブランチ削除を禁止
-- ✅ 対象ブランチ: `main`, `review-branch`
+- ✅ 対象ブランチ: `main`
 
 ### 2. 次稿ブランチ自動作成
 
@@ -259,9 +259,9 @@ gh run view <run-id> --log
 - `abstract-1st`, `abstract-2nd`: 英文概要
 - `gaiyou-1st`, `gaiyou-2nd`: 日本語概要
 
-#### 特殊パターン
-- `final-submission`: 最終提出
-- `review-branch`: 特別レビュー用
+#### 提出タグ（ブランチではなくタグで運用）
+- `submit`: 論文本体の提出許可版（main にはマージされない）
+- `final`, `final-*`: 最終提出（main への提出 PR が自動作成され、教員がマージ）
 
 ### 2. ワークフロー設定
 
@@ -296,10 +296,6 @@ branches:
       dismiss_stale_reviews: true
       prevent_force_push: true
       prevent_deletions: true
-  review-branch:
-    protection_rules:
-      required_reviews: 1
-      dismiss_stale_reviews: true
 ```
 
 ---
@@ -309,7 +305,7 @@ branches:
 ### ドキュメント
 - [エコシステム全体構成](../ECOSYSTEM.md)
 - [ワークフロー詳細](MANAGEMENT-WORKFLOWS.ja.md)
-- [学生向け使用方法](../sotsuron-template/README.md)
+- [学生向け使用方法](https://github.com/smkwlab/sotsuron-template/blob/main/README.md)
 
 ### 完成レポート例
 - [学生作品例1](http://www-st.is.kyusan-u.ac.jp/~k22rs044/semi3a/)
@@ -319,7 +315,7 @@ branches:
 ### 管理ツール
 - [registry-manager](https://github.com/smkwlab/registry-manager)（レジストリ書き込み・workflow 伝播）
 - [thesis-monitor](https://github.com/smkwlab/thesis-monitor)（学生リポジトリの監視）
-- [student-repo-management](../student-repo-management/)
+- [student-repo-management](https://github.com/smkwlab/student-repo-management)
 
 ---
 
