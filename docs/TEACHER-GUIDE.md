@@ -8,38 +8,36 @@
 ## 概要
 
 このガイドは、GitHub を使った論文添削ワークフローの教員向け運用・管理ガイドです。
-ハイブリッドワークフローにより、差分レビューと全体レビューの両方を効率的に実施できます。
+draft 連鎖型のワークフローにより、各稿の差分レビューを効率的に実施できます。
 
 ## ワークフロー概要
 
 ### ブランチ構成
 
 ```
-initial (初期状態) ← レビュー用PRのベース
+main (最終成果物)
  ├─ 0th-draft (目次案)
  ├─ 1st-draft (0th-draftベース) ← 差分明確
  ├─ 2nd-draft (1st-draftベース) ← 差分明確
  ├─ 3rd-draft (2nd-draftベース) ← 差分明確
- └─ review-branch (定期的に最新版をマージ)
+ └─ abstract-1st, abstract-2nd, … (概要用)
 ```
 
-### レビュー用PRの特徴
+各 draft PR は直前の draft をベースにするため、直前版からの差分だけが表示されます。
+次稿ブランチは PR 作成時に GitHub Actions が自動作成します（create-next-draft）。
 
-- **ベース**: `initial` (初期状態)
-- **ヘッド**: `review-branch` (GitHub Actionsで自動更新)
-- **目的**: 論文全体への添削（merge済み箇所含む）
-- **運用**: 絶対にマージしない、最終提出まで維持
+> **旧構成についての補足**: 2025年10月以前に作成されたリポジトリには
+> `initial` / `review-branch` と「レビュー用 PR」が存在しますが、この仕組みは
+> 廃止されました（sotsuron-template #74）。現行のリポジトリには存在しません。
 
 ### レビューの使い分け
 
-| コメントの種類 | 使用するPR |
+| コメントの種類 | 場所 |
 | ------------ | ----------- |
 | 目次案への指摘 | 0th-draft PR |
 | 直前版からの変更点 | 各版のPR (1st-draft等) |
-| 論文全体の構成 | レビュー用PR |
-| merge済み箇所への追加指摘 | レビュー用PR |
-| 章を跨ぐ整合性の確認 | レビュー用PR |
-| 最終提出前の全体確認 | レビュー用PR |
+| 論文全体の構成・章を跨ぐ整合性 | その時点の最新の draft PR |
+| 全体を通した確認 | 各 PR で自動ビルドされる PDF アーティファクト |
 
 ## 初期設定
 
@@ -59,16 +57,15 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 1. GitHub認証（ブラウザ経由）
 2. リポジトリ作成（テンプレートから）
 3. LaTeX devcontainer追加 (aldc)
-4. initial ブランチ作成（リポジトリ作成直後の状態）
-5. 0th-draft ブランチ作成（initialベース）
-6. review-branch ブランチ作成（initialベース）
-7. レビュー用PR作成（initial → review-branch, do-not-mergeラベル付き）
+4. 0th-draft ブランチ作成
+5. 学生レジストリへの登録と `main` ブランチ保護の自動設定
+6. レビュアー（教員）の自動アサイン
 
 ### 教員側の設定作業
 
 学生のリポジトリ作成後、必要に応じて以下を設定：
 
-1. **mainブランチ保護設定**（推奨）
+1. **mainブランチ保護設定**（通常は自動設定される。失敗時のみ手動）
    ```bash
    # 教員用ブランチ保護ツール（student-repo-management リポジトリの scripts/ にある）
    ./scripts/setup-branch-protection.sh k21rs001-sotsuron k21rs002-sotsuron
@@ -93,11 +90,8 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 
 - **差分レビュー（各版のPR）**: 直前版からの変更点をレビューします。
   操作手順は [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の「基本的な添削手順」を参照。
-- **全体レビュー（レビュー用PR）**: review-branch は GitHub Actions
-  （`.github/workflows/update-review-branch.yml`、PR の opened / synchronize / reopened で発火）が
-  自動更新するため、教員側の操作は不要です。レビュー用PRで全体構成・章を跨ぐ整合性・merge済み箇所への
-  追加指摘を行います。使い分けは [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の「レビュー用PRの活用」を参照。
-  トラブル時のみ `update-review-branch.sh`（非推奨、後述の「スクリプト活用」）が利用可能です。
+- **論文全体に関わる指摘**: その時点の最新の draft PR にコメントします。
+  全体を通して読む場合は、各 PR で自動ビルドされる PDF アーティファクトを利用します。
 
 ### 2. Suggestion対応フロー
 
@@ -152,21 +146,6 @@ PRをマージしない運用のメリット：
 # - final-*タグ時の自動マージ対応
 ```
 
-### update-review-branch.sh（非推奨）
-
-⚠️ **GitHub Actions による自動更新を推奨**
-
-緊急時やトラブルシューティング用として残されています：
-
-```bash
-# 緊急時のみ使用
-./update-review-branch.sh k21rs001-sotsuron 1st-draft
-
-# 学生リポジトリディレクトリ内で実行
-cd k21rs001-sotsuron
-../update-review-branch.sh 1st-draft
-```
-
 ## 複数人レビューの運用方法
 
 役割分担（主指導・副指導・外部）、順次/並行/段階的レビューの各パターン、CODEOWNERS や必要承認数の
@@ -175,24 +154,14 @@ GitHub 設定、通知管理、レビュー遅延時の対応は、[PR-REVIEW-GU
 
 ## 効率的な添削のコツ
 
-差分レビューと全体レビューの使い分け、Suggestion の効果的な使用、優先順位付け、週次の推奨スケジュールは、
-[PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の「レビュー用PRの活用」「効率的な添削のコツ」を参照してください。
+Suggestion の効果的な使用、優先順位付け、週次の推奨スケジュールは、
+[PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の「効率的な添削のコツ」を参照してください。
 
 ## トラブルシューティング
 
 ### よくある問題と対処法
 
-#### 1. レビュー用PRでコンフリクト
-
-```bash
-# review-branchをリセット（レビュー用PRのベースである initial に合わせる）
-git checkout review-branch
-git reset --hard initial
-git merge origin/{latest-student-branch}
-git push --force-with-lease
-```
-
-#### 2. 学生のブランチ作成ミス
+#### 1. 学生のブランチ作成ミス
 
 ```bash
 # 正しいベースブランチを指定してブランチ作成支援
@@ -201,7 +170,7 @@ git checkout -b {new-branch-name}
 git push -u origin {new-branch-name}
 ```
 
-#### 3. aldc実行ファイルの残留
+#### 2. aldc実行ファイルの残留
 
 ```bash
 # 一時ファイルの削除
@@ -245,7 +214,7 @@ git push origin v1.0-{student-id}-submit
 
 ```bash
 # 学生の論文内容を確認
-# レビュー用PRで全体チェック
+# 最新の draft PR と PDF アーティファクトで全体チェック
 # 各版PRで変更内容チェック
 ```
 
@@ -293,32 +262,23 @@ gh pr list --label abstract
 
 ```
 学生への指示例（口頭）：
-「最終版として問題ありません。
-review-branch → main のPRを作成し、承認後にfinal-2ndタグを作成してください。」
+「最終版として問題ありません。final-2nd タグを作成してください。」
 ```
 
-#### 2. 最終提出PRの処理
+#### 2. final tag による提出 PR の自動作成
+
+学生が `final-*` タグを作成すると、GitHub Actions（auto-final-merge.yml）が
+**タグの付いたブランチ → main の提出 PR**（タイトル "Final Submission: final-*"）を
+自動作成します。同時に、タグ push に対して latex-build が最終版 PDF 付きの
+GitHub Release を作成します。
+
+#### 3. 提出 PR の確認・マージ
 
 ```bash
-# 学生が作成するPR
-Base: main
-Head: review-branch
-Title: "Final Submission Request"
-
-# PR内容の確認・承認（まだマージはしない）
-gh pr review {pr-number} --approve --body "最終版として承認します。final tagを作成してください。"
-```
-
-#### 3. final tag による自動マージ
-
-学生が `final-*` タグを作成すると、以下が自動実行されます：
-
-```yaml
-自動実行内容:
-1. 承認済みPRの検出
-2. 自動マージ実行（main ブランチへ）
-3. GitHub Release 自動作成
-4. 提出完了通知
+# PR内容を確認・承認のうえ、教員がマージ
+gh pr review {pr-number} --approve --body "最終版として承認します。"
+# マージ方式はリポジトリ設定に従う（merge が許可されていなければ --squash 等に読み替え）
+gh pr merge {pr-number} --merge
 ```
 
 #### 4. 提出完了の確認
@@ -338,7 +298,7 @@ gh pr list --state merged --base main
 ### 段階別タグの意味
 
 - **submit タグ**: 論文本体の提出許可版（mainにマージされない）
-- **final タグ**: 最終完成版（mainに自動マージ、GitHub Release作成）
+- **final タグ**: 最終完成版（main への提出 PR を自動作成・教員がマージ、GitHub Release作成）
 
 ### トラブル時の対応
 
