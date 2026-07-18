@@ -323,5 +323,6 @@ STUDENT_ID=k21rs001 bash <(curl -fsSL https://repo-setup.smkwlab.net) wr
 
 - [ECOSYSTEM.md](../ECOSYSTEM.md) - エコシステム全体のアーキテクチャ、依存関係、バージョン互換性
 - [MANAGEMENT-REPOSITORY.md](MANAGEMENT-REPOSITORY.md) - 本管理リポジトリの構造と境界
-- [SETUP-AND-RELEASE.md](SETUP-AND-RELEASE.md) - エコシステム管理のための環境セットアップ
+- [GETTING-STARTED.md](GETTING-STARTED.md) - ワークスペース構築・運用開始の手順
+- [RELEASE-OPERATIONS.md](RELEASE-OPERATIONS.md) - 依存関係更新とリリース運用
 - [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) - Pull Request レビューガイドライン

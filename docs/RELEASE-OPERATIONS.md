@@ -1,102 +1,7 @@
-# LaTeX エコシステム セットアップ・管理ガイド
+# LaTeX エコシステム リリース運用ガイド
 
-本ガイドは、九州産業大学の LaTeX エコシステムにおけるセットアップ、依存関係管理、リリースプロセスを包括的に解説します。
-
-## 前提条件
-
-### 必須ツール
-- **Git**: バージョン管理システム
-- **GitHub CLI (`gh`)**: PR/Issue の追跡に必須。クローンを容易にするため推奨
-- **Elixir/Mix**（Erlang/OTP を含む）: `ecosystem-manager` escript のビルドと実行に必須
-- **Bash**: シェルインタプリタ（バージョン 3.2 以上）
-
-### 任意ツール
-- **Docker**: Docker イメージのテスト用
-- **VSCode**: 開発に推奨される IDE
-
-### GitHub CLI のセットアップ
-
-```bash
-# GitHub CLI のインストール
-# macOS
-brew install gh
-
-# Ubuntu/Debian  
-sudo apt install gh
-
-# Windows (Scoop を使用)
-scoop install gh
-
-# 認証
-gh auth login
-
-# 認証の確認
-gh auth status
-```
-
-**注意**: エコシステム管理機能をフルに利用するには GitHub CLI の認証が必要です。認証がない場合、PR/Issue の追跡は動作しません。
-
-## クイックセットアップ
-
-```bash
-# ワンライナーによるエコシステムのセットアップ
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
-```
-
-## 手動セットアップ
-
-### 1. 管理リポジトリのクローン
-
-```bash
-# 開発用ディレクトリの作成
-mkdir latex-ecosystem-dev
-cd latex-ecosystem-dev
-
-# 管理リポジトリのクローン
-gh repo clone smkwlab/latex-ecosystem .
-
-# または git を使用
-git clone https://github.com/smkwlab/latex-ecosystem.git .
-```
-
-### 2. セットアップスクリプトの実行
-
-```bash
-# セットアップスクリプトの実行
-./setup.sh
-
-# これにより、すべてのコンポーネントリポジトリがクローンされます:
-# コア基盤:
-# - texlive-ja-textlint
-# - latex-environment
-# - latex-release-action
-# ドキュメントテンプレート:
-# - sotsuron-template
-# - wr-template
-# - latex-template
-# - sotsuron-report-template
-# - ise-report-template
-# - poster-template
-# ツール:
-# - ecosystem-manager
-# - student-repo-management
-# - thesis-student-registry
-# - ai-academic-paper-reviewer
-# - aldc
-```
-
-### 3. インストールの確認
-
-```bash
-# マネージャを一度ビルドする (Elixir escript)
-(cd ecosystem-manager && mix escript.build)
-
-# エコシステムの状態を確認
-./ecosystem-manager/ecosystem-manager status
-
-# リポジトリ構成とソースを表示
-./ecosystem-manager/ecosystem-manager repos
-```
+本ガイドは、九州産業大学の LaTeX エコシステムにおける依存関係の更新とリリースプロセスを解説します。
+ワークスペースの構築・初期セットアップは [GETTING-STARTED.md](GETTING-STARTED.md) を参照してください。
 
 ## 依存関係管理
 
@@ -301,7 +206,7 @@ gh release create 2025d --title "TeXLive 2025d Release" --notes "
 - Node.js 18 → 20（ローカル開発環境の更新が必要）
 
 ## 移行手順
-docs/SETUP-AND-RELEASE.md を参照
+docs/RELEASE-OPERATIONS.md を参照
 "
 
 # 関係者への通知
@@ -409,17 +314,7 @@ Investigation ongoing.
 
 ### よくある問題
 
-**セットアップスクリプトの失敗**:
-```bash
-# GitHub CLI の認証を確認
-gh auth status
-
-# リポジトリへのアクセスを確認
-gh repo view smkwlab/latex-ecosystem
-
-# 自動セットアップが失敗する場合は手動でクローン
-git clone https://github.com/smkwlab/texlive-ja-textlint.git
-```
+ワークスペース構築（setup.sh）のトラブルは [GETTING-STARTED.md](GETTING-STARTED.md) を参照してください。
 
 **依存関係更新の問題**:
 ```bash

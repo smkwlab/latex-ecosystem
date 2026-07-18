@@ -27,7 +27,7 @@
 1. [../ECOSYSTEM.md](../ECOSYSTEM.md) — 全体アーキテクチャ・依存関係
 2. [MANAGEMENT-REPOSITORY.md](MANAGEMENT-REPOSITORY.md) — この管理リポジトリの構造と境界
 3. [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md) — 管理タスクのワークフロー
-4. [SETUP-AND-RELEASE.md](SETUP-AND-RELEASE.md) — セットアップ・依存関係更新・リリース
+4. [RELEASE-OPERATIONS.md](RELEASE-OPERATIONS.md) — 依存関係更新・リリース運用
 5. [GIT-WORKFLOW.md](GIT-WORKFLOW.md) — Git 運用のベストプラクティス
 
 ## 全ドキュメント一覧
@@ -35,7 +35,7 @@
 | ファイル | 読者 |
 |---|---|
 | [GETTING-STARTED.md](GETTING-STARTED.md) | 運用を新しく始める人 |
-| [SETUP-AND-RELEASE.md](SETUP-AND-RELEASE.md) | 維持運用者 |
+| [RELEASE-OPERATIONS.md](RELEASE-OPERATIONS.md) | 維持運用者 |
 | [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) | 新 org への展開者 |
 | [MANAGEMENT-REPOSITORY.md](MANAGEMENT-REPOSITORY.md) | 維持運用者 |
 | [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md) | 維持運用者 |

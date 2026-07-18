@@ -145,7 +145,7 @@ STUDENT_ID=k21rs001 bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 - **[docs/GETTING-STARTED.md](docs/GETTING-STARTED.md)**: エコシステム運用を始めるための単一経路ガイド
 - **[ECOSYSTEM.md](ECOSYSTEM.md)**: エコシステム全体のアーキテクチャと管理ガイド
 - **[docs/](docs/)**: 詳細ドキュメント
-  - **[SETUP-AND-RELEASE.md](docs/SETUP-AND-RELEASE.md)**: セットアップ・依存関係管理・リリースプロセス
+  - **[RELEASE-OPERATIONS.md](docs/RELEASE-OPERATIONS.md)**: 依存関係管理・リリースプロセス
   - **[MANAGEMENT-REPOSITORY.md](docs/MANAGEMENT-REPOSITORY.md)**: この管理リポジトリの構造と境界(エコシステム全体のアーキテクチャは上記 ECOSYSTEM.md)
   - **[MANAGEMENT-WORKFLOWS.md](docs/MANAGEMENT-WORKFLOWS.md)**: エコシステム管理のワークフローと連携
   - **[GIT-WORKFLOW.md](docs/GIT-WORKFLOW.md)**: Git のベストプラクティスとコンフリクト解消
