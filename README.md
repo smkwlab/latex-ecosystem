@@ -1,10 +1,10 @@
 # LaTeX Ecosystem
 
-Comprehensive ecosystem management for LaTeX thesis templates and tools at Shimokawa Lab, Faculty of Science and Engineering, Kyushu Sangyo University.
+九州産業大学 理工学部 下川研究室の LaTeX 論文テンプレートとツール群を統合管理するエコシステムです。
 
-## Repository Structure
+## リポジトリ構成
 
-This directory contains multiple independent Git repositories that work together to form a comprehensive LaTeX academic document management system:
+このディレクトリには、連携して LaTeX 学術文書管理システムを構成する複数の独立した Git リポジトリが含まれます。
 
 ```
 latex-ecosystem/
@@ -37,18 +37,18 @@ latex-ecosystem/
 └── aldc/                     # Adds the LaTeX devcontainer to a repository
 ```
 
-## Prerequisites
+## 前提条件
 
-### Required Tools
+### 必要なツール
 
-- **Git**: Version control system
-- **GitHub CLI (gh)**: Required for PR/Issue tracking features
-- **Elixir 1.17+** (with Erlang/OTP): Required to build and run the ecosystem-manager escript
-- **Bash**: Shell interpreter (version 4.0+)
+- **Git**: バージョン管理システム
+- **GitHub CLI (gh)**: PR / Issue の確認機能に必要
+- **Elixir 1.17 以上**(Erlang/OTP を含む): ecosystem-manager escript のビルド・実行に必要
+- **Bash**: シェル(バージョン 4.0 以上)
 
-### GitHub CLI Setup
+### GitHub CLI のセットアップ
 
-The ecosystem manager uses GitHub CLI for advanced features. To get full functionality:
+ecosystem manager の全機能を使うには GitHub CLI が必要です。
 
 ```bash
 # Install GitHub CLI (if not already installed)
@@ -67,43 +67,40 @@ gh auth login
 gh auth status
 ```
 
-**Note**: Without GitHub CLI authentication, the ecosystem manager will still work but with limited functionality (no PR/Issue counts).
+**注**: GitHub CLI の認証がなくても ecosystem manager 自体は動作しますが、機能は限定されます(PR / Issue 数が表示されません)。
 
-**Note**: Some ecosystem repositories (e.g. `thesis-student-registry`, `ecosystem-manager`) are private. `setup.sh` can clone them only with an authenticated GitHub CLI (`gh auth login`) or an SSH key registered on GitHub; the anonymous HTTPS fallback works for public repositories only.
+**注**: エコシステムの一部リポジトリ(`thesis-student-registry`、`ecosystem-manager` など)は private です。`setup.sh` がこれらを clone できるのは、GitHub CLI の認証(`gh auth login`)済みか、GitHub に SSH 鍵を登録済みの場合のみです。匿名 HTTPS フォールバックは public リポジトリにしか使えません。
 
-## Quick Start
+## クイックスタート
 
-### Initial Setup
+### 初回セットアップ
 
-**One-line setup:**
+**ワンライナーでのセットアップ:**
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
 ```
 
-This creates a `latex-ecosystem-dev/` directory under the current directory
-and sets up everything inside it.
+カレントディレクトリの下に `latex-ecosystem-dev/` ディレクトリを作成し、その中に一式をセットアップします。
 
-**Manual clone and setup:**
+**手動での clone とセットアップ:**
 ```bash
 gh repo clone smkwlab/latex-ecosystem latex-ecosystem-dev
 cd latex-ecosystem-dev
 ./setup.sh
 ```
 
-When run inside an existing latex-ecosystem checkout, `setup.sh` detects it
-and clones the component repositories into that checkout instead of creating
-a nested `latex-ecosystem-dev/`.
+既存の latex-ecosystem チェックアウト内で実行した場合、`setup.sh` はそれを検出し、入れ子の `latex-ecosystem-dev/` を作らずにそのチェックアウト内へコンポーネントリポジトリを clone します。
 
-**Custom location:**
+**セットアップ先の指定:**
 ```bash
 # Set LATEX_ECOSYSTEM_BASE to control where the ecosystem is set up
 LATEX_ECOSYSTEM_BASE="$HOME/work/latex-ecosystem" \
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
 ```
 
-### Daily Ecosystem Management
+### 日常のエコシステム管理
 
-> **First time?** Build the escript once: `(cd ecosystem-manager && mix escript.build)`
+> **初回のみ**: escript をビルドしてください: `(cd ecosystem-manager && mix escript.build)`
 
 ```bash
 # Check status of all repositories
@@ -119,84 +116,79 @@ LATEX_ECOSYSTEM_BASE="$HOME/work/latex-ecosystem" \
 ./ecosystem-manager/ecosystem-manager repos
 ```
 
-### For Students
+### 学生向け
 
-Students should use the automated repository creation process (the full
-writing workflow is described in
-[docs/STUDENT-WORKFLOW.md](docs/STUDENT-WORKFLOW.md)):
+学生は自動リポジトリ作成プロセスを使ってください(執筆ワークフロー全体は [docs/STUDENT-WORKFLOW.md](docs/STUDENT-WORKFLOW.md) を参照)。
 
-**Basic setup (zero dependencies required):**
+**基本セットアップ(依存ツール不要):**
 ```bash
 bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 ```
 
-**With student ID specified:**
+**学籍番号を指定する場合:**
 ```bash
 STUDENT_ID=k21rs001 bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 ```
 
-> The short URL serves the **latest stable release** of the creation tooling
-> (the `v1` moving tag, never `main`), so unreleased changes never reach
-> students.
+> この短縮 URL は作成ツールの**最新安定リリース**(`v1` 移動タグ。`main` は決して使わない)を配信するため、未リリースの変更が学生に届くことはありません。
 >
-> It is also the **smkwlab deployment's** entry point. In any other
-> deployment, students must run **your org's fork** of `setup.sh` (configured
-> per [docs/MULTI-ORG-DEPLOYMENT.md](docs/MULTI-ORG-DEPLOYMENT.md)) — the
-> smkwlab URL creates the repository against smkwlab's defaults.
+> また、この URL は **smkwlab デプロイメント**の入口です。他のデプロイメントでは、学生は**自 org のフォーク**の `setup.sh`([docs/MULTI-ORG-DEPLOYMENT.md](docs/MULTI-ORG-DEPLOYMENT.md) に従って設定したもの)を実行する必要があります — smkwlab の URL では smkwlab の既定値でリポジトリが作成されてしまいます。
 
-### For Faculty
+### 教員向け
 
-Review workflow documentation is consolidated in [docs/](docs/) — start with [docs/TEACHER-ONBOARDING.md](docs/TEACHER-ONBOARDING.md).
+レビューワークフローのドキュメントは [docs/](docs/) に集約されています。まず [docs/TEACHER-ONBOARDING.md](docs/TEACHER-ONBOARDING.md) からお読みください。
 
-## Documentation
+## ドキュメント
 
-- **[docs/README.md](docs/README.md)**: Documentation guide — start here to find the right document for your role
-- **Teacher / student guides** are consolidated in docs/: [docs/TEACHER-ONBOARDING.md](docs/TEACHER-ONBOARDING.md) (faculty) and [docs/STUDENT-WORKFLOW.md](docs/STUDENT-WORKFLOW.md) (students)
-- **[docs/GETTING-STARTED.md](docs/GETTING-STARTED.md)**: Single-path guide for starting ecosystem operations
-- **[ECOSYSTEM.md](ECOSYSTEM.md)**: Comprehensive ecosystem architecture and management guide
-- **[docs/](docs/)**: Detailed documentation
-  - **[SETUP-AND-RELEASE.md](docs/SETUP-AND-RELEASE.md)**: Comprehensive setup, dependency management, and release processes
-  - **[MANAGEMENT-REPOSITORY.md](docs/MANAGEMENT-REPOSITORY.md)**: This management repository's structure and boundaries (ecosystem-wide architecture is in ECOSYSTEM.md above)
-  - **[MANAGEMENT-WORKFLOWS.md](docs/MANAGEMENT-WORKFLOWS.md)**: Ecosystem management workflows and coordination
-  - **[GIT-WORKFLOW.md](docs/GIT-WORKFLOW.md)**: Git best practices and conflict resolution
-- **Individual repositories**: Each has its own README.md and CLAUDE.md documentation
+- **[docs/README.md](docs/README.md)**: ドキュメントガイド — 役割に応じたドキュメントを探すならまずここから
+- **教員・学生向けガイド**は docs/ に集約: [docs/TEACHER-ONBOARDING.md](docs/TEACHER-ONBOARDING.md)(教員)、[docs/STUDENT-WORKFLOW.md](docs/STUDENT-WORKFLOW.md)(学生)
+- **[docs/GETTING-STARTED.md](docs/GETTING-STARTED.md)**: エコシステム運用を始めるための単一経路ガイド
+- **[ECOSYSTEM.md](ECOSYSTEM.md)**: エコシステム全体のアーキテクチャと管理ガイド
+- **[docs/](docs/)**: 詳細ドキュメント
+  - **[SETUP-AND-RELEASE.md](docs/SETUP-AND-RELEASE.md)**: セットアップ・依存関係管理・リリースプロセス
+  - **[MANAGEMENT-REPOSITORY.md](docs/MANAGEMENT-REPOSITORY.md)**: この管理リポジトリの構造と境界(エコシステム全体のアーキテクチャは上記 ECOSYSTEM.md)
+  - **[MANAGEMENT-WORKFLOWS.md](docs/MANAGEMENT-WORKFLOWS.md)**: エコシステム管理のワークフローと連携
+  - **[GIT-WORKFLOW.md](docs/GIT-WORKFLOW.md)**: Git のベストプラクティスとコンフリクト解消
+- **各リポジトリ**: それぞれに README.md と CLAUDE.md があります
 
-## Repository Management
+## リポジトリ管理
 
-### This Repository (latex-ecosystem)
+### このリポジトリ (latex-ecosystem)
 
-This management repository contains:
-- **ECOSYSTEM.md**: Comprehensive ecosystem architecture documentation
-- **docs/**: Detailed documentation directory with specialized guides
-- **setup.sh**: Automated setup script for cloning all repositories
-- **README.md**: This overview file
+この管理リポジトリに含まれるのは次のとおりです。
 
-The `ecosystem-manager` tool is a separate repository (`smkwlab/ecosystem-manager`) cloned alongside the other components by setup.sh.
+- **ECOSYSTEM.md**: エコシステム全体のアーキテクチャドキュメント
+- **docs/**: 各種ガイドを収めた詳細ドキュメントディレクトリ
+- **setup.sh**: 全リポジトリを clone する自動セットアップスクリプト
+- **README.md**: この概要ファイル
 
-All subdirectories are independent Git repositories cloned by setup.sh and are **not** included in this repository's version control.
+`ecosystem-manager` ツールは独立したリポジトリ(`smkwlab/ecosystem-manager`)で、setup.sh が他のコンポーネントと同様に clone します。
 
-### Individual Repositories
+サブディレクトリはすべて setup.sh が clone する独立した Git リポジトリであり、このリポジトリのバージョン管理には**含まれません**。
 
-Each subdirectory is a separate Git repository with its own:
-- Independent version control
-- GitHub repository and issues
-- Release cycles and tagging
-- Documentation and README
+### 各コンポーネントリポジトリ
 
-## Contributing
+各サブディレクトリは独立した Git リポジトリで、それぞれが次を持ちます。
 
-### For Ecosystem-wide Changes
+- 独立したバージョン管理
+- GitHub リポジトリと Issue
+- リリースサイクルとタグ付け
+- ドキュメントと README
 
-1. Update documentation in this repository
-2. Use ecosystem-manager/ecosystem-manager to coordinate changes
-3. Create issues in relevant individual repositories
-4. Test changes across the ecosystem
+## コントリビューション
 
-### For Component-specific Changes
+### エコシステム全体に関わる変更
 
-Work directly in the relevant repository following its contribution guidelines.
+1. このリポジトリのドキュメントを更新する
+2. ecosystem-manager/ecosystem-manager で変更を調整する
+3. 関係する各リポジトリに Issue を作成する
+4. エコシステム全体で変更をテストする
 
-## Architecture Overview
+### コンポーネント固有の変更
+
+対象リポジトリで、そのリポジトリのコントリビューションガイドラインに従って作業してください。
+
+## アーキテクチャ概要
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -222,12 +214,12 @@ Supporting Infrastructure:
 └── thesis-student-registry → (Student repository registry data; managed by registry-manager, read by thesis-monitor)
 ```
 
-## Support
+## サポート
 
-- **Component Issues**: Create issues in the relevant repository
-- **Ecosystem Issues**: Create issues in the most relevant component repository
-- **Documentation**: Refer to ECOSYSTEM.md for detailed information
+- **コンポーネントの問題**: 該当リポジトリに Issue を作成してください
+- **エコシステムの問題**: 最も関係の深いコンポーネントリポジトリに Issue を作成してください
+- **ドキュメント**: 詳細は ECOSYSTEM.md を参照してください
 
 ---
 
-*For detailed architecture information, see [ECOSYSTEM.md](ECOSYSTEM.md)*
+*アーキテクチャの詳細は [ECOSYSTEM.md](ECOSYSTEM.md) を参照*

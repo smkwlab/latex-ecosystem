@@ -67,6 +67,7 @@ This directory contains multiple **independent Git repositories**:
 - **sotsuron-report-template/**: Thesis report template for practice
 - **ise-report-template/**: ISE report template for PR review learning
 - **latex-template/**: General-purpose LaTeX template
+- **poster-template/**: Academic poster template (A0 size)
 
 ### Management & Monitoring
 - **ecosystem-manager/**: Cross-repository status tool for the ecosystem workspace (Elixir escript, separate repo)
@@ -77,9 +78,9 @@ This directory contains multiple **independent Git repositories**:
 - **latex-ecosystem/**: This management repository for ecosystem coordination
 
 ### GitHub Actions
-- **ai-reviewer/**: Automated PR review action (bug-fixed fork)
-- **ai-academic-paper-reviewer/**: Academic paper review action
+- **ai-academic-paper-reviewer/**: AI review action (ACADEMIC/CODE modes); the single AI reviewer for the ecosystem
 - **latex-release-action/**: PDF generation and release automation
+- **ai-reviewer/** (legacy): standalone code-review action, superseded by ai-academic-paper-reviewer (CODE mode); no longer used, kept for reference only
 
 ## Important Conventions
 
@@ -130,7 +131,7 @@ Use the **`/propagate` skill** ([.claude/skills/propagate/SKILL.md](.claude/skil
 
 ## Development Notes
 
-- **ai-reviewer**: Fork maintained here due to upstream bugs
-- **ai-academic-paper-reviewer**: Developed based on `ai-reviewer`.
+- **ai-academic-paper-reviewer**: Developed based on `ai-reviewer`; now the single AI reviewer (ACADEMIC/CODE modes)
+- **ai-reviewer** (legacy): superseded by ai-academic-paper-reviewer, no longer used by migrated workflows; kept for reference only
 - **thesis-monitor**: Elixir-based monitoring tool with CSV integration (own repository: smkwlab/thesis-monitor)
 - **Cross-repository Coordination**: All repositories work together as unified system

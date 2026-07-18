@@ -1,37 +1,37 @@
-# LaTeX Thesis Environment Ecosystem
+# LaTeX 論文執筆環境エコシステム
 
-This document describes the architecture and management strategy for the thesis-environment ecosystem at Shimokawa Lab, Faculty of Science and Engineering, Kyushu Sangyo University.
+本ドキュメントは、九州産業大学 理工学部 下川研究室の論文執筆環境エコシステムのアーキテクチャと管理方針を記述する。
 
-## Repository Overview
+## リポジトリ概要
 
-### Core Infrastructure
-- **texlive-ja-textlint**: Docker images for Japanese LaTeX compilation with textlint
-- **latex-environment**: General LaTeX development environment template with devcontainer
-- **latex-release-action**: GitHub Action for automated LaTeX compilation and release creation
+### コアインフラ
+- **texlive-ja-textlint**: 日本語 LaTeX コンパイルと textlint のための Docker イメージ
+- **latex-environment**: devcontainer を備えた汎用 LaTeX 開発環境テンプレート
+- **latex-release-action**: LaTeX の自動コンパイルとリリース作成のための GitHub Action
 
-### Templates & Tools
-- **sotsuron-template**: Unified thesis template (undergraduate 卒業論文 + graduate 修士論文)
-- **ise-report-template**: Information Science Exercise report template with HTML/textlint quality management
-- **wr-template**: Weekly report template
-- **latex-template**: Basic LaTeX template
-- **sotsuron-report-template**: Report template for thesis work
-- **poster-template**: Academic poster template (A0 size, conference presentations)
+### テンプレートとツール
+- **sotsuron-template**: 統合論文テンプレート(学部の卒業論文 + 大学院の修士論文)
+- **ise-report-template**: HTML/textlint による品質管理を備えた情報科学演習レポートテンプレート
+- **wr-template**: 週間報告テンプレート
+- **latex-template**: 基本 LaTeX テンプレート
+- **sotsuron-report-template**: 論文執筆練習用レポートテンプレート
+- **poster-template**: 学会発表用ポスターテンプレート(A0 サイズ)
 
-### Management & Automation
-- **student-repo-management**: Administrative tools and documentation for thesis supervision
-- **thesis-student-registry**: Student repository registry data (private, data-only)
-- **registry-manager**: Registry data management tool (Elixir escript)
-- **thesis-monitor**: Student repository monitoring tool (Elixir escript)
-- **ecosystem-manager**: Cross-repository status tool for the ecosystem workspace (Elixir escript)
-- **ai-academic-paper-reviewer**: GitHub Action for automated review via the org-standard AI review workflow; supports both `ACADEMIC` (paper) and `CODE` review modes, so it is the single AI reviewer for the ecosystem
-- **ai-reviewer** (legacy): standalone code-review Action hosted at `toshi0806/ai-reviewer` (a fork of `Nasubikun/ai-reviewer`). Superseded by `ai-academic-paper-reviewer` (`CODE` mode) and no longer used by the migrated workflows; kept for reference only
-- **aldc**: Command-line tool for adding LaTeX devcontainer to repositories
+### 管理と自動化
+- **student-repo-management**: 論文指導のための管理ツールとドキュメント
+- **thesis-student-registry**: 学生リポジトリのレジストリデータ(private、データ専用)
+- **registry-manager**: レジストリデータ管理ツール(Elixir escript)
+- **thesis-monitor**: 学生リポジトリ監視ツール(Elixir escript)
+- **ecosystem-manager**: エコシステムワークスペースの横断ステータスツール(Elixir escript)
+- **ai-academic-paper-reviewer**: org 標準の AI レビューワークフローで使う自動レビュー GitHub Action。`ACADEMIC`(論文)と `CODE`(コード)の両レビューモードを持ち、エコシステム唯一の AI レビューアである
+- **ai-reviewer**(legacy): `toshi0806/ai-reviewer` にある単機能コードレビュー Action(`Nasubikun/ai-reviewer` のフォーク)。`ai-academic-paper-reviewer`(`CODE` モード)に置き換えられ、移行後のワークフローでは未使用。参照用にのみ残している
+- **aldc**: リポジトリに LaTeX devcontainer を追加するコマンドラインツール
 
-> **Out of ecosystem scope**: Other repositories that may appear alongside these in a local
-> workspace (e.g. `split-sentences`, `ise-report`) are not part of the thesis-environment
-> ecosystem and are not managed here.
+> **エコシステム対象外**: ローカルワークスペースにこれらと並んで存在しうる他のリポジトリ
+> (`split-sentences`、`ise-report` など)は論文執筆環境エコシステムの一部ではなく、
+> ここでは管理しない。
 
-## Dependency Matrix
+## 依存関係マトリクス
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -60,326 +60,327 @@ Supporting Infrastructure:
 └── ecosystem-manager → (reads status of all ecosystem repos)
 ```
 
-## Version Compatibility
+## バージョン互換性
 
-| Component | Current Version | Compatible With | Update Frequency |
+| コンポーネント | 現行バージョン | 互換対象 | 更新頻度 |
 |-----------|----------------|-----------------|------------------|
-| texlive-ja-textlint | 2026a | TeXLive 2026 | Annual (TeXLive release) |
-| latex-environment | release branch | texlive-ja-textlint:2026a | Auto (on merge to main) |
-| sotsuron-template | Latest | Auto-updated via aldc | No manual updates needed |
-| ise-report-template | Latest | Auto-updated via aldc | No manual updates needed |
-| latex-template | Latest | Auto-updated via aldc | No manual updates needed |
-| wr-template | Latest | Auto-updated via aldc | No manual updates needed |
-| sotsuron-report-template | Latest | Auto-updated via aldc | No manual updates needed |
-| poster-template | Latest | Auto-updated via aldc | No manual updates needed |
-| latex-release-action | v3.3.0 | All templates | Per feature |
-| aldc | Latest | latex-environment:release | No updates needed |
-| ecosystem-manager | Latest | Elixir ~> 1.17 (OTP 27+) | Per feature |
+| texlive-ja-textlint | 2026a | TeXLive 2026 | 年次(TeXLive リリース) |
+| latex-environment | release ブランチ | texlive-ja-textlint:2026a | 自動(main へのマージ時) |
+| sotsuron-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
+| ise-report-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
+| latex-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
+| wr-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
+| sotsuron-report-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
+| poster-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
+| latex-release-action | v3.3.0 | 全テンプレート | 機能ごと |
+| aldc | 最新 | latex-environment:release | 更新不要 |
+| ecosystem-manager | 最新 | Elixir ~> 1.17 (OTP 27+) | 機能ごと |
 
-## Automated Update Chain
+## 自動更新チェーン
 
 ```
-1. texlive-ja-textlint update (manual tag creation)
+1. texlive-ja-textlint の更新（手動でタグ作成）
    ↓
-2. latex-environment auto-detects and creates PR  
-   ↓  
-3. Manual PR review and merge to main branch
+2. latex-environment が自動検出して PR を作成
    ↓
-4. latex-environment release branch updated automatically
-   (update-release-branch workflow on merge to main)
+3. PR を手動レビューして main へマージ
    ↓
-5. aldc automatically uses updated release branch
+4. latex-environment の release ブランチが自動更新
+   （main へのマージ時に update-release-branch workflow が実行）
    ↓
-6. New student repositories automatically get latest environment
+5. aldc は更新された release ブランチを自動的に利用
    ↓
-7. Templates require no manual updates (aldc integration)
+6. 新規の学生リポジトリには自動的に最新環境が入る
+   ↓
+7. テンプレート側の手動更新は不要（aldc 連携）
 ```
 
-## Management Principles
+## 管理原則
 
-### 1. **Loose Coupling**
-- Each repository maintains independence
-- Clear interfaces between components
-- Minimal hard dependencies
+### 1. **疎結合 (Loose Coupling)**
+- 各リポジトリは独立性を保つ
+- コンポーネント間のインターフェースを明確にする
+- ハードな依存関係は最小限にする
 
-### 2. **Progressive Enhancement**  
-- Core functionality works without optional components
-- Additional features layer on top cleanly
-- Graceful degradation when dependencies unavailable
+### 2. **漸進的拡張 (Progressive Enhancement)**
+- コア機能はオプションのコンポーネントなしでも動作する
+- 追加機能はその上にきれいに重なる
+- 依存先が使えないときは段階的に機能を縮退する
 
-### 3. **Student-First Design**
-- Simple setup process (one-liner with Docker)
-- Self-service repository creation
-- Automatic environment configuration
+### 3. **学生第一の設計**
+- シンプルなセットアップ(Docker とワンライナー)
+- セルフサービスでのリポジトリ作成
+- 環境の自動構成
 
-### 4. **Faculty Workflow Integration**
-- Review system built into GitHub
-- Automated suggestion workflows
-- Accepted suggestions propagate automatically to later draft branches
-- Minimal manual intervention required
+### 4. **教員ワークフローとの統合**
+- GitHub に組み込まれたレビューシステム
+- 自動化された suggestion ワークフロー
+- 受理された suggestion は後続 draft ブランチへ自動伝播する
+- 手作業の介入は最小限にする
 
-### 5. **Organization-Scoped Deployment**
+### 5. **org 単位のデプロイメント**
 
-The ecosystem operates **per GitHub organization**: one organization is one
-deployment unit, holding its own registry data repository, student
-repositories, and automation. The tools are distributed as code; the
-deployment identity lives in the organization, never in the code.
+エコシステムは **GitHub organization 単位**で運用する。1 つの org が 1 つの
+デプロイメント単位であり、レジストリデータリポジトリ・学生リポジトリ・
+自動化を自ら保持する。ツールはコードとして配布され、デプロイメントの
+アイデンティティはコードではなく org に宿る。
 
-- **Location by convention**: the registry data repository is
-  `<org>/thesis-student-registry`. The organization is always derived from
-  the runtime context — `github.repository_owner` in GitHub Actions,
-  `ORGANIZATION` in create-repo scripts, `github_org` in tool configs.
-  Code must not contain a literal organization name as the effective default —
-  that is, as a value the tools actually fall back to at runtime. Literals in
-  test fixtures, documentation samples, and a clearly-marked local-only
-  fallback (where no runtime context exists) are acceptable.
-- **Deviation by configuration**: deployments that depart from the
-  convention override it per deployment — the org-level Actions variable
-  `REGISTRY_REPO` for automation, and per-tool overrides
-  (`--registry-repo` flag / environment variable / local config) for CLIs.
-  Setting the variable to an empty string disables the override (falls back
-  to the convention).
-- **Fork-clean guarantee**: cloning or forking the tool repositories into
-  another organization must work **without editing distributed code**.
-  Committing a deployment's identity into a tool repository is therefore
-  not allowed (it would force forks to diverge).
-- Local tool configs (`~/.config/registry-manager/config.yml`,
-  `~/.config/thesis-monitor/config.yml`) are a local record of this decision
-  plus machine-local details; the org context remains the source of truth.
-  See "Tool Configuration Conventions" below for the shared vocabulary.
+- **規約による所在 (Location by convention)**: レジストリデータリポジトリは
+  `<org>/thesis-student-registry` である。org は常に実行時コンテキストから
+  導出する — GitHub Actions では `github.repository_owner`、create-repo
+  スクリプトでは `ORGANIZATION`、ツール設定では `github_org`。
+  コードに実効デフォルトとしての org 名リテラル — すなわち実行時に実際に
+  フォールバック先となる値 — を含めてはならない。テストフィクスチャ、
+  ドキュメントのサンプル、および(実行時コンテキストが存在しない場合の)
+  明示されたローカル専用フォールバックのリテラルは許容する。
+- **設定による逸脱 (Deviation by configuration)**: 規約から外れる
+  デプロイメントは、デプロイメントごとに上書きする — 自動化には org レベルの
+  Actions 変数 `REGISTRY_REPO`、CLI にはツールごとの上書き
+  (`--registry-repo` フラグ / 環境変数 / ローカル設定)。
+  変数を空文字列に設定すると上書きは無効になる(規約にフォールバックする)。
+- **フォーククリーン保証 (Fork-clean guarantee)**: ツールリポジトリを別 org に
+  clone またはフォークしたとき、**配布コードを編集せずに**動作しなければ
+  ならない。したがって、デプロイメントのアイデンティティをツールリポジトリに
+  コミットすることは許されない(フォークの分岐を強いるため)。
+- ローカルのツール設定(`~/.config/registry-manager/config.yml`、
+  `~/.config/thesis-monitor/config.yml`)は、この決定のローカルな記録と
+  マシン固有の詳細である。org コンテキストが真実の源であることは変わらない。
+  共有語彙は後述の「ツール設定規約」を参照。
 
-**Deployment identity vs. shared infrastructure.** The org-scoping rule above
-governs *deployment identity* — registry data, student repositories, rosters,
-notification targets. A second, distinct category is *shared infrastructure*:
-the reusable GitHub Actions workflows (`smkwlab/.github`), composite actions
-(`smkwlab/latex-release-action`, `smkwlab/ai-academic-paper-reviewer`), and the
-DevContainer image (`ghcr.io/smkwlab/texlive-ja-textlint`) that every
-deployment consumes. These are **published as public shared services** and
-referenced literally, because a GitHub Actions `uses:`/`container:` reference
-cannot contain an expression — `${{ github.repository_owner }}` is not
-resolvable there, so a workflow cannot dynamically point at "my own org's"
-copy. The distinction is deliberate: deployment identity must never be a code
-literal (§ above), but a *literal reference to shared infrastructure* is not
-a deployment identity — it is the address of a shared service, and org-specific
-values are injected into it through Actions secrets and variables, never baked
-into the shared workflow. An org that wants to sever this dependency may fork
-the infrastructure and rewrite the references, but the default and recommended
-posture is shared use. See
-[docs/MULTI-ORG-DEPLOYMENT.md](docs/MULTI-ORG-DEPLOYMENT.md) for the concrete
-reference strategy.
+**デプロイメントのアイデンティティと共有インフラの区別。** 上記の org スコープの
+規則が対象とするのは*デプロイメントのアイデンティティ* — レジストリデータ、
+学生リポジトリ、名簿、通知先 — である。これとは別の第二のカテゴリが
+*共有インフラ*である: すべてのデプロイメントが利用する再利用可能な GitHub
+Actions ワークフロー(`smkwlab/.github`)、composite action
+(`smkwlab/latex-release-action`、`smkwlab/ai-academic-paper-reviewer`)、
+DevContainer イメージ(`ghcr.io/smkwlab/texlive-ja-textlint`)。これらは
+**public な共有サービスとして公開**され、リテラルで参照する。GitHub Actions の
+`uses:`/`container:` 参照には式を書けない — `${{ github.repository_owner }}` は
+そこでは解決されないため、ワークフローが「自 org の」コピーを動的に指すことは
+できない。この区別は意図的である: デプロイメントのアイデンティティをコード
+リテラルにしてはならない(前節)が、*共有インフラへのリテラル参照*は
+デプロイメントのアイデンティティではない — それは共有サービスのアドレスで
+あり、org 固有の値は Actions の secrets と variables を通じて注入され、共有
+ワークフローに焼き込まれることはない。この依存を断ちたい org はインフラを
+フォークして参照を書き換えてもよいが、既定かつ推奨の姿勢は共有利用である。
+具体的な参照戦略は [docs/MULTI-ORG-DEPLOYMENT.md](docs/MULTI-ORG-DEPLOYMENT.md)
+を参照。
 
-## Template Specialization
+## テンプレートの特化
 
-### Document Format Focus
-- **sotsuron-template**: LaTeX-based academic thesis with advanced typesetting
-- **ise-report-template**: HTML-based reports with web accessibility and quality automation
-- **wr-template**: Weekly progress reports with structured formatting
-- **latex-template**: Minimal LaTeX setup for general academic documents
-- **poster-template**: A0-sized academic posters using tikzposter with LuaLaTeX
+### 文書フォーマットの焦点
+- **sotsuron-template**: 高度な組版を備えた LaTeX ベースの学術論文
+- **ise-report-template**: Web アクセシビリティと品質自動化を備えた HTML ベースのレポート
+- **wr-template**: 構造化された週間進捗報告
+- **latex-template**: 汎用学術文書のための最小構成 LaTeX
+- **poster-template**: tikzposter と LuaLaTeX による A0 サイズの学術ポスター
 
-### Quality Management Approaches
-- **ise-report-template**: Comprehensive quality pipeline (HTML5 validation, accessibility checks, textlint for Japanese)
-- **sotsuron-template**: Academic writing standards with citation management
-- **wr-template**: Structured progress tracking with consistent formatting
-- **latex-template**: Basic LaTeX quality assurance
-- **poster-template**: Automated PDF generation with visual design validation
+### 品質管理のアプローチ
+- **ise-report-template**: 包括的な品質パイプライン(HTML5 検証、アクセシビリティチェック、日本語 textlint)
+- **sotsuron-template**: 引用管理を含む学術的文章の標準
+- **wr-template**: 一貫したフォーマットによる構造化された進捗管理
+- **latex-template**: 基本的な LaTeX 品質保証
+- **poster-template**: 視覚デザイン検証付きの自動 PDF 生成
 
-### Target Audiences
-- **ise-report-template**: Information Science Exercise students (HTML proficiency development)
-- **sotsuron-template**: Undergraduate/graduate thesis students (research document preparation)
-- **wr-template**: Research students and faculty (progress tracking)
-- **latex-template**: General academic users (basic LaTeX needs)
-- **poster-template**: Researchers presenting at conferences and symposiums
+### 想定読者
+- **ise-report-template**: 情報科学演習の学生(HTML 習熟度の育成)
+- **sotsuron-template**: 学部・大学院の論文執筆学生(研究文書の作成)
+- **wr-template**: 研究室の学生と教員(進捗管理)
+- **latex-template**: 一般の学術ユーザ(基本的な LaTeX 用途)
+- **poster-template**: 学会・シンポジウムで発表する研究者
 
-## Cross-Repository Standards
+## リポジトリ横断の標準
 
-### Terminology: Student Repository Registry
+### 用語: 学生リポジトリレジストリ
 
-The ecosystem uses **"registry"** consistently for the student-repository ledger:
+エコシステムでは、学生リポジトリの台帳を一貫して **「registry(レジストリ)」** と呼ぶ:
 
-- **Registry**: the ledger of student repositories, materialized as `data/registry.json`
-  (renamed from `repositories.json` in 2026-07; the old name is no longer read —
-  all backward-compatibility fallbacks were dropped pre-publication, 2026-07)
-  in the registry data repository. `thesis-monitor` reads it via the GitHub
-  contents API (no local checkout). Use "registry (data)" in docs — avoid ad-hoc synonyms
-  such as "student data", "student repository list", or "リポジトリ一覧" for the same thing.
-- **Registry data repository**: `thesis-student-registry` (private, data-only).
-  Test counterpart: `thesis-student-registry-test` (naming rule: `<production-name>-test`).
-- **Tool naming**: prefix = the object the tool operates on, suffix = its role
-  (read = *monitor*, write = *manager*). Hence `registry-manager` writes the registry,
-  while `thesis-monitor` reads the registry as an index to monitor student thesis
-  repositories. The prefix asymmetry is intentional — the two tools operate on
-  different objects.
-- **Data fields**: registry-managed timestamps carry the `registry_` prefix
-  (`registry_created_at`, `registry_updated_at`); bare `created_at`/`updated_at` are
-  legacy fields (see registry-manager data-structure spec for migration status).
-- **`repository_type` vocabulary**: `sotsuron` (undergraduate thesis), `master`
-  (master's thesis), `wr`, `ise` (the stored value; `ise-report` is accepted as an alias), `latex` (latex-template-derived,
-  branch-tracked — conference papers etc.), `other`. The word `thesis` is **not**
-  a repository_type: it lives in other layers only — the `DOC_TYPE=thesis`
-  document flow, the "all theses" filter (`--type thesis` = sotsuron ∪ master),
-  and historical repo-name suffixes (real master theses are named `*-master`).
-  Decision record: smkwlab/student-repo-management#471.
-- **Disambiguation**: "registry" in container/image contexts (texlive-ja-textlint,
-  devcontainer docs) means **GitHub Container Registry (ghcr.io)** and is unrelated;
-  always spell it out fully there.
+- **Registry**: 学生リポジトリの台帳。レジストリデータリポジトリ内の
+  `data/registry.json` として実体化される(2026-07 に `repositories.json` から
+  改名。旧名はもう読まれない — 後方互換フォールバックは公開前にすべて廃止、
+  2026-07)。`thesis-monitor` は GitHub contents API 経由で読む(ローカル
+  チェックアウト不要)。ドキュメントでは「registry (data)」と表記し、
+  「student data」「学生リポジトリ一覧」「リポジトリ一覧」などの場当たり的な
+  同義語を同じ対象に使わない。
+- **レジストリデータリポジトリ**: `thesis-student-registry`(private、データ専用)。
+  テスト用の対応リポジトリ: `thesis-student-registry-test`(命名規則:
+  `<production-name>-test`)。
+- **ツール命名**: prefix = ツールが操作する対象、suffix = 役割
+  (読み = *monitor*、書き = *manager*)。よって `registry-manager` は
+  レジストリを書き、`thesis-monitor` はレジストリを索引として読み、学生の
+  論文リポジトリを監視する。prefix の非対称は意図的である — 2 つのツールは
+  異なる対象を操作している。
+- **データフィールド**: レジストリが管理するタイムスタンプは `registry_`
+  prefix を持つ(`registry_created_at`、`registry_updated_at`)。素の
+  `created_at`/`updated_at` はレガシーフィールドである(移行状況は
+  registry-manager のデータ構造仕様を参照)。
+- **`repository_type` の語彙**: `sotsuron`(卒業論文)、`master`(修士論文)、
+  `wr`、`ise`(格納値。`ise-report` はエイリアスとして受理)、`latex`
+  (latex-template 由来、ブランチ管理 — 学会論文など)、`other`。
+  `thesis` という語は repository_type では**ない**: それは別のレイヤに
+  のみ存在する — `DOC_TYPE=thesis` の文書フロー、「全論文」フィルタ
+  (`--type thesis` = sotsuron ∪ master)、および歴史的なリポジトリ名
+  suffix(実際の修士論文は `*-master` と命名される)。
+  決定記録: smkwlab/student-repo-management#471。
+- **曖昧さ回避**: コンテナ / イメージの文脈(texlive-ja-textlint、devcontainer
+  ドキュメント)での「registry」は **GitHub Container Registry (ghcr.io)** を
+  意味し、無関係である。そこでは常に完全な名称で書くこと。
 
-### Tool Configuration Conventions
+### ツール設定規約
 
-The two registry tools share one configuration scheme (decided 2026-07;
-smkwlab/thesis-monitor#14/#16/#18/#20 and registry-manager#16/#18/#21):
+2 つのレジストリツールは 1 つの設定スキームを共有する(2026-07 決定;
+smkwlab/thesis-monitor#14/#16/#18/#20、registry-manager#16/#18/#21):
 
-- **Shared vocabulary** — the same key means the same thing in both tools:
-  - `github_org`: the deployment organization (no default — derived from the
-    `registry_repo` owner when unset, otherwise an explicit error;
+- **共有語彙** — 同じキーは両ツールで同じ意味を持つ:
+  - `github_org`: デプロイメントの org(デフォルトなし — 未設定時は
+    `registry_repo` の owner から導出し、それもなければ明示的なエラー;
     thesis-monitor#28 / registry-manager#45)
-  - `registry_repo`: the registry data repository (`owner/repo`)
-  - `csv_path`: the student roster CSV for name resolution (optional)
-- **File format & location**: annotated YAML at `~/.config/<tool-name>/config.yml`
-  (`registry-manager` / `thesis-monitor`). Comments are part of the design —
-  generated configs show convention-matching defaults as commented lines so
-  the effective value keeps coming from runtime derivation, never from a
-  stored copy that can drift.
-- **Convention over configuration**: values derivable at runtime are not
-  stored. For the **reader** (`thesis-monitor`), `registry_repo` defaults to
-  `<github_org>/thesis-student-registry`; in both tools `csv_path` defaults to
-  `~/.config/<github_org>/students.csv` when that file exists (when absent,
-  name resolution is simply skipped — no warning, names show as N/A).
-  The roster CSV itself stays **local-only** (it contains personal
-  information — never commit it to any repository or to the registry).
-- **Read = org only, write = explicit**: `thesis-monitor` (reader) needs only
-  the organization (`thesis-monitor init --org <org>` generates the config;
-  `registry_repo` then derives by convention) — beyond that, `gh auth login`
-  is the only prerequisite. `registry-manager` (writer) requires an explicit
-  `registry_repo`: a write target is never guessed by convention. This
-  asymmetry is a safety feature. Neither tool falls back to a default
-  organization: missing org context is an explicit error
-  (thesis-monitor#28 / registry-manager#45).
-- **No backward-compatibility fallbacks**: old keys (`data_dir`, `data_repo`,
-  `student_csv`, `registry_dir`), old file names (`repositories.json`), and old
-  config locations (`config.json`, `~/.thesis-monitor.yml`) are not read.
-  Migration is a rename/rewrite, and unmigrated machines fail loudly with an
-  actionable message (pre-publication decision, 2026-07).
+  - `registry_repo`: レジストリデータリポジトリ(`owner/repo`)
+  - `csv_path`: 氏名解決用の学生名簿 CSV(オプション)
+- **ファイル形式と場所**: `~/.config/<tool-name>/config.yml` の注釈付き YAML
+  (`registry-manager` / `thesis-monitor`)。コメントは設計の一部である —
+  生成される設定は規約どおりのデフォルトをコメント行として示し、実効値は
+  常に実行時導出から得る。ドリフトしうる保存コピーからは決して得ない。
+- **設定より規約 (Convention over configuration)**: 実行時に導出できる値は
+  保存しない。**リーダー**(`thesis-monitor`)の `registry_repo` は
+  `<github_org>/thesis-student-registry` がデフォルト。両ツールで `csv_path` は
+  `~/.config/<github_org>/students.csv` が存在すればそれがデフォルト
+  (存在しなければ氏名解決を単にスキップする — 警告なし、氏名は N/A 表示)。
+  名簿 CSV 自体は**ローカル専用**である(個人情報を含む — いかなる
+  リポジトリにもレジストリにもコミットしない)。
+- **読みは org のみ、書きは明示**: `thesis-monitor`(リーダー)に必要なのは
+  org だけである(`thesis-monitor init --org <org>` で設定を生成;
+  `registry_repo` は規約から導出される) — それ以外の前提は `gh auth login`
+  のみ。`registry-manager`(ライター)は明示的な `registry_repo` を要求する:
+  書き込み先を規約から推測することは決してない。この非対称は安全のための
+  設計である。どちらのツールもデフォルト org にフォールバックしない:
+  org コンテキストの欠如は明示的なエラーである
+  (thesis-monitor#28 / registry-manager#45)。
+- **後方互換フォールバックなし**: 旧キー(`data_dir`、`data_repo`、
+  `student_csv`、`registry_dir`)、旧ファイル名(`repositories.json`)、旧設定
+  場所(`config.json`、`~/.thesis-monitor.yml`)は読まない。移行は改名 /
+  書き換えであり、未移行マシンは実行可能な対処を示すメッセージとともに
+  明示的に失敗する(公開前の決定、2026-07)。
 
-### File Naming Conventions
-- **CLAUDE.md**: Project-specific Claude Code instructions
-- **README.md**: User-facing documentation  
-- **CHANGELOG.md**: Release history (where applicable)
-- **.devcontainer/**: VS Code development environment
+### ファイル命名規約
+- **CLAUDE.md**: プロジェクト固有の Claude Code 向け指示
+- **README.md**: ユーザ向けドキュメント
+- **CHANGELOG.md**: リリース履歴(該当する場合)
+- **.devcontainer/**: VS Code 開発環境
 
-### Branch Strategy
-- **main**: Development and source of truth
-- **release**: Clean template for user consumption (latex-environment only)
-- **feature branches**: Development work, PR-based workflow
+### ブランチ戦略
+- **main**: 開発と真実の源
+- **release**: 利用者向けのクリーンなテンプレート(latex-environment のみ)
+- **feature ブランチ**: 開発作業、PR ベースのワークフロー
 
-### Tagging Strategy  
-- **Semantic versioning**: v{MAJOR}.{MINOR}.{PATCH}
-- **Calendar versioning**: For texlive-ja-textlint (e.g., 2025b)
-- **Coordinated releases**: Major ecosystem updates
+### タグ戦略
+- **セマンティックバージョニング**: v{MAJOR}.{MINOR}.{PATCH}
+- **カレンダーバージョニング**: texlive-ja-textlint 用(例: 2025b)
+- **協調リリース**: エコシステムの大規模更新時
 
-## Development Workflow
+## 開発ワークフロー
 
-### For Infrastructure Changes
-1. Update base component (texlive-ja-textlint)
-2. Test in latex-environment
-3. Propagate to templates
-4. Update documentation
+### インフラ変更の場合
+1. ベースコンポーネント(texlive-ja-textlint)を更新する
+2. latex-environment でテストする
+3. テンプレートへ伝播させる
+4. ドキュメントを更新する
 
-### For Template Changes
-1. Develop in template repository
-2. Test with current environment
-3. Ensure compatibility across thesis types
-4. Update related documentation
+### テンプレート変更の場合
+1. テンプレートリポジトリで開発する
+2. 現行環境でテストする
+3. 論文種別をまたぐ互換性を確認する
+4. 関連ドキュメントを更新する
 
-### For Tool Development  
-1. Develop in respective tool repository
-2. Test against multiple templates
-3. Update integration documentation
-4. Consider automation opportunities
+### ツール開発の場合
+1. 各ツールリポジトリで開発する
+2. 複数のテンプレートに対してテストする
+3. 連携ドキュメントを更新する
+4. 自動化の機会を検討する
 
-## Quality Assurance
+## 品質保証
 
-### Automated Testing
-- **texlive-ja-textlint**: Multi-architecture builds, LaTeX compilation tests
-- **latex-environment**: DevContainer validation, extension loading
-- **Templates**: Sample document compilation, textlint validation
-  - **ise-report-template**: HTML5/CSS quality validation, accessibility checks, Japanese academic writing standards
-- **Actions**: Integration tests with sample repositories
-- **Elixir tools** (ecosystem-manager, registry-manager, thesis-monitor): org-standard Elixir CI (mix test, Credo, Dialyzer) via `smkwlab/.github`
+### 自動テスト
+- **texlive-ja-textlint**: マルチアーキテクチャビルド、LaTeX コンパイルテスト
+- **latex-environment**: DevContainer 検証、拡張機能ロード
+- **テンプレート**: サンプル文書のコンパイル、textlint 検証
+  - **ise-report-template**: HTML5/CSS 品質検証、アクセシビリティチェック、日本語学術文章の標準
+- **Actions**: サンプルリポジトリによる統合テスト
+- **Elixir ツール**(ecosystem-manager、registry-manager、thesis-monitor): `smkwlab/.github` 経由の org 標準 Elixir CI(mix test、Credo、Dialyzer)
 
-### Manual Validation
-- Student workflow end-to-end testing
-- Faculty review process validation  
-- Cross-platform compatibility (Windows/macOS/Linux)
-- Performance regression testing
+### 手動検証
+- 学生ワークフローのエンドツーエンドテスト
+- 教員レビュープロセスの検証
+- クロスプラットフォーム互換性(Windows/macOS/Linux)
+- 性能リグレッションテスト
 
-## Emergency Procedures
+## 緊急時の手順
 
-### Rollback Strategy
-1. **Immediate**: Revert problematic component to previous version
-2. **Communication**: Update status in relevant repositories
-3. **Investigation**: Root cause analysis in issue tracker
-4. **Prevention**: Update automated tests to catch similar issues
+### ロールバック戦略
+1. **即時**: 問題のあるコンポーネントを前バージョンに戻す
+2. **周知**: 関係リポジトリでステータスを更新する
+3. **調査**: Issue トラッカーで根本原因を分析する
+4. **予防**: 同種の問題を検出できるよう自動テストを更新する
 
-### Hotfix Process
-1. Create hotfix branch from last known good state
-2. Apply minimal fix with thorough testing
-3. Fast-track review process
-4. Deploy with monitoring
+### ホットフィックスプロセス
+1. 最後の正常な状態から hotfix ブランチを作成する
+2. 十分なテストとともに最小限の修正を適用する
+3. レビュープロセスを迅速化する
+4. 監視しながらデプロイする
 
-## Monitoring & Metrics
+## 監視とメトリクス
 
-### Health Indicators
-- Student repository creation success rate
-- Environment setup failure rate  
-- Compilation success rate across templates
-- Review system adoption metrics
+### 健全性指標
+- 学生リポジトリ作成の成功率
+- 環境セットアップの失敗率
+- テンプレート全体でのコンパイル成功率
+- レビューシステムの利用状況
 
-### Performance Metrics
-- Container build times
-- Repository setup duration
-- Document compilation speed
-- Action execution times
+### 性能メトリクス
+- コンテナビルド時間
+- リポジトリセットアップ所要時間
+- 文書コンパイル速度
+- Action 実行時間
 
-## Future Roadmap
+## 今後のロードマップ
 
-### Short Term (3 months)
-- [ ] Implement cross-repository testing
-- [x] Enhance dependency update automation (check-texlive-updates workflow + Renovate across repos)
-- [ ] Improve error reporting and diagnostics
+### 短期(3 か月)
+- [ ] リポジトリ横断テストの実装
+- [x] 依存関係更新の自動化強化(check-texlive-updates ワークフロー + 各リポジトリへの Renovate 導入)
+- [ ] エラー報告と診断の改善
 
-### Medium Term (6 months)  
-- [ ] Multi-language template support
-- [ ] Enhanced AI review capabilities
-- [ ] Student progress analytics
+### 中期(6 か月)
+- [ ] 多言語テンプレート対応
+- [ ] AI レビュー機能の強化
+- [ ] 学生の進捗分析
 
-### Long Term (12 months)
-- [ ] Cloud-based compilation service
-- [ ] Real-time collaboration features
-- [ ] Advanced template customization
+### 長期(12 か月)
+- [ ] クラウドベースのコンパイルサービス
+- [ ] リアルタイム共同編集機能
+- [ ] 高度なテンプレートカスタマイズ
 
-## Contributing Guidelines
+## コントリビューションガイドライン
 
-### Cross-Repository Changes
-1. Create issues in all affected repositories
-2. Coordinate changes through main tracking issue
-3. Test integration points thoroughly
-4. Update this document as needed
+### リポジトリ横断の変更
+1. 影響するすべてのリポジトリに Issue を作成する
+2. 中心となるトラッキング Issue で変更を調整する
+3. 連携ポイントを十分にテストする
+4. 必要に応じて本ドキュメントを更新する
 
-### Documentation Standards
-- Keep ECOSYSTEM.md updated with architectural changes
-- Maintain README.md in each repository
-- Use English for all public-facing documentation
-- Include migration guides for breaking changes
+### ドキュメント標準
+- アーキテクチャ変更時は ECOSYSTEM.md を最新に保つ
+- 各リポジトリの README.md を維持する
+- 本エコシステムのドキュメントは日本語で管理する(コード・コマンド・固有名詞は原語のまま)
+- 破壊的変更には移行ガイドを含める
 
-## Support & Contact
+## サポートと連絡先
 
-- **Primary Maintainer**: Kyushu Sangyo University LaTeX Team
-- **Issue Tracking**: Individual repository issues for component-specific problems
-- **Ecosystem Issues**: Use latex-environment repository for cross-cutting concerns
-- **Emergency Contact**: Create issue with `urgent` label in relevant repository
+- **主保守者**: Kyushu Sangyo University LaTeX Team
+- **Issue トラッキング**: コンポーネント固有の問題は各リポジトリの Issue へ
+- **エコシステムの問題**: 横断的な事項は latex-environment リポジトリを使う
+- **緊急連絡**: 該当リポジトリに `urgent` ラベル付きの Issue を作成する
 
 ---
 
-*Last Updated: 2026-07-13*  
-*Document Version: 1.3*
+*Last Updated: 2026-07-18*  
+*Document Version: 1.4(ドキュメントを日本語化)*

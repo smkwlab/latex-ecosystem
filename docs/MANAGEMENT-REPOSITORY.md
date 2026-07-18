@@ -1,76 +1,72 @@
-# Management Repository Guide
+# 管理リポジトリガイド
 
-This document describes the **latex-ecosystem management repository itself** — its
-Git boundaries, directory structure, and the principles that govern what it
-tracks.
+このドキュメントでは、**latex-ecosystem 管理リポジトリそのもの** — その Git 境界、
+ディレクトリ構造、そして何を追跡するかを定める原則 — について説明します。
 
-For the **ecosystem-wide architecture** — all component repositories, the
-dependency matrix, version compatibility, and update chains — see
-[../ECOSYSTEM.md](../ECOSYSTEM.md).
+**エコシステム全体のアーキテクチャ**（全コンポーネントリポジトリ、依存関係マトリクス、
+バージョン互換性、更新チェーン）については
+[../ECOSYSTEM.md](../ECOSYSTEM.md) を参照してください。
 
-## What this repository is
+## このリポジトリの位置づけ
 
-`latex-ecosystem` is the coordination hub for the LaTeX thesis environment. It
-does **not** contain the components themselves — each is an independent Git
-repository — but it tracks ecosystem-level coordination material (the overview
-and documentation) and provides a workspace where the component repositories,
-including the `ecosystem-manager` tool, are cloned side by side.
+`latex-ecosystem` は LaTeX 卒業論文環境の連携ハブです。コンポーネントそのものは
+**含みません** — 各コンポーネントは独立した Git リポジトリです — が、エコシステム
+レベルの連携用資材（概要・ドキュメント）を追跡し、`ecosystem-manager` ツールを
+含むコンポーネントリポジトリを横に並べて clone するためのワークスペースを提供します。
 
-## Git Repository Boundaries
+## Git リポジトリの境界
 
-### Management Repository Structure
+### 管理リポジトリの構造
 
 ```
-latex-ecosystem/                 # This management repository
-├── .git/                       # Git for management files only
-├── ECOSYSTEM.md                # Tracked - ecosystem overview
-├── README.md                   # Tracked - repository overview
-├── setup.sh                    # Tracked - ecosystem setup script
-├── CLAUDE.md                   # Tracked - management-repo instructions
-├── .claude/                    # Tracked - claude configuration
-├── docs/                       # Tracked - ecosystem documentation
-│   ├── MANAGEMENT-REPOSITORY.md   # This file
-│   ├── MANAGEMENT-WORKFLOWS.md    # Management workflow examples
-│   └── ...                        # Other guides (setup, git, multi-org, review)
+latex-ecosystem/                 # この管理リポジトリ
+├── .git/                       # 管理ファイル専用の Git
+├── ECOSYSTEM.md                # 追跡対象 - エコシステム概要
+├── README.md                   # 追跡対象 - リポジトリ概要
+├── setup.sh                    # 追跡対象 - エコシステムセットアップスクリプト
+├── CLAUDE.md                   # 追跡対象 - 管理リポジトリ向け指示
+├── .claude/                    # 追跡対象 - claude 設定
+├── docs/                       # 追跡対象 - エコシステムドキュメント
+│   ├── MANAGEMENT-REPOSITORY.md   # このファイル
+│   ├── MANAGEMENT-WORKFLOWS.md    # 管理ワークフロー例
+│   └── ...                        # その他のガイド (setup, git, multi-org, review)
 │
-├── ecosystem-manager/          # Independent repository (cloned alongside; Elixir escript coordination tool)
-│   ├── .git/                  # Separate Git repository
+├── ecosystem-manager/          # 独立したリポジトリ (横に clone; Elixir escript 連携ツール)
+│   ├── .git/                  # 別個の Git リポジトリ
 │   └── ...
 │
-├── latex-environment/          # Independent repository (cloned alongside)
-│   ├── .git/                  # Separate Git repository
-│   ├── CLAUDE.md              # Different CLAUDE.md for that repo
-│   └── docs/                  # Component-specific documentation
+├── latex-environment/          # 独立したリポジトリ (横に clone)
+│   ├── .git/                  # 別個の Git リポジトリ
+│   ├── CLAUDE.md              # そのリポジトリ用の別の CLAUDE.md
+│   └── docs/                  # コンポーネント固有のドキュメント
 │
-├── sotsuron-template/          # Independent repository (cloned alongside)
-│   ├── .git/                  # Separate Git repository
+├── sotsuron-template/          # 独立したリポジトリ (横に clone)
+│   ├── .git/                  # 別個の Git リポジトリ
 │   └── ...
 │
-└── (other independent repos...)
+└── (その他の独立したリポジトリ...)
 ```
 
-The component repositories (`latex-environment`, `sotsuron-template`, …) are
-listed and categorized in
-[../ECOSYSTEM.md](../ECOSYSTEM.md#repository-overview); this repository does not
-track their content.
+コンポーネントリポジトリ（`latex-environment`、`sotsuron-template`、…）の一覧と
+分類は [../ECOSYSTEM.md](../ECOSYSTEM.md#repository-overview) にあります。この
+リポジトリはそれらの内容を追跡しません。
 
-## Design Principles
+## 設計原則
 
-### Management Repository Principles
-- **Tracks files only**: No subdirectory content except `docs/`
-- **Coordination focus**: Cross-repository coordination and documentation
-- **Independent components**: Each subdirectory is a separate Git repository
-- **Exception for docs/**: Ecosystem-wide documentation is centrally managed here
-- **Documentation placement**: Reader-facing documentation (students, faculty,
-  operators) lives in this repository's `docs/`. A component repository's own
-  `docs/` is developer-facing only (`CLAUDE-*.md` and similar); its
-  reader-facing entry points are its top-level files (README,
-  WRITING-GUIDE.md, …)
+### 管理リポジトリの原則
+- **ファイルのみを追跡**: `docs/` を除きサブディレクトリの内容は追跡しない
+- **連携重視**: リポジトリ横断の連携とドキュメント管理に注力する
+- **独立したコンポーネント**: 各サブディレクトリは別個の Git リポジトリである
+- **docs/ の例外**: エコシステム全体のドキュメントはここで一元管理する
+- **ドキュメントの配置**: 読者向け（学生・教員・運用者）ドキュメントは本リポジトリの
+  `docs/` に集約する。各コンポーネントリポジトリの `docs/` は開発者向け
+  （`CLAUDE-*.md` 等）に限り、読者向けの入口はそのリポジトリのトップレベル
+  （README、WRITING-GUIDE.md など）に置く
 
-### Working across the component repositories
-- Each subdirectory is an independent Git repository with its own history,
-  `CLAUDE.md`, and release cycle.
-- Always confirm which repository you are in (`pwd` / `git status`) before Git
-  operations — see [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md).
-- For ecosystem-wide changes, coordinate through this repository and keep
-  [../ECOSYSTEM.md](../ECOSYSTEM.md) up to date.
+### コンポーネントリポジトリをまたぐ作業
+- 各サブディレクトリは、独自の履歴・`CLAUDE.md`・リリースサイクルを持つ独立した
+  Git リポジトリです。
+- Git 操作の前に、必ず今どのリポジトリにいるか（`pwd` / `git status`）を確認して
+  ください — [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md) を参照。
+- エコシステム全体にまたがる変更は、この管理リポジトリを通じて調整し、
+  [../ECOSYSTEM.md](../ECOSYSTEM.md) を最新に保ってください。
