@@ -1,297 +1,305 @@
-# Multi-Org Deployment Guide
+# マルチ org 展開ガイド
 
-How to deploy the LaTeX thesis ecosystem to a GitHub organization other than
-`smkwlab`.
+LaTeX 卒論エコシステムを `smkwlab` 以外の GitHub org に展開する方法を説明します。
 
-The automation core is organization-scoped, and the student-facing entry points
-are parameterized with `smkwlab` defaults, so a fork rehomes itself by setting a
-handful of knobs. This guide documents what a new organization must provision,
-the exact resources and secrets the automation consumes, and how the org ↔
-registry relationship is resolved.
+自動化の中核は org スコープになっており、学生向けのエントリポイントも `smkwlab`
+を既定値とするパラメータ化がされているため、フォークは少数のつまみを設定するだけ
+で自分自身を再ホームできます。このガイドは、新しい org が用意しなければならないもの、
+自動化が消費する正確なリソースとシークレット、そして org ↔ レジストリの関係がどう
+解決されるかを文書化します。
 
-## Architecture: how the org ↔ registry relationship is resolved
+## アーキテクチャ: org ↔ レジストリの関係はどう解決されるか
 
-The org/registry relationship is **not** stored in any central configuration.
-It is resolved per component, at three different layers:
+org とレジストリの関係は、中央の設定にはいっさい保存されていません。
+コンポーネントごとに、3 つの異なるレイヤーで解決されます。
 
-1. **GitHub Actions (automation core)** — derived dynamically from
-   `github.repository_owner`. The registry repository defaults to the
-   convention `<org>/thesis-student-registry` and can be overridden with the
-   org/repo variable `REGISTRY_REPO`
-   (`student-repo-management/.github/workflows/student-repo-management.yml`).
-   No local configuration is involved.
-2. **Local management tools** — resolved from per-tool config files
-   (`~/.config/<tool>/config.yml`) with the same convention defaults. See
-   [Local tool configuration](#local-tool-configuration).
-3. **Student-facing entry points** (`setup.sh`, `aldc`, template workflows) —
-   parameterized through environment knobs that default to `smkwlab`
-   (`DEFAULT_ORG`, `TEMPLATE_REPO`, `ALDC_URL`, …); a fork sets these to rehome
-   itself (see [create-repo fork configuration](#5-create-repo-fork-configuration)).
-   The template workflows still reference `smkwlab/.github` literally by design
-   (see [Shared infrastructure](#shared-infrastructure-reference-strategy)).
+1. **GitHub Actions（自動化の中核）** — `github.repository_owner` から動的に
+   導出されます。レジストリリポジトリは既定で
+   `<org>/thesis-student-registry` という規約に従い、org/repo 変数
+   `REGISTRY_REPO` で上書きできます
+   (`student-repo-management/.github/workflows/student-repo-management.yml`)。
+   ローカル設定はいっさい関与しません。
+2. **ローカル管理ツール** — ツールごとの設定ファイル
+   (`~/.config/<tool>/config.yml`) から解決され、同じ規約の既定値を使います。
+   [ローカルツールの設定](#local-tool-configuration)を参照。
+3. **学生向けのエントリポイント** (`setup.sh`, `aldc`, テンプレートワークフロー) —
+   `smkwlab` を既定値とする環境変数のつまみ (`DEFAULT_ORG`, `TEMPLATE_REPO`,
+   `ALDC_URL`, …) でパラメータ化されています。フォークはこれらを設定して
+   自分自身を再ホームします（[create-repo フォークの設定](#5-create-repo-fork-configuration)を参照）。
+   テンプレートワークフローは設計上、依然として `smkwlab/.github` を
+   リテラルで参照します（[共有インフラ](#shared-infrastructure-reference-strategy)を参照）。
 
-## What works out of the box
+## そのまま動くもの
 
-These components follow the *Organization-Scoped Deployment* principle
-(ECOSYSTEM.md) and need no code changes:
+以下のコンポーネントは *Organization-Scoped Deployment* 原則
+(ECOSYSTEM.md) に従っており、コード変更は不要です。
 
-- **Repository creation pipeline** (`student-repo-management`):
-  `student-repo-management.yml`, `process-pending-issues.sh`, and
-  `setup-branch-protection.sh` derive the organization from
-  `github.repository_owner` / `GITHUB_REPOSITORY` and resolve the registry as
-  `<org>/thesis-student-registry`. Cross-org requests are rejected by an
-  explicit guard.
-- **Registry auto-registration**: `data/registry.json` updates go through the
-  GitHub API using the resolved registry repository. Authentication uses a
-  GitHub App installation token minted per run — no PAT.
-- **ecosystem-manager**: fully org-agnostic. The organization is derived from
-  the `origin` remote of the workspace root; repository auto-discovery filters
-  by that owner.
+- **リポジトリ作成パイプライン** (`student-repo-management`):
+  `student-repo-management.yml`, `process-pending-issues.sh`,
+  `setup-branch-protection.sh` は org を
+  `github.repository_owner` / `GITHUB_REPOSITORY` から導出し、レジストリを
+  `<org>/thesis-student-registry` として解決します。org をまたぐリクエストは
+  明示的なガードで拒否されます。
+- **レジストリ自動登録**: `data/registry.json` の更新は、解決されたレジストリ
+  リポジトリを使って GitHub API 経由で行われます。認証には実行ごとに発行される
+  GitHub App のインストールトークンを使い、PAT は使いません。
+- **ecosystem-manager**: 完全に org 非依存です。org はワークスペースルートの
+  `origin` リモートから導出され、リポジトリの自動検出はそのオーナーで
+  フィルタリングされます。
 
-## Prerequisites in the new organization
+<a id="prerequisites-in-the-new-organization"></a>
+## 新しい org における前提条件
 
-The automation is driven by one GitHub App, one registry repository, a set of
-templates, and a small set of secrets and variables. Provision all of the
-following before onboarding students. (Verified against
-`student-repo-management.yml`, `ai-code-review.yml`, `notify-ml-on-pr.yml`, and
-`create-repo/*.sh`.)
+自動化は、1 つの GitHub App、1 つのレジストリリポジトリ、一連のテンプレート、
+そして少数のシークレットと変数で駆動されます。学生をオンボーディングする前に、
+以下のすべてを用意してください。（`student-repo-management.yml`,
+`ai-code-review.yml`, `notify-ml-on-pr.yml`, `create-repo/*.sh` に対して
+検証済み。）
 
-> **Organization plan requirement.** Thesis repositories are created **private**
-> (`create-repo/main.sh` sets `VISIBILITY="private"`) and the registration
-> workflow applies branch protection to them. Branch protection on *private*
-> repositories requires a paid GitHub plan (Team or Enterprise) — on the **Free**
-> plan the protection step fails with HTTP 403 (`Upgrade to GitHub Pro or make
-> this repository public to enable this feature`) and the registration run ends in
-> failure. Put the new org on a plan that allows branch protection on private
-> repositories before onboarding students. (Verified 2026-07-11 on a Free test
-> org: every other step — App token, registry write, issue close — succeeded; only
-> the private-repo branch-protection call was rejected.)
+> **org プランの要件。** 卒論リポジトリは **private** で作成され
+> (`create-repo/main.sh` が `VISIBILITY="private"` を設定)、登録ワークフローが
+> それらにブランチ保護を適用します。*private* リポジトリへのブランチ保護には
+> 有料の GitHub プラン（Team または Enterprise）が必要です。**Free** プランでは
+> 保護ステップが HTTP 403 (`Upgrade to GitHub Pro or make this repository public
+> to enable this feature`) で失敗し、登録実行は失敗で終わります。学生を
+> オンボーディングする前に、新しい org を private リポジトリへのブランチ保護を
+> 許可するプランに置いてください。（2026-07-11 に Free テスト org で検証済み:
+> 他のすべてのステップ — App トークン、レジストリ書き込み、issue クローズ —
+> は成功し、private リポジトリへのブランチ保護呼び出しだけが拒否されました。）
 
-### 1. Repositories
+### 1. リポジトリ
 
-| Repository | Purpose | Notes |
+| リポジトリ | 目的 | 備考 |
 |---|---|---|
-| `<org>/thesis-student-registry` (private) | Holds `data/registry.json` | Initialize with `registry-manager init --org <org>` (add `--force` if a config already exists; see [Local tool configuration](#local-tool-configuration)). A non-standard name requires the `REGISTRY_REPO` variable below. |
-| `<org>/student-repo-management` | Hosts the registration workflow and `create-repo` scripts | Fork/copy. Carries the App secrets and the fork configuration below. |
-| `<org>/sotsuron-template`, `<org>/wr-template`, `<org>/ise-report-template` | Student document templates | **Must exist in the org** — `create-repo` resolves them as `${ORGANIZATION}/<template>`. |
-| `<org>/latex-template`, `<org>/poster-template` | General LaTeX / poster templates | Default to `smkwlab/...` (shared). Only needed in the org if you point `TEMPLATE_REPO` at your own copy. |
+| `<org>/thesis-student-registry` (private) | `data/registry.json` を保持 | `registry-manager init --org <org>` で初期化する（設定が既に存在する場合は `--force` を追加。[ローカルツールの設定](#local-tool-configuration)を参照）。非標準の名前を使う場合は後述の `REGISTRY_REPO` 変数が必要。 |
+| `<org>/student-repo-management` | 登録ワークフローと `create-repo` スクリプトをホスト | フォーク/コピー。App シークレットと後述のフォーク設定を保持する。 |
+| `<org>/sotsuron-template`, `<org>/wr-template`, `<org>/ise-report-template` | 学生用ドキュメントテンプレート | **org 内に存在する必要がある** — `create-repo` はこれらを `${ORGANIZATION}/<template>` として解決する。 |
+| `<org>/latex-template`, `<org>/poster-template` | 汎用 LaTeX / ポスターテンプレート | 既定では `smkwlab/...`（共有）。`TEMPLATE_REPO` を自分のコピーに向ける場合にのみ org 内に必要。 |
 
-### 2. GitHub App (on `<org>/student-repo-management`)
+### 2. GitHub App（`<org>/student-repo-management` 上）
 
-`student-repo-management.yml` mints a per-run installation token with
-`actions/create-github-app-token` using `owner: <org>`, so a single App reaches
-this repo, the registry, and the student repositories.
+`student-repo-management.yml` は `actions/create-github-app-token` を使い
+`owner: <org>` で実行ごとのインストールトークンを発行するため、単一の App で
+このリポジトリ、レジストリ、学生リポジトリに到達できます。
 
-- **Permissions**: `contents: write` (registry commits and repo content),
-  `administration: write` (branch protection), `issues: write` (close
-  registration issues).
-- **Installation**: org-wide is simplest (must cover `student-repo-management`,
-  the registry, and the student repositories).
-- **Secrets on `student-repo-management`**: `APP_ID`, `APP_PRIVATE_KEY`.
+- **権限**: `contents: write`（レジストリのコミットとリポジトリ内容）、
+  `administration: write`（ブランチ保護）、`issues: write`（登録 issue の
+  クローズ）。
+- **インストール**: org 全体が最もシンプル（`student-repo-management`、
+  レジストリ、学生リポジトリをカバーする必要がある）。
+- **`student-repo-management` 上のシークレット**: `APP_ID`, `APP_PRIVATE_KEY`。
 
-### 3. Actions variable (optional)
+### 3. Actions 変数（任意）
 
-- `REGISTRY_REPO` on `student-repo-management` — set only when the registry
-  repository name deviates from `<org>/thesis-student-registry`.
+- `student-repo-management` 上の `REGISTRY_REPO` — レジストリリポジトリ名が
+  `<org>/thesis-student-registry` から外れる場合にのみ設定する。
 
-### 4. Secrets
+### 4. シークレット
 
-Place each where its workflow runs. Prefer **organization secrets** for the AI
-keys and the ML settings so every student repository inherits them.
+各シークレットは、それを使うワークフローが動く場所に置きます。AI キーと ML の
+設定については、すべての学生リポジトリが継承できるよう **org シークレット** を
+推奨します。
 
-| Secret(s) | Consumed by | Where | Required? |
+| シークレット | 消費元 | 置き場所 | 必須? |
 |---|---|---|---|
-| `APP_ID`, `APP_PRIVATE_KEY` | Registration automation (`student-repo-management.yml`) | `student-repo-management` | **Yes** — registration cannot run without them |
-| `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` | `ai-review` / `claude-qa` in student repos, and `student-repo-management`'s own `ai-code-review.yml` | Org (student repos) + `student-repo-management` | Optional — the AI jobs skip cleanly when absent |
-| `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, `LAB_ML_ADDRESS` | `notify-ml-on-pr` reusable (sotsuron / ise / latex templates, `secrets: inherit`) | Org | Required by that workflow — **all six**. To skip ML mail, delete `notify-ml-on-pr.yml` from the templates instead. |
+| `APP_ID`, `APP_PRIVATE_KEY` | 登録自動化 (`student-repo-management.yml`) | `student-repo-management` | **はい** — これがないと登録は実行できない |
+| `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` | 学生リポジトリの `ai-review` / `claude-qa`、および `student-repo-management` 自身の `ai-code-review.yml` | org（学生リポジトリ）＋ `student-repo-management` | 任意 — AI ジョブは無い場合にクリーンにスキップする |
+| `SMTP_SERVER`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, `LAB_ML_ADDRESS` | `notify-ml-on-pr` 再利用可能ワークフロー（sotsuron / ise / latex テンプレート、`secrets: inherit`） | org | このワークフローが要求 — **6 つすべて**。ML メールを省く場合は、代わりにテンプレートから `notify-ml-on-pr.yml` を削除する。 |
 
-All secret values are plain strings (GitHub secrets are always strings). Set
-`SMTP_PORT` to e.g. `587`; `notify-ml-on-pr` passes it to the mail action as-is,
-so no numeric type is needed.
+すべてのシークレット値はプレーンな文字列です（GitHub シークレットは常に
+文字列）。`SMTP_PORT` は例えば `587` のように設定します。`notify-ml-on-pr` は
+それをそのままメールアクションに渡すため、数値型は不要です。
 
-### 5. create-repo fork configuration
+<a id="5-create-repo-fork-configuration"></a>
+### 5. create-repo フォークの設定
 
-The forked `create-repo` scripts default every org-specific value to `smkwlab`
-(env vars read by `setup.sh` / `common-lib.sh`). A new org overrides:
+フォークした `create-repo` スクリプトは、org 固有の値すべてを既定で `smkwlab`
+にします（`setup.sh` / `common-lib.sh` が読む環境変数）。新しい org は以下を
+上書きします。
 
-| Variable | Default | Set to |
+| 変数 | 既定値 | 設定する値 |
 |---|---|---|
-| `DEFAULT_ORG` | `smkwlab` | your org (drives the membership check, target org, and tools owner) |
-| `TOOLS_REPO_OWNER` / `TOOLS_REPO_NAME` / `TOOLS_CLONE_URL` | `<DEFAULT_ORG>` / `student-repo-management` / derived | your fork's location |
-| `TEMPLATE_REPO` | `smkwlab/latex-template`, `smkwlab/poster-template` | your copy — overrides the template for any doc type ([#517](https://github.com/smkwlab/student-repo-management/issues/517)); the default shown drives latex/poster, while thesis/wr/ise derive from the org |
-| `ALDC_URL` | `…/smkwlab/aldc/main/aldc` | your aldc copy (or keep the shared one) |
-| `AUTO_ASSIGN_REVIEWER` | `toshi0806` | your reviewer account (defaults to `toshi0806`; auto-assign is skipped only when the reviewer is outside the org) |
-| `SETUP_GIT_EMAIL_DOMAIN` | `smkwlab.github.io` | your domain |
+| `DEFAULT_ORG` | `smkwlab` | 自分の org（メンバーシップチェック、ターゲット org、tools オーナーを駆動する） |
+| `TOOLS_REPO_OWNER` / `TOOLS_REPO_NAME` / `TOOLS_CLONE_URL` | `<DEFAULT_ORG>` / `student-repo-management` / 導出 | 自分のフォークの場所 |
+| `TEMPLATE_REPO` | `smkwlab/latex-template`, `smkwlab/poster-template` | 自分のコピー — 任意のドキュメントタイプのテンプレートを上書きする（[#517](https://github.com/smkwlab/student-repo-management/issues/517)）。表示の既定値は latex/poster を駆動し、thesis/wr/ise は org から導出される |
+| `ALDC_URL` | `…/smkwlab/aldc/main/aldc` | 自分の aldc コピー（または共有のものを使い続ける） |
+| `AUTO_ASSIGN_REVIEWER` | `toshi0806` | 自分のレビュアーアカウント（既定は `toshi0806`。自動アサインは割当先が org 外ユーザーの場合のみスキップされる） |
+| `SETUP_GIT_EMAIL_DOMAIN` | `smkwlab.github.io` | 自分のドメイン |
 
-#### The command you hand to students
+#### 学生へ案内するコマンド
 
-The smkwlab-facing docs point students at the short URL
-`https://repo-setup.smkwlab.net`. That short URL serves **smkwlab's fork of
-`setup.sh` only**, so it does not work for another org (it would create the
-repository against smkwlab's defaults).
+smkwlab 向けのドキュメントは、学生に短縮 URL `https://repo-setup.smkwlab.net`
+を案内しています。この短縮 URL は **smkwlab のフォークの `setup.sh` を配信する
+専用のもの**なので、他の org ではそのまま使えません（smkwlab の既定でリポジトリが
+作られてしまいます）。
 
-In your own org, replace the short URL with a **raw URL to your fork's
-`setup.sh`**:
+自分の org では、案内するコマンドの短縮 URL 部分を、**自分のフォークの `setup.sh`
+を指す raw URL** に差し替えてください。
 
 ```bash
-# As printed in the smkwlab docs
+# smkwlab のドキュメントに載っている形
 bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 
-# Rewritten for your org (e.g. your-org)
+# 自分の org（例: your-org）向けに書き換えた形
 bash <(curl -fsSL https://raw.githubusercontent.com/your-org/student-repo-management/v1/create-repo/setup.sh) thesis
 ```
 
-A fresh fork has no `v1` tag yet, so the raw URL above 404s until you create
-one — cut a release before handing this command to students.
+フォーク直後は `v1` タグがまだ存在せず、上記 raw URL は 404 になります。学生に
+案内する前に一度リリースを作成してタグを打ってください。
 
-`v1` is a moving tag pointing at the latest stable release of your fork (tag
-it following the release process in
-[RELEASE](https://github.com/smkwlab/student-repo-management/blob/main/docs/RELEASE.md)).
-If you want a short URL of your own, mirror smkwlab's
-[Pages workflow](https://github.com/smkwlab/student-repo-management/blob/main/.github/workflows/pages.yml)
-to publish the same way from your org.
+`v1` は自分のフォークの最新安定版リリースを指す移動タグです（[RELEASE](https://github.com/smkwlab/student-repo-management/blob/main/docs/RELEASE.md)
+のリリース運用に従ってタグを打ちます）。短縮 URL を独自に用意したい場合は、
+smkwlab の [Pages ワークフロー](https://github.com/smkwlab/student-repo-management/blob/main/.github/workflows/pages.yml)
+を参考に、自分の org で同様の配信を設定できます。
 
-## Shared infrastructure: reference strategy
+<a id="shared-infrastructure-reference-strategy"></a>
+## 共有インフラ: 参照戦略
 
-Some infrastructure is referenced *literally* (with `smkwlab/` in the string)
-from every template, and — unlike deployment identity — this **cannot** be made
-dynamic: a GitHub Actions `uses:`/`container:` reference may not contain an
-expression, so `${{ github.repository_owner }}` is not resolvable there. A
-workflow therefore cannot point at "my own org's" copy of a reusable workflow
-or action; the org is fixed at the moment the string is written.
+一部のインフラは、すべてのテンプレートから *リテラルに*（文字列中に `smkwlab/`
+を含めて）参照されており、展開のアイデンティティとは異なり、これは動的化
+**できません**。GitHub Actions の `uses:`/`container:` 参照には式を含められない
+ため、`${{ github.repository_owner }}` はそこでは解決されません。したがって
+ワークフローは「自分の org」の再利用可能ワークフローやアクションのコピーを
+指すことができず、org は文字列が書かれた時点で固定されます。
 
-**Decision (#105): treat this as public shared infrastructure.** The following
-are published as public shared services; any organization consumes them by
-referencing `smkwlab/...` directly, and injects its own values through Actions
-secrets and variables rather than editing the shared code:
+**決定 (#105): これを公開された共有インフラとして扱う。** 以下は公開の共有
+サービスとして提供されます。どの org も `smkwlab/...` を直接参照して利用し、
+共有コードを編集する代わりに Actions のシークレットと変数を通じて自分の値を
+注入します。
 
-| Shared service | Referenced by | Per-org input |
+| 共有サービス | 参照元 | org ごとの入力 |
 |---|---|---|
-| `smkwlab/.github` reusable workflows (`.github/workflows/<name>.yml@v1`) | template caller workflows (draft-chain, ML notify, AI review, LaTeX build, QA) | secrets / `secrets: inherit` |
-| `smkwlab/latex-release-action@v3` | `latex-build` / `latex-build-modified` reusables | — |
-| `smkwlab/ai-academic-paper-reviewer@v1` | `ai-review` reusable | `ANTHROPIC_API_KEY` / `GEMINI_API_KEY` |
-| `ghcr.io/smkwlab/texlive-ja-textlint` | `devcontainer.json`, build workflows | — |
+| `smkwlab/.github` の再利用可能ワークフロー (`.github/workflows/<name>.yml@v1`) | テンプレートの呼び出し元ワークフロー（draft-chain、ML 通知、AI レビュー、LaTeX ビルド、QA） | シークレット / `secrets: inherit` |
+| `smkwlab/latex-release-action@v3` | `latex-build` / `latex-build-modified` 再利用可能ワークフロー | — |
+| `smkwlab/ai-academic-paper-reviewer@v1` | `ai-review` 再利用可能ワークフロー | `ANTHROPIC_API_KEY` / `GEMINI_API_KEY` |
+| `ghcr.io/smkwlab/texlive-ja-textlint` | `devcontainer.json`、ビルドワークフロー | — |
 
-Why shared use is the default, not fork:
+フォークではなく共有利用が既定である理由:
 
-- The reusable **bodies** are already org-agnostic — org derivation uses
-  `github.repository_owner`, and org-specific values (mailing-list address,
-  SMTP, API keys) are consumed through secrets, not hardcoded. Only the
-  *addresses* above carry `smkwlab`.
-- Because `uses:` cannot be templated, forking means rewriting every caller in
-  every template (7 workflows × 5 templates) and re-syncing them on every
-  upstream change. That cost buys independence but nothing else for a
-  deployment that trusts the shared services.
+- 再利用可能ワークフローの **本体** は既に org 非依存です — org の導出は
+  `github.repository_owner` を使い、org 固有の値（メーリングリストアドレス、
+  SMTP、API キー）はハードコードではなくシークレットを通じて消費されます。
+  上記の *アドレス* だけが `smkwlab` を持っています。
+- `uses:` はテンプレート化できないため、フォークするということはすべての
+  テンプレートのすべての呼び出し元を書き換え（7 ワークフロー × 5 テンプレート）、
+  上流の変更のたびに再同期することを意味します。そのコストは独立性を買いますが、
+  共有サービスを信頼する展開にとってはそれ以外に何ももたらしません。
 
-**Accepted trade-offs.** Shared use means a permanent dependency on the
-`smkwlab` org staying public, and template PRs in another org execute
-smkwlab-owned reusable code with that org's secrets (the normal trust model for
-any public reusable workflow). An org that needs to sever the dependency — for
-independence, air-gapping, or per-org customization of the reusable logic
-itself — should fork instead; see [When to fork](#when-to-fork).
+**受け入れるトレードオフ。** 共有利用は、`smkwlab` org が公開されたままで
+あることへの恒久的な依存を意味し、別の org のテンプレート PR はその org の
+シークレットで smkwlab 所有の再利用可能コードを実行します（あらゆる公開
+再利用可能ワークフローにとって通常の信頼モデル）。依存を断ち切る必要がある
+org — 独立性、エアギャップ、または再利用可能ロジックそのものの org ごとの
+カスタマイズのため — は、代わりにフォークすべきです。[フォークすべきとき](#when-to-fork)を
+参照。
 
-**Out of scope — the legacy `ai-reviewer.yml` reusable.** `smkwlab/.github`
-also ships a legacy `ai-reviewer.yml` reusable that pins `toshi0806/ai-reviewer`
-(a personal account). It is **not part of the deployment path**: no template
-(`sotsuron` / `wr` / `ise-report` / `sotsuron-report` / `latex` / `poster`)
-references it, and `scripts/callers/` ships no caller for it, so newly-created
-repositories and new-org deployments never pick it up — the current AI-review
-path is `ai-review.yml` (→ `smkwlab/ai-academic-paper-reviewer`). Only
-pre-existing repos that still call it are affected. Retiring it (or repointing
-to an org-owned action) is therefore a smkwlab-internal cleanup item for those
-legacy repos, not a multi-org concern.
+**対象外 — レガシーな `ai-reviewer.yml` 再利用可能ワークフロー。**
+`smkwlab/.github` は `toshi0806/ai-reviewer`（個人アカウント）を固定した
+レガシーな `ai-reviewer.yml` 再利用可能ワークフローも提供しています。これは
+**展開経路の一部ではありません**: どのテンプレート
+(`sotsuron` / `wr` / `ise-report` / `sotsuron-report` / `latex` / `poster`) も
+それを参照せず、`scripts/callers/` はそれ用の呼び出し元を提供しないため、
+新規作成されるリポジトリと新しい org の展開がそれを拾うことはありません —
+現在の AI レビュー経路は `ai-review.yml`（→ `smkwlab/ai-academic-paper-reviewer`）
+です。影響を受けるのは、まだそれを呼び出している既存のリポジトリだけです。
+したがってその廃止（または org 所有のアクションへの向け直し）は、それらの
+レガシーリポジトリのための smkwlab 内部のクリーンアップ項目であり、マルチ org
+の懸念ではありません。
 
-### DevContainer image maintenance
+### DevContainer イメージのメンテナンス
 
-The `ghcr.io/smkwlab/texlive-ja-textlint` image (TeXLive + textlint, tagged by
-TeXLive year, e.g. `2026a`) is the default shared image. Public GHCR allows
-anonymous pulls, and `latex-environment`'s `check-texlive-updates.yml` bumps the
-`devcontainer.json` tag automatically when a new image is published — so a
-consuming org needs no image maintenance at all.
+`ghcr.io/smkwlab/texlive-ja-textlint` イメージ（TeXLive + textlint、TeXLive の年で
+タグ付け、例: `2026a`）が既定の共有イメージです。公開 GHCR は匿名 pull を許可し、
+`latex-environment` の `check-texlive-updates.yml` は新しいイメージが公開された
+ときに `devcontainer.json` のタグを自動的に更新します。そのため、利用する org は
+イメージのメンテナンスをいっさい必要としません。
 
-Fork the image only for an independent update cadence, to pin or patch TeX
-packages, or to satisfy a registry / air-gap policy. The build pipeline is
-already org-agnostic on publish: `texlive-ja-textlint`'s `build-tag.yml` pushes
-to `ghcr.io/<owner>/texlive-ja-textlint` via `github.repository_owner`, so a
-fork publishes to its own namespace with no code change (make the package
-public, or provide pull credentials). What a fork must then repoint to
-`ghcr.io/<org>/...`:
+イメージをフォークするのは、独立した更新頻度が欲しいとき、TeX パッケージを固定
+またはパッチしたいとき、あるいはレジストリ / エアギャップのポリシーを満たしたい
+ときだけです。ビルドパイプラインは公開時点で既に org 非依存です:
+`texlive-ja-textlint` の `build-tag.yml` は `github.repository_owner` を通じて
+`ghcr.io/<owner>/texlive-ja-textlint` に push するため、フォークはコード変更なしで
+自分の名前空間に公開します（パッケージを公開にするか、pull 認証情報を用意する）。
+フォークがその後 `ghcr.io/<org>/...` に向け直さなければならないもの:
 
-- **`latex-environment` fork** — the `image` in `devcontainer.json`, **and** the
-  `IMAGE=` constant in `check-texlive-updates.yml`, so the auto-bump tracks the
-  org's image. `aldc` injects this devcontainer, so also point `aldc` at the
-  org's `latex-environment` via aldc's `ALDC_REPOSITORY_OWNER` /
-  `ALDC_REPOSITORY_NAME` env overrides
-  ([aldc#32](https://github.com/smkwlab/aldc/issues/32)).
-- **The CI build image** — `latex-build-modified.yml` pins the *same* image and
-  tag with `container: ghcr.io/smkwlab/texlive-ja-textlint:2026a` (deliberately
-  matching the DevContainer so PDF builds reproduce the dev environment), while
-  `latex-build.yml` reaches the image indirectly through
-  `smkwlab/latex-release-action`. Both live in `smkwlab/.github`, so repointing
-  them means forking `.github` (and the action) too — see
-  [When to fork](#when-to-fork).
+- **`latex-environment` フォーク** — `devcontainer.json` の `image`、**および**
+  `check-texlive-updates.yml` の `IMAGE=` 定数（自動更新が org のイメージを
+  追跡するように）。`aldc` はこの devcontainer を注入するため、`aldc` も org の
+  `latex-environment` に、aldc の `ALDC_REPOSITORY_OWNER` /
+  `ALDC_REPOSITORY_NAME` 環境変数で向ける
+  （[aldc#32](https://github.com/smkwlab/aldc/issues/32)）。
+- **CI ビルドイメージ** — `latex-build-modified.yml` は
+  `container: ghcr.io/smkwlab/texlive-ja-textlint:2026a` で *同じ* イメージと
+  タグを固定します（PDF ビルドが開発環境を再現するよう、意図的に DevContainer に
+  一致させている）。一方 `latex-build.yml` は `smkwlab/latex-release-action` を
+  通じて間接的にイメージに到達します。どちらも `smkwlab/.github` にあるため、
+  向け直すには `.github`（およびアクション）もフォークする必要があります —
+  [フォークすべきとき](#when-to-fork)を参照。
 
-### When to fork
+<a id="when-to-fork"></a>
+### フォークすべきとき
 
-Choose the fork path only when shared use is unacceptable (independence
-requirement, or you need to change the reusable logic per org). Then:
+フォーク経路を選ぶのは、共有利用が受け入れられないとき（独立性の要件、または
+再利用可能ロジックを org ごとに変える必要があるとき）だけです。その場合:
 
-- Copy `smkwlab/.github`, `latex-release-action`, `ai-academic-paper-reviewer`,
-  and the image pipeline into the org, and rewrite `uses:`/`container:`
-  references to the org.
-- Note the two distribution-side seams that assume `smkwlab`: the caller
-  templates in `smkwlab/.github/scripts/callers/*.yml` hardcode the
-  `smkwlab/.github` owner (only the `@__REF__` version is tokenized), and
-  `scripts/distribute-workflow.sh` defaults `ORG="smkwlab"` with no `--org`
-  flag. Both need org parameterization for a fork workflow to be maintainable.
+- `smkwlab/.github`, `latex-release-action`, `ai-academic-paper-reviewer`、
+  そしてイメージパイプラインを org 内にコピーし、`uses:`/`container:` 参照を
+  org に書き換えます。
+- `smkwlab` を前提とする 2 つの配布側の継ぎ目に注意してください:
+  `smkwlab/.github/scripts/callers/*.yml` の呼び出し元テンプレートは
+  `smkwlab/.github` オーナーをハードコードしており（`@__REF__` バージョンのみが
+  トークン化されている）、`scripts/distribute-workflow.sh` は `--org` フラグを
+  持たず `ORG="smkwlab"` を既定にします。フォークのワークフローを保守可能に
+  するには、どちらも org のパラメータ化が必要です。
 
-## Local tool configuration
+<a id="local-tool-configuration"></a>
+## ローカルツールの設定
 
-Faculty machines in the new org need per-tool configuration. **Configure each
-tool explicitly**: neither Elixir tool has an org default anymore — they derive
-the org from the `registry_repo` owner and, when it is unset, fail with an
-explicit error instead of silently falling back to smkwlab. Set them as below.
+新しい org のスタッフのマシンには、ツールごとの設定が必要です。**各ツールを
+明示的に設定してください**: 両方の Elixir ツールに org の既定値はもうありません
+— org は `registry_repo` のオーナーから導出され、未設定の場合は smkwlab に
+暗黙のフォールバックをせず明示的にエラーになります。以下のとおり設定します。
 
 - **registry-manager**: `~/.config/registry-manager/config.yml`
 
   ```yaml
   github_org: your-org
-  registry_repo: your-org/thesis-student-registry   # explicit; required for all registry operations
+  registry_repo: your-org/thesis-student-registry   # 明示的に指定。すべてのレジストリ操作に必須
   ```
 
-  Or generate it with `registry-manager init --org your-org`. If a config file
-  already exists it is **not** overwritten — add `--force` (the command still
-  creates/repairs the registry repo either way).
-- **thesis-monitor**: run `thesis-monitor init --org your-org` (the `--org`
-  flag works **only** on `init`; runtime commands read the config file). As with
-  registry-manager, an existing config requires `--force` to overwrite.
-- **Student roster (optional)**: place the CSV at
-  `~/.config/<your-org>/students.csv` — the convention path follows
-  `github_org` automatically.
-- **ecosystem-manager**: no org setting needed; configure workspace paths in
-  `~/.config/ecosystem-manager/config.exs` if you use multiple workspaces.
+  または `registry-manager init --org your-org` で生成します。設定ファイルが
+  既に存在する場合は **上書きされません** — `--force` を追加してください
+  （コマンドはいずれの場合もレジストリリポジトリの作成/修復は行います）。
+- **thesis-monitor**: `thesis-monitor init --org your-org` を実行します
+  （`--org` フラグは `init` でのみ機能します。ランタイムコマンドは設定ファイルを
+  読みます）。registry-manager と同様に、既存の設定を上書きするには `--force` が
+  必要です。
+- **学生名簿（任意）**: CSV を `~/.config/<your-org>/students.csv` に置きます —
+  規約パスは `github_org` に自動的に従います。
+- **ecosystem-manager**: org 設定は不要です。複数のワークスペースを使う場合は
+  `~/.config/ecosystem-manager/config.exs` でワークスペースパスを設定します。
 
-## Verification checklist
+## 検証チェックリスト
 
-After preparing the org and configuration:
+org と設定を準備したあと:
 
-1. With the org configured (see
-   [Local tool configuration](#local-tool-configuration)), `registry-manager
-   list` reads the new org's registry — and with no config it now errors
-   explicitly instead of falling back to smkwlab.
-2. `thesis-monitor status` reports repositories of the new org only (same
-   explicit-error-without-config guarantee).
-3. Have a student run `setup.sh` from the fork (configured per
-   [create-repo fork configuration](#5-create-repo-fork-configuration)), or file
-   the repository-creation request issue on the org's `student-repo-management`
-   directly, and confirm: the repository is created in the new org, branch
-   protection is applied (requires a paid plan — see the plan note under
-   [Prerequisites](#prerequisites-in-the-new-organization)), and
-   `data/registry.json` in the new org's registry gains the entry.
-   `setup.sh` runs the creator in an interactive container (`docker run -it`), so
-   it needs a real terminal — for a headless/automated check, run
-   `create-repo/main.sh` directly instead, e.g.
-   `TARGET_ORG=<org> DOC_TYPE=thesis ./main.sh <student-id>`.
-4. Open a draft PR in a created student repository and confirm the template
-   workflows (build, draft-chain, review) run without referencing missing
-   secrets or private `smkwlab` resources.
+1. org を設定した状態で（[ローカルツールの設定](#local-tool-configuration)を
+   参照）、`registry-manager list` は新しい org のレジストリを読みます — そして
+   設定が無い場合は、smkwlab にフォールバックせず明示的にエラーになるように
+   なりました。
+2. `thesis-monitor status` は新しい org のリポジトリのみを報告します（同じく
+   設定が無ければ明示的にエラーになる保証）。
+3. 学生にフォークから `setup.sh` を実行してもらう
+   （[create-repo フォークの設定](#5-create-repo-fork-configuration)に従って
+   設定したもの）か、org の `student-repo-management` に直接リポジトリ作成
+   リクエストの issue を出してもらい、次を確認します: リポジトリが新しい org に
+   作成されること、ブランチ保護が適用されること（有料プランが必要 —
+   [前提条件](#prerequisites-in-the-new-organization)のプラン注記を参照）、
+   そして新しい org のレジストリの `data/registry.json` にエントリが追加される
+   こと。`setup.sh` はクリエータを対話的コンテナ (`docker run -it`) で実行する
+   ため、実際のターミナルが必要です — ヘッドレス/自動化されたチェックでは、
+   代わりに `create-repo/main.sh` を直接実行してください。例:
+   `TARGET_ORG=<org> DOC_TYPE=thesis ./main.sh <student-id>`。
+4. 作成された学生リポジトリでドラフト PR を開き、テンプレートワークフロー
+   （ビルド、draft-chain、レビュー）が、欠けているシークレットや private な
+   `smkwlab` リソースを参照することなく実行されることを確認します。

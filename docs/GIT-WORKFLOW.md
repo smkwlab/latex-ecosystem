@@ -1,57 +1,57 @@
-# Git Workflow Best Practices
+# Git ワークフローのベストプラクティス
 
-This document covers the Git workflow for the LaTeX ecosystem: how to keep every change on a feature branch and avoid main-branch conflicts.
+このドキュメントは、LaTeX エコシステムでの Git ワークフロー、すなわち「すべての変更を feature ブランチで行い、main ブランチのコンフリクトを避ける」方法を扱います。
 
-## Why feature branches
+## なぜ feature ブランチを使うか
 
-Committing directly to a local `main` — and letting it drift from `origin/main` while PRs merge remotely — creates avoidable merge conflicts. The rules below keep every change on a feature branch and keep `main` a clean mirror of the remote, so `git pull` is always a fast-forward.
+ローカル `main` に直接 commit し、リモートで PR がマージされる間にローカル `main` を `origin/main` から乖離させると、避けられたはずのマージコンフリクトが生じます。以下のルールは、すべての変更を feature ブランチに載せ、`main` をリモートのクリーンなミラーに保つことで、`git pull` を常に fast-forward にします。
 
-## Correct Git Workflow
+## 正しい Git ワークフロー
 
-**❌ Problem Workflow (what caused conflicts)**:
+**❌ 問題のあるワークフロー (コンフリクトの原因)**:
 ```bash
-# Direct commits to main (AVOID THIS)
+# main への直接 commit (これは避ける)
 git checkout main
 git add . && git commit -m "Add feature X"
 git add . && git commit -m "Fix bug Y"
-# ... multiple direct commits ...
-# Later: another PR gets merged remotely
-git pull origin main  # → CONFLICT!
+# ... 複数の直接 commit ...
+# 後で: 別の PR がリモートでマージされる
+git pull origin main  # → コンフリクト!
 ```
 
-**✅ Correct Workflow**:
+**✅ 正しいワークフロー**:
 ```bash
-# 1. Always start with clean, updated main
+# 1. 常にクリーンで最新の main から始める
 git checkout main
 git pull origin main
 
-# 2. Create feature branch for ALL changes
+# 2. すべての変更に対して feature ブランチを作成する
 git checkout -b feature/descriptive-name
 
-# 3. Work on feature branch
+# 3. feature ブランチ上で作業する
 git add . && git commit -m "Implement feature X"
 git add . && git commit -m "Add tests for feature X"
 
-# 4. Push feature branch and create PR
+# 4. feature ブランチを push して PR を作成する
 git push -u origin feature/descriptive-name
 gh pr create --title "Add feature X" --body "Description..."
 
-# 5. After PR is merged, update local main
+# 5. PR がマージされたら、ローカル main を更新する
 git checkout main
 git pull origin main
-git branch -d feature/descriptive-name  # Clean up
+git branch -d feature/descriptive-name  # 後片付け
 ```
 
-## Branch Strategy Rules
+## ブランチ戦略のルール
 
-**For Component Repositories**:
-1. **Never commit directly to main branch**
-2. **Always use feature branches** for any change
-3. **Keep feature branches focused** on single features/fixes
-4. **Regularly sync main branch** with remote before creating new features
-5. **Use PRs for all changes** to maintain review process
+**コンポーネントリポジトリの場合**:
+1. **main ブランチに直接 commit しない**
+2. **あらゆる変更に必ず feature ブランチを使う**
+3. **feature ブランチは単一の機能/修正に集中させる**
+4. **新しい feature を作る前に main ブランチをリモートと定期的に同期する**
+5. **すべての変更に PR を使い**、レビュープロセスを維持する
 
-**Branch Naming Convention**:
+**ブランチ命名規則**:
 ```bash
 feature/add-student-id-normalization
 fix/github-actions-bash-rematch
@@ -59,71 +59,71 @@ enhance/error-handling-improvements
 docs/update-architecture-guide
 ```
 
-## Recovery from Conflicts
+## コンフリクトからの復旧
 
-**When conflicts occur** (emergency procedure):
+**コンフリクトが発生したとき** (緊急時手順):
 ```bash
-# 1. Assess the situation
+# 1. 状況を把握する
 git status
 git log --oneline -n 10
 
-# 2. If safe to reset (no important unpushed work)
+# 2. リセットしても安全な場合 (重要な未 push 作業がない)
 git fetch origin
 git reset --hard origin/main
 
-# 3. If local changes need to be preserved
+# 3. ローカルの変更を保存する必要がある場合
 git stash push -m "WIP: local changes before sync"
 git pull origin main
-git stash pop  # Resolve conflicts manually if needed
+git stash pop  # 必要ならコンフリクトを手動で解消する
 
-# 4. Create feature branch for any new work
+# 4. 新しい作業のために feature ブランチを作成する
 git checkout -b feature/continue-work
 ```
 
-## Prevention Strategies
+## 予防策
 
-**Daily Workflow**:
+**日々のワークフロー**:
 ```bash
-# Start of day: sync main
+# 一日の始まり: main を同期する
 git checkout main && git pull origin main
 
-# Before new work: create feature branch
+# 新しい作業の前: feature ブランチを作成する
 git checkout -b feature/today-work
 
-# End of day: push feature branch
+# 一日の終わり: feature ブランチを push する
 git push -u origin feature/today-work
 ```
 
-**Pre-PR Checklist**:
-- [ ] Feature branch is up to date with main
-- [ ] All commits are focused and well-described
-- [ ] Tests pass locally
-- [ ] No merge conflicts with main
+**PR 前のチェックリスト**:
+- [ ] feature ブランチが main と最新の状態に同期されている
+- [ ] すべての commit が集中していて、よく説明されている
+- [ ] ローカルでテストが通る
+- [ ] main とのマージコンフリクトがない
 
-## Emergency Procedures
+## 緊急時手順
 
-**If main branch becomes corrupted**:
+**main ブランチが壊れた場合**:
 ```bash
-# Reset local main to match remote
+# ローカル main をリモートに合わせてリセットする
 git checkout main
 git fetch origin
 git reset --hard origin/main
 
-# Recreate feature work from backup/stash
+# バックアップ/stash から feature 作業を再作成する
 git checkout -b feature/recovered-work
-# Apply changes...
+# 変更を適用する...
 ```
 
-This workflow keeps main-branch conflicts from occurring and ensures smooth collaboration across the ecosystem.
+このワークフローは main ブランチのコンフリクト発生を防ぎ、エコシステム全体でのスムーズな協働を保証します。
 
-## Integration with Ecosystem Workflows
+## エコシステムワークフローとの統合
 
-### For Ecosystem Management Repository
-- Apply same branch strategy rules
-- Use feature branches for ecosystem-wide documentation updates
-- Coordinate changes across multiple component repositories
+### エコシステム管理リポジトリの場合
+- 同じブランチ戦略のルールを適用する
+- エコシステム全体のドキュメント更新には feature ブランチを使う
+- 複数のコンポーネントリポジトリにまたがる変更を調整する
 
-### For Component Repositories
-- Follow same workflow for component-specific changes
-- Ensure coordination with ecosystem management repository
-- Test changes against ecosystem compatibility
+### コンポーネントリポジトリの場合
+- コンポーネント固有の変更にも同じワークフローに従う
+- エコシステム管理リポジトリとの調整を確実に行う
+- エコシステムとの互換性に対して変更をテストする

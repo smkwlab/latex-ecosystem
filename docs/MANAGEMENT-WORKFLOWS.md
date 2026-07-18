@@ -1,128 +1,129 @@
-# Ecosystem Management Workflows
+# エコシステム管理ワークフロー
 
-This document provides workflow examples specifically for ecosystem management tasks using the LaTeX ecosystem management repository.
+このドキュメントは、LaTeX エコシステム管理リポジトリを用いたエコシステム管理タスクに特化したワークフロー例を提供する。
 
-## Ecosystem Management Commands
+## エコシステム管理コマンド
 
-### Comprehensive Command Reference
+### コマンドリファレンス
 
-The manager is an Elixir escript. Build it once with
-`(cd ecosystem-manager && mix escript.build)`, then:
+manager は Elixir escript である。最初に
+`(cd ecosystem-manager && mix escript.build)`
+で一度ビルドしておき、その後は以下を実行する:
 
 ```bash
-# Show status of all repositories (default command)
+# 全リポジトリの状態を表示(デフォルトコマンド)
 ./ecosystem-manager/ecosystem-manager status
 
-# Detailed status: branch, uncommitted changes, last commit, PRs, issues
+# 詳細な状態: ブランチ、未コミットの変更、最新コミット、PR、issue
 ./ecosystem-manager/ecosystem-manager status --long
 
-# Fast status without GitHub API calls
+# GitHub API 呼び出しなしの高速な状態表示
 ./ecosystem-manager/ecosystem-manager status --fast
 
-# Filter: urgent issues / open PRs / PRs needing review
+# フィルタ: 緊急 issue / オープンな PR / レビュー待ちの PR
 ./ecosystem-manager/ecosystem-manager status --urgent-issues
 ./ecosystem-manager/ecosystem-manager status --with-prs
 ./ecosystem-manager/ecosystem-manager status --needs-review
 
-# Status across every configured workspace, or a specific one by name
+# 全ワークスペースの状態、または名前指定で特定のワークスペースの状態
 ./ecosystem-manager/ecosystem-manager status --all
-./ecosystem-manager/ecosystem-manager status -w dns   # or --workspace NAME
+./ecosystem-manager/ecosystem-manager status -w dns   # または --workspace NAME
 
-# Tune parallelism (default: 8)
+# 並列度を調整(デフォルト: 8)
 ./ecosystem-manager/ecosystem-manager status --max-concurrency 4
 
-# Show repository configuration and sources
+# リポジトリ設定とソースを表示
 ./ecosystem-manager/ecosystem-manager repos
 
-# Auto-discover ecosystem repositories, record them in the user config,
-# and register the workspace
+# ワークスペースのリポジトリを自動探索し、ユーザ設定に記録して
+# ワークスペースを登録
 ./ecosystem-manager/ecosystem-manager repos --sync
 
-# Show the resolved workspace path / list all configured workspaces
+# 解決されるワークスペースパスを表示 / 全ワークスペースを一覧表示
 ./ecosystem-manager/ecosystem-manager workspace
 ./ecosystem-manager/ecosystem-manager workspace --list
 
-# Create example user configuration files
+# サンプルのユーザ設定ファイルを作成
 ./ecosystem-manager/ecosystem-manager init-config
 
-# Show current configuration
+# 現在の設定を表示
 ./ecosystem-manager/ecosystem-manager config
 ```
 
-### Status Monitoring Examples
+### 状態監視の例
 ```bash
-# Quick ecosystem health check (rows with branch/commit/change info)
+# エコシステムの簡易ヘルスチェック(ブランチ/コミット/変更情報を含む行)
 ./ecosystem-manager/ecosystem-manager status --long
 
-# Show only repositories that need attention
+# 対応が必要なリポジトリのみを表示
 ./ecosystem-manager/ecosystem-manager status --urgent-issues
 ./ecosystem-manager/ecosystem-manager status --needs-review
 
-# Version compatibility is tracked in ECOSYSTEM.md (compatibility matrix)
+# バージョン互換性は ECOSYSTEM.md(互換性マトリクス)で管理している
 ```
 
-## Repository Navigation and Operations
+## リポジトリ間の移動と操作
 
-### Shell Command Gotchas
+### シェルコマンドの落とし穴
 
-#### Directory Navigation
+#### ディレクトリ間の移動
 ```bash
-# Working in ecosystem management
-pwd  # /path/to/latex-ecosystem (management repo)
-git status  # Shows management repository status
+# エコシステム管理リポジトリでの作業
+pwd  # /path/to/latex-ecosystem (管理リポジトリ)
+git status  # 管理リポジトリの状態を表示
 
-# Working in component
+# コンポーネントでの作業
 cd latex-environment/
-pwd  # /path/to/latex-ecosystem/latex-environment (different repo)
-git status  # Shows latex-environment repository status
+pwd  # /path/to/latex-ecosystem/latex-environment (別リポジトリ)
+git status  # latex-environment リポジトリの状態を表示
 
-# Return to management repository
+# 管理リポジトリに戻る
 cd ..
-git status  # Shows management repository status again
+git status  # 再び管理リポジトリの状態を表示
 ```
 
-#### Git Operations
+#### Git 操作
 ```bash
-# Management repository operations
+# 管理リポジトリの操作
 git add ECOSYSTEM.md docs/
 git commit -m "Update ecosystem documentation"
 
-# Component repository operations  
+# コンポーネントリポジトリの操作
 cd latex-environment/
 git add .devcontainer/devcontainer.json
 git commit -m "Update devcontainer config"
 git push origin feature-branch
 
-# Return to management repository
+# 管理リポジトリに戻る
 cd ..
-git status  # Completely separate Git history
+git status  # まったく別の Git 履歴
 ```
 
-## Workflow Guidelines
+## ワークフローガイドライン
 
-### For Ecosystem-level Changes
+### エコシステムレベルの変更
 
-#### Documentation Updates
+#### ドキュメントの更新
 ```bash
-# Update ecosystem documentation
-vim ECOSYSTEM.md  # Edit ecosystem overview
-vim docs/MANAGEMENT-REPOSITORY.md  # Edit management-repo structure/boundaries
+# エコシステムドキュメントの更新
+vim ECOSYSTEM.md  # エコシステム概要を編集
+vim docs/MANAGEMENT-REPOSITORY.md  # 管理リポジトリの構造・境界を編集
 
-# Commit ecosystem changes
+# エコシステムの変更をコミット
 git add ECOSYSTEM.md docs/
 git commit -m "Update ecosystem architecture documentation"
 git push origin main
 ```
 
-#### Cross-repository Coordination
+#### リポジトリ横断の連携
 ```bash
-# Check current state
+# 現在の状態を確認
 ./ecosystem-manager/ecosystem-manager status
 
-# Coordinate updates
-vim ECOSYSTEM.md  # Document planned changes
+# 更新の調整
+vim ECOSYSTEM.md  # 予定している変更を記録
 
-# Create issues in affected repositories
+# 影響を受けるリポジトリに issue を作成
 cd latex-environment/
 gh issue create --title "Update for texlive-ja-textlint v2025c"
 
@@ -130,55 +131,55 @@ cd ../sotsuron-template/
 gh issue create --title "Align with updated latex-environment"
 ```
 
-### For Component-specific Changes
+### コンポーネント固有の変更
 
-#### Working in Components
+#### コンポーネント内での作業
 ```bash
-# Navigate to specific repository
+# 特定のリポジトリへ移動
 cd latex-environment/
 
-# Create feature branch
+# feature ブランチを作成
 git checkout -b feature/update-textlint-config
 
-# Make changes
+# 変更を加える
 vim .textlintrc
 git add .textlintrc
 git commit -m "Update textlint configuration"
 
-# Push and create PR
+# push して PR を作成
 git push origin feature/update-textlint-config
 gh pr create --title "Update textlint configuration"
 
-# Return to ecosystem management
+# エコシステム管理リポジトリに戻る
 cd ..
 ```
 
-#### Tracking Component Changes
+#### コンポーネントの変更追跡
 ```bash
-# Monitor component repository changes
+# コンポーネントリポジトリの変更を監視
 cd latex-environment/
 git log --oneline -10
 
-# Check if changes affect other components
+# 変更が他のコンポーネントに影響するか確認
 cd ../sotsuron-template/
-# Test with updated latex-environment
+# 更新された latex-environment でテスト
 
-# Update compatibility documentation
+# 互換性ドキュメントを更新
 cd ..
-vim ECOSYSTEM.md  # Update compatibility matrix
+vim ECOSYSTEM.md  # 互換性マトリクスを更新
 ```
 
-## Cross-repository Issue Management
+## リポジトリ横断の issue 管理
 
-### Coordinated Issue Creation
+### 連携した issue 作成
 ```bash
-# For ecosystem-wide changes affecting multiple repositories
+# 複数リポジトリに影響するエコシステム全体の変更向け
 echo "Creating coordinated issues for texlive update..."
 
-# Document in ecosystem management
-vim ECOSYSTEM.md  # Add to Known Issues or Planned Updates
+# エコシステム管理リポジトリに記録
+vim ECOSYSTEM.md  # Known Issues または Planned Updates に追加
 
-# Create issues in affected repositories
+# 影響を受けるリポジトリに issue を作成
 repositories=("texlive-ja-textlint" "latex-environment" "sotsuron-template")
 for repo in "${repositories[@]}"; do
     cd "$repo/"
@@ -187,12 +188,12 @@ for repo in "${repositories[@]}"; do
 done
 ```
 
-### Issue Tracking and Coordination
+### issue の追跡と連携
 ```bash
-# Track progress across repositories
+# リポジトリ横断で進捗を追跡
 ./ecosystem-manager/ecosystem-manager status --with-prs
 
-# Check issue status across ecosystem
+# エコシステム全体で issue の状態を確認
 for repo in */; do
     if [ -d "$repo/.git" ]; then
         echo "=== $repo ==="
@@ -203,14 +204,14 @@ for repo in */; do
 done
 ```
 
-## Testing and Validation
+## テストと検証
 
-### Ecosystem-wide Testing
+### エコシステム全体のテスト
 ```bash
-# Validate all repositories (branches, uncommitted changes)
+# 全リポジトリを検証(ブランチ、未コミットの変更)
 ./ecosystem-manager/ecosystem-manager status --long
 
-# Test compilation across templates
+# テンプレート横断でコンパイルをテスト
 templates=("sotsuron-template" "wr-template" "latex-template")
 for template in "${templates[@]}"; do
     echo "Testing $template..."
@@ -222,49 +223,49 @@ for template in "${templates[@]}"; do
 done
 ```
 
-### Compatibility Validation
+### 互換性検証
 ```bash
-# Version compatibility is documented in ECOSYSTEM.md (compatibility matrix);
-# review it when coordinating updates.
+# バージョン互換性は ECOSYSTEM.md(互換性マトリクス)に記載されている。
+# 更新を調整する際に参照すること。
 
-# Validate dependency chain
+# 依存関係チェーンを検証
 echo "Checking texlive-ja-textlint → latex-environment compatibility..."
 cd latex-environment/
 grep -r "texlive-ja-textlint" .devcontainer/
 
-# Check template compatibility
+# テンプレートの互換性を確認
 cd ../sotsuron-template/
 grep -r "latex-environment" .devcontainer/
 ```
 
-## Ecosystem Coordination Tasks
+## エコシステム連携タスク
 
-### Cross-Repository Documentation Updates
+### リポジトリ横断のドキュメント更新
 ```bash
-# When CLAUDE.md structure changes across ecosystem
-./ecosystem-manager/ecosystem-manager status  # Check current state
+# エコシステム全体で CLAUDE.md の構成が変わったとき
+./ecosystem-manager/ecosystem-manager status  # 現在の状態を確認
 
-# Plan documentation updates
+# ドキュメント更新を計画
 for repo in texlive-ja-textlint latex-environment sotsuron-template; do
     cd $repo/
     echo "Planning docs update for $repo"
-    # Create feature branch, update docs/, create PR
+    # feature ブランチを作成し、docs/ を更新し、PR を作成
     cd ..
 done
 
-# Track progress
-./ecosystem-manager/ecosystem-manager status  # Verify updates
+# 進捗を追跡
+./ecosystem-manager/ecosystem-manager status  # 更新を確認
 ```
 
-### Issue Coordination
+### issue の連携
 ```bash
-# Create coordinated issues for ecosystem-wide changes
+# エコシステム全体の変更向けに連携した issue を作成
 echo "Creating coordinated issues for major update..."
 
-# Document in ecosystem management
-vim ECOSYSTEM.md  # Add to Known Issues or Planned Updates
+# エコシステム管理リポジトリに記録
+vim ECOSYSTEM.md  # Known Issues または Planned Updates に追加
 
-# Create issues in affected repositories  
+# 影響を受けるリポジトリに issue を作成
 repositories=("texlive-ja-textlint" "latex-environment" "sotsuron-template")
 for repo in "${repositories[@]}"; do
     cd "$repo/"
@@ -273,54 +274,54 @@ for repo in "${repositories[@]}"; do
 done
 ```
 
-## Student Repository Workflows
+## 学生リポジトリワークフロー
 
-### Student Repository Creation
+### 学生リポジトリの作成
 ```bash
-# Create student thesis repository (automated)
+# 学生の卒論リポジトリを作成(自動化)
 bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 
-# Create weekly report repository
+# 週報リポジトリを作成
 STUDENT_ID=k21rs001 bash <(curl -fsSL https://repo-setup.smkwlab.net) wr
 
-# The final argument selects the document type. setup.sh supports five types:
-# thesis, wr, latex, ise, poster.
+# 末尾の引数で文書タイプを選択する。setup.sh は 5 種類に対応:
+# thesis, wr, latex, ise, poster。
 ```
 
-### Student Progress Monitoring
+### 学生の進捗監視
 ```bash
-# Monitor all students' thesis progress
+# 全学生の卒論進捗を監視
 ./thesis-monitor/thesis-monitor status
 
-# Show only protection status
+# 保護状態のみを表示
 ./thesis-monitor/thesis-monitor status --show-protection
 
-# Verbose output
+# 詳細出力
 ./thesis-monitor/thesis-monitor status --verbose
 ```
 
-## Best Practices
+## ベストプラクティス
 
-### Repository Boundary Management
-- Always check `pwd` before git operations
-- Use `git status` to confirm which repository you're working in
-- Keep ecosystem documentation in management repository's docs/
-- Keep component documentation in component repository's docs/
+### リポジトリ境界の管理
+- git 操作の前に必ず `pwd` を確認する
+- `git status` で作業中のリポジトリを確認する
+- エコシステムドキュメントは管理リポジトリの docs/ に置く
+- コンポーネントドキュメントはコンポーネントリポジトリの docs/ に置く
 
-### Documentation Management
-- **Management docs/**: Ecosystem-wide architecture, coordination workflows
-- **Component docs/**: Component-specific development, usage, troubleshooting
-- **Cross-reference**: Link between management and component documentation where appropriate
+### ドキュメント管理
+- **管理リポジトリの docs/**: エコシステム全体のアーキテクチャ、連携ワークフロー
+- **コンポーネントの docs/**: コンポーネント固有の開発、使用方法、トラブルシューティング
+- **相互参照**: 適切な箇所で管理ドキュメントとコンポーネントドキュメントを相互にリンクする
 
-### Communication Patterns
-- Use ecosystem management repository for architectural decisions
-- Create coordinated issues for cross-repository changes
-- Document compatibility matrices and update procedures
-- Maintain clear separation between ecosystem and component concerns
+### コミュニケーションのパターン
+- アーキテクチャ上の決定にはエコシステム管理リポジトリを用いる
+- リポジトリ横断の変更には連携した issue を作成する
+- 互換性マトリクスと更新手順を文書化する
+- エコシステムとコンポーネントの関心事の明確な分離を維持する
 
-## Related Documentation
+## 関連ドキュメント
 
-- [ECOSYSTEM.md](../ECOSYSTEM.md) - Ecosystem-wide architecture, dependencies, version compatibility
-- [MANAGEMENT-REPOSITORY.md](MANAGEMENT-REPOSITORY.md) - This management repository's structure and boundaries
-- [SETUP-AND-RELEASE.md](SETUP-AND-RELEASE.md) - Environment setup for ecosystem management
-- [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) - Pull Request review guidelines
+- [ECOSYSTEM.md](../ECOSYSTEM.md) - エコシステム全体のアーキテクチャ、依存関係、バージョン互換性
+- [MANAGEMENT-REPOSITORY.md](MANAGEMENT-REPOSITORY.md) - 本管理リポジトリの構造と境界
+- [SETUP-AND-RELEASE.md](SETUP-AND-RELEASE.md) - エコシステム管理のための環境セットアップ
+- [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) - Pull Request レビューガイドライン

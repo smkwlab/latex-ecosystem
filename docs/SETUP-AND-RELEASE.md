@@ -1,83 +1,83 @@
-# LaTeX Ecosystem Setup and Management Guide
+# LaTeX エコシステム セットアップ・管理ガイド
 
-This comprehensive guide covers setup, dependency management, and release processes for the LaTeX ecosystem at Kyushu Sangyo University.
+本ガイドは、九州産業大学の LaTeX エコシステムにおけるセットアップ、依存関係管理、リリースプロセスを包括的に解説します。
 
-## Prerequisites
+## 前提条件
 
-### Required Tools
-- **Git**: Version control system
-- **GitHub CLI (`gh`)**: Required for PR/Issue tracking, recommended for easier cloning
-- **Elixir/Mix** (with Erlang/OTP): Required to build and run the `ecosystem-manager` escript
-- **Bash**: Shell interpreter (version 3.2+)
+### 必須ツール
+- **Git**: バージョン管理システム
+- **GitHub CLI (`gh`)**: PR/Issue の追跡に必須。クローンを容易にするため推奨
+- **Elixir/Mix**（Erlang/OTP を含む）: `ecosystem-manager` escript のビルドと実行に必須
+- **Bash**: シェルインタプリタ（バージョン 3.2 以上）
 
-### Optional Tools
-- **Docker**: For testing Docker images
-- **VSCode**: Recommended IDE for development
+### 任意ツール
+- **Docker**: Docker イメージのテスト用
+- **VSCode**: 開発に推奨される IDE
 
-### GitHub CLI Setup
+### GitHub CLI のセットアップ
 
 ```bash
-# Install GitHub CLI
+# GitHub CLI のインストール
 # macOS
 brew install gh
 
 # Ubuntu/Debian  
 sudo apt install gh
 
-# Windows (with Scoop)
+# Windows (Scoop を使用)
 scoop install gh
 
-# Authenticate
+# 認証
 gh auth login
 
-# Verify authentication
+# 認証の確認
 gh auth status
 ```
 
-**Note**: Full ecosystem management features require GitHub CLI authentication. Without it, PR/Issue tracking will not work.
+**注意**: エコシステム管理機能をフルに利用するには GitHub CLI の認証が必要です。認証がない場合、PR/Issue の追跡は動作しません。
 
-## Quick Setup
+## クイックセットアップ
 
 ```bash
-# One-line ecosystem setup
+# ワンライナーによるエコシステムのセットアップ
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/smkwlab/latex-ecosystem/main/setup.sh)"
 ```
 
-## Manual Setup
+## 手動セットアップ
 
-### 1. Clone Management Repository
+### 1. 管理リポジトリのクローン
 
 ```bash
-# Create development directory
+# 開発用ディレクトリの作成
 mkdir latex-ecosystem-dev
 cd latex-ecosystem-dev
 
-# Clone management repository
+# 管理リポジトリのクローン
 gh repo clone smkwlab/latex-ecosystem .
 
-# Or with git
+# または git を使用
 git clone https://github.com/smkwlab/latex-ecosystem.git .
 ```
 
-### 2. Run Setup Script
+### 2. セットアップスクリプトの実行
 
 ```bash
-# Execute setup script
+# セットアップスクリプトの実行
 ./setup.sh
 
-# This will clone all component repositories:
-# Core infrastructure:
+# これにより、すべてのコンポーネントリポジトリがクローンされます:
+# コア基盤:
 # - texlive-ja-textlint
 # - latex-environment
 # - latex-release-action
-# Document templates:
+# ドキュメントテンプレート:
 # - sotsuron-template
 # - wr-template
 # - latex-template
 # - sotsuron-report-template
 # - ise-report-template
 # - poster-template
-# Tools:
+# ツール:
 # - ecosystem-manager
 # - student-repo-management
 # - thesis-student-registry
@@ -85,22 +85,22 @@ git clone https://github.com/smkwlab/latex-ecosystem.git .
 # - aldc
 ```
 
-### 3. Verify Installation
+### 3. インストールの確認
 
 ```bash
-# Build the manager once (Elixir escript)
+# マネージャを一度ビルドする (Elixir escript)
 (cd ecosystem-manager && mix escript.build)
 
-# Check ecosystem status
+# エコシステムの状態を確認
 ./ecosystem-manager/ecosystem-manager status
 
-# Show repository configuration and sources
+# リポジトリ構成とソースを表示
 ./ecosystem-manager/ecosystem-manager repos
 ```
 
-## Dependency Management
+## 依存関係管理
 
-### Ecosystem Dependency Structure
+### エコシステムの依存関係構造
 
 ```
 texlive-ja-textlint (Docker base)
@@ -120,60 +120,60 @@ Supporting Infrastructure:
 └── student-repo-management → (Management workflows)
 ```
 
-### Standard Update Process
+### 標準的な更新プロセス
 
-#### Phase 1: Base Image Update (texlive-ja-textlint)
+#### フェーズ 1: ベースイメージの更新 (texlive-ja-textlint)
 
 ```bash
 cd texlive-ja-textlint/
 
-# Create feature branch
+# feature ブランチの作成
 git checkout -b feature/update-2025d
 
-# Make changes (package updates, security patches, etc.)
-# Edit alpine/package.json, debian/package.json, etc.
+# 変更を加える (パッケージ更新、セキュリティパッチなど)
+# alpine/package.json, debian/package.json などを編集
 
-# Test locally
+# ローカルでテスト
 docker build -f alpine/Dockerfile -t test-alpine .
 docker build -f debian/Dockerfile -t test-debian .
 
-# Commit and push
+# コミットとプッシュ
 git add .
 git commit -m "Update to TeXLive 2025d with security patches"
 git push origin feature/update-2025d
 
-# Create PR
+# PR の作成
 gh pr create --title "Update to TeXLive 2025d" --body "- Security updates
 - Package compatibility fixes
 - Multi-architecture support verified"
 
-# After PR approval and merge
+# PR の承認とマージの後
 git checkout main && git pull origin main
 git tag 2025d -m "TeXLive 2025d release"
 git push origin 2025d
 ```
 
-#### Phase 2: Environment Update (latex-environment)
+#### フェーズ 2: 環境の更新 (latex-environment)
 
 ```bash
 cd ../latex-environment/
 
-# Wait for texlive-ja-textlint Docker image to be built
-# Check registry: ghcr.io/smkwlab/texlive-ja-textlint:2025d
+# texlive-ja-textlint の Docker イメージがビルドされるのを待つ
+# レジストリを確認: ghcr.io/smkwlab/texlive-ja-textlint:2025d
 
-# Create feature branch
+# feature ブランチの作成
 git checkout -b feature/update-texlive-2025d
 
-# Update devcontainer to use new image
+# 新しいイメージを使うよう devcontainer を更新
 vim .devcontainer/devcontainer.json
-# Change: "image": "ghcr.io/smkwlab/texlive-ja-textlint:2025d"
+# 変更: "image": "ghcr.io/smkwlab/texlive-ja-textlint:2025d"
 
-# Test the update
-# - Start devcontainer in VS Code
-# - Compile sample documents
-# - Verify textlint functionality
+# 更新のテスト
+# - VS Code で devcontainer を起動
+# - サンプル文書をコンパイル
+# - textlint の機能を確認
 
-# Commit and create PR
+# コミットして PR を作成
 git add .devcontainer/devcontainer.json
 git commit -m "Update to texlive-ja-textlint 2025d"
 git push origin feature/update-texlive-2025d
@@ -181,49 +181,49 @@ gh pr create --title "Update to texlive-ja-textlint 2025d" --body "- Update base
 - Compatibility verified with sample documents"
 ```
 
-#### Phase 3: Template Updates
+#### フェーズ 3: テンプレートの更新
 
 ```bash
-# Update each template repository
+# 各テンプレートリポジトリを更新
 for template in sotsuron-template wr-template latex-template ise-report-template; do
     echo "Updating $template..."
     cd ../$template/
     
-    # Templates inherit from latex-environment, so usually no direct changes needed
-    # But verify compatibility and update if necessary
+    # テンプレートは latex-environment を継承するため、通常は直接の変更は不要
+    # ただし互換性を確認し、必要なら更新する
     
-    # Test compilation
+    # コンパイルのテスト
     if [ -f "main.tex" ] || [ -f "sotsuron.tex" ]; then
-        # Open in VS Code with devcontainer to test
+        # devcontainer 付きの VS Code で開いてテスト
         echo "Manual testing required for $template"
     fi
 done
 ```
 
-## Release Management
+## リリース管理
 
-### Release Types
+### リリースの種類
 
-1. **Regular Updates** (Monthly/Bi-monthly)
-   - Feature additions, dependency updates
-   - Non-breaking improvements
-   - Example: 2025a → 2025b
+1. **通常更新**（毎月/隔月）
+   - 機能追加、依存関係更新
+   - 後方互換性を壊さない改善
+   - 例: 2025a → 2025b
 
-2. **Security Updates** (As needed)
-   - Critical security patches
-   - Example: 2025b → 2025b-security
+2. **セキュリティ更新**（必要に応じて）
+   - 重大なセキュリティパッチ
+   - 例: 2025b → 2025b-security
 
-3. **Major Updates** (Annually)
-   - TeXLive major version updates
-   - Architecture changes
-   - Example: 2024c → 2025
+3. **メジャー更新**（年次）
+   - TeXLive のメジャーバージョン更新
+   - アーキテクチャの変更
+   - 例: 2024c → 2025
 
-### Release Workflow
+### リリースワークフロー
 
-#### 1. Planning Phase
+#### 1. 計画フェーズ
 
 ```bash
-# Create release planning issue in primary repository
+# 主要リポジトリにリリース計画 issue を作成
 gh issue create --title "Release Planning: texlive-ja-textlint 2025d" --body "
 ## Release Goals
 - [ ] Security updates for base Alpine/Debian images
@@ -246,51 +246,51 @@ gh issue create --title "Release Planning: texlive-ja-textlint 2025d" --body "
 "
 ```
 
-#### 2. Development Phase
+#### 2. 開発フェーズ
 
 ```bash
-# Follow Phase 1-3 dependency update process
-# Ensure all changes are properly tested
-# Create comprehensive PRs with testing evidence
+# フェーズ 1〜3 の依存関係更新プロセスに従う
+# すべての変更が適切にテストされていることを確認
+# テストの証跡を含む包括的な PR を作成
 ```
 
-#### 3. Testing Phase
+#### 3. テストフェーズ
 
 ```bash
-# Ecosystem-wide status check (branches, uncommitted changes, PRs)
+# エコシステム全体の状態チェック (ブランチ、未コミット変更、PR)
 ./ecosystem-manager/ecosystem-manager status --long
 
-# Test critical workflows
-# (thesis-repo-manager.sh was removed in student-repo-management#503;
-#  use thesis-monitor to verify registry / repository health instead)
+# 重要なワークフローのテスト
+# (thesis-repo-manager.sh は student-repo-management#503 で削除済み。
+#  代わりに thesis-monitor でレジストリ／リポジトリの状態を検証する)
 ./thesis-monitor/thesis-monitor status --show-protection
 
-# Student workflow verification
+# 学生ワークフローの検証
 cd test-repos/
-# Verify repository creation and compilation
+# リポジトリ作成とコンパイルを確認
 ```
 
-#### 4. Release Phase
+#### 4. リリースフェーズ
 
 ```bash
-# Tag releases in dependency order
+# 依存順にリリースをタグ付け
 cd texlive-ja-textlint/
 git tag 2025d && git push origin 2025d
 
 cd ../latex-environment/
 git tag 2025.1 && git push origin 2025.1
 
-# Update ecosystem tracking
+# エコシステムのトラッキングを更新
 cd ../
-vim ECOSYSTEM.md  # Update compatibility matrix
+vim ECOSYSTEM.md  # 互換性マトリクスを更新
 git add ECOSYSTEM.md
 git commit -m "Update compatibility matrix for 2025d release"
 ```
 
-#### 5. Communication Phase
+#### 5. 周知フェーズ
 
 ```bash
-# Create release announcements
+# リリースアナウンスの作成
 gh release create 2025d --title "TeXLive 2025d Release" --notes "
 ## New Features
 - Updated TeXLive packages
@@ -304,25 +304,25 @@ gh release create 2025d --title "TeXLive 2025d Release" --notes "
 See docs/SETUP-AND-RELEASE.md for update instructions
 "
 
-# Notify stakeholders
-# - Update lab documentation
-# - Inform students of any required actions
-# - Update course materials if needed
+# 関係者への通知
+# - 研究室ドキュメントの更新
+# - 必要な対応を学生に周知
+# - 必要なら講義資料を更新
 ```
 
-## Emergency Procedures
+## 緊急時手順
 
-### Critical Security Updates
+### 重大なセキュリティ更新
 
 ```bash
-# Emergency workflow for security patches
-# 1. Assess vulnerability impact
-# 2. Create hotfix branch
+# セキュリティパッチのための緊急ワークフロー
+# 1. 脆弱性の影響を評価
+# 2. hotfix ブランチを作成
 git checkout -b hotfix/security-CVE-2025-XXXX
 
-# 3. Apply minimal fixes
-# 4. Expedited testing
-# 5. Emergency release with clear communication
+# 3. 最小限の修正を適用
+# 4. 迅速なテスト
+# 5. 明確な周知を伴う緊急リリース
 git tag 2025b-security1
 gh release create 2025b-security1 --title "Security Hotfix" --notes "
 ⚠️ SECURITY UPDATE
@@ -332,23 +332,23 @@ All users should update immediately.
 "
 ```
 
-### Rollback Procedures
+### ロールバック手順
 
 ```bash
-# If a release causes issues
-# 1. Identify problematic version
-# 2. Revert to previous stable tag
+# リリースが問題を引き起こした場合
+# 1. 問題のあるバージョンを特定
+# 2. 直前の安定タグに戻す
 
 cd texlive-ja-textlint/
-git checkout 2025c  # Previous stable version
+git checkout 2025c  # 直前の安定バージョン
 git tag 2025d-rollback
 git push origin 2025d-rollback
 
-# 3. Update latex-environment to use rollback version
+# 3. ロールバック版を使うよう latex-environment を更新
 cd ../latex-environment/
-# Update devcontainer.json to use 2025c or 2025d-rollback
+# devcontainer.json を 2025c または 2025d-rollback を使うよう更新
 
-# 4. Communicate rollback to users
+# 4. ロールバックをユーザに周知
 gh issue create --title "ROLLBACK: 2025d → 2025c" --body "
 Issue identified in 2025d release.
 Temporarily rolling back to 2025c.
@@ -356,90 +356,90 @@ Investigation ongoing.
 "
 ```
 
-## Ecosystem Maintenance
+## エコシステムの保守
 
-### Regular Maintenance Tasks
+### 定常的な保守タスク
 
 ```bash
-# Weekly maintenance
+# 週次の保守
 ./ecosystem-manager/ecosystem-manager status --long
 
-# Monthly maintenance
-# Pull the latest changes in each repository as needed (git pull)
-# Review and update documentation
-# Check for upstream updates (TeXLive, Node.js, etc.)
+# 月次の保守
+# 必要に応じて各リポジトリの最新変更を取得する (git pull)
+# ドキュメントのレビューと更新
+# 上流の更新を確認する (TeXLive, Node.js など)
 
-# Quarterly maintenance
-# Security audit
-# Performance review
-# Student feedback integration
+# 四半期の保守
+# セキュリティ監査
+# パフォーマンスレビュー
+# 学生フィードバックの反映
 ```
 
-### Monitoring and Alerts
+### 監視とアラート
 
 ```bash
-# Set up monitoring for:
-# - Docker image build failures
-# - GitHub Actions failures
-# - Student repository creation issues
-# - Compilation failures in templates
+# 以下の監視を設定する:
+# - Docker イメージのビルド失敗
+# - GitHub Actions の失敗
+# - 学生リポジトリ作成の問題
+# - テンプレートのコンパイル失敗
 
-# Use ecosystem-manager for status checks (e.g. in cron / CI)
+# 状態チェックには ecosystem-manager を利用する (cron / CI など)
 ./ecosystem-manager/ecosystem-manager status --fast
 ```
 
-## Development Best Practices
+## 開発のベストプラクティス
 
-### Branch Strategy
-- Always use feature branches
-- Never commit directly to main
-- Use descriptive branch names: `feature/`, `fix/`, `hotfix/`
+### ブランチ戦略
+- 常に feature ブランチを使う
+- main へ直接コミットしない
+- 説明的なブランチ名を使う: `feature/`, `fix/`, `hotfix/`
 
-### Testing Requirements
-- All changes must pass automated tests
-- Manual testing for template changes
-- Cross-platform compatibility verification
+### テスト要件
+- すべての変更は自動テストをパスする必要がある
+- テンプレート変更には手動テストを行う
+- クロスプラットフォーム互換性の検証
 
-### Documentation
-- Update CHANGELOG.md for user-facing changes
-- Maintain compatibility matrices
-- Provide migration guides for breaking changes
+### ドキュメント
+- ユーザ向けの変更については CHANGELOG.md を更新する
+- 互換性マトリクスを維持する
+- 破壊的変更には移行ガイドを提供する
 
-## Troubleshooting
+## トラブルシューティング
 
-### Common Issues
+### よくある問題
 
-**Setup Script Failures**:
+**セットアップスクリプトの失敗**:
 ```bash
-# Check GitHub CLI authentication
+# GitHub CLI の認証を確認
 gh auth status
 
-# Verify repository access
+# リポジトリへのアクセスを確認
 gh repo view smkwlab/latex-ecosystem
 
-# Manual clone if automated setup fails
+# 自動セットアップが失敗する場合は手動でクローン
 git clone https://github.com/smkwlab/texlive-ja-textlint.git
 ```
 
-**Dependency Update Issues**:
+**依存関係更新の問題**:
 ```bash
-# Check Docker image availability
+# Docker イメージの利用可否を確認
 docker pull ghcr.io/smkwlab/texlive-ja-textlint:2025d
 
-# Verify image compatibility
+# イメージの互換性を確認
 docker run --rm ghcr.io/smkwlab/texlive-ja-textlint:2025d tlmgr --version
 ```
 
-**Release Process Issues**:
+**リリースプロセスの問題**:
 ```bash
-# Check GitHub Actions status
+# GitHub Actions の状態を確認
 gh run list --repo smkwlab/texlive-ja-textlint
 
-# Verify tag creation
+# タグ作成を確認
 git tag -l | grep 2025
 
-# Check registry uploads
-# Visit: https://github.com/orgs/smkwlab/packages
+# レジストリへのアップロードを確認
+# 参照: https://github.com/orgs/smkwlab/packages
 ```
 
-For additional troubleshooting, see individual repository documentation and [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md).
+追加のトラブルシューティングについては、各リポジトリのドキュメントおよび [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md) を参照してください。
