@@ -79,20 +79,20 @@ Supporting Infrastructure:
 ## 自動更新チェーン
 
 ```
-1. texlive-ja-textlint update (manual tag creation)
+1. texlive-ja-textlint の更新（手動でタグ作成）
    ↓
-2. latex-environment auto-detects and creates PR  
-   ↓  
-3. Manual PR review and merge to main branch
+2. latex-environment が自動検出して PR を作成
    ↓
-4. latex-environment release branch updated automatically
-   (update-release-branch workflow on merge to main)
+3. PR を手動レビューして main へマージ
    ↓
-5. aldc automatically uses updated release branch
+4. latex-environment の release ブランチが自動更新
+   （main へのマージ時に update-release-branch workflow が実行）
    ↓
-6. New student repositories automatically get latest environment
+5. aldc は更新された release ブランチを自動的に利用
    ↓
-7. Templates require no manual updates (aldc integration)
+6. 新規の学生リポジトリには自動的に最新環境が入る
+   ↓
+7. テンプレート側の手動更新は不要（aldc 連携）
 ```
 
 ## 管理原則

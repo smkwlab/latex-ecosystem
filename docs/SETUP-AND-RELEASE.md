@@ -292,16 +292,16 @@ git commit -m "Update compatibility matrix for 2025d release"
 ```bash
 # リリースアナウンスの作成
 gh release create 2025d --title "TeXLive 2025d Release" --notes "
-## New Features
-- Updated TeXLive packages
-- Enhanced security
-- Improved multi-architecture support
+## 新機能
+- TeXLive パッケージの更新
+- セキュリティ強化
+- マルチアーキテクチャ対応の改善
 
-## Breaking Changes
-- Node.js 18 → 20 (update your local development)
+## 互換性に影響する変更
+- Node.js 18 → 20（ローカル開発環境の更新が必要）
 
-## Migration Guide
-See docs/SETUP-AND-RELEASE.md for update instructions
+## 移行手順
+docs/SETUP-AND-RELEASE.md を参照
 "
 
 # 関係者への通知
