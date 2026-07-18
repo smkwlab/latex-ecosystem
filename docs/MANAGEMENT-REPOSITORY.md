@@ -61,6 +61,11 @@ track their content.
 - **Coordination focus**: Cross-repository coordination and documentation
 - **Independent components**: Each subdirectory is a separate Git repository
 - **Exception for docs/**: Ecosystem-wide documentation is centrally managed here
+- **Documentation placement**: Reader-facing documentation (students, faculty,
+  operators) lives in this repository's `docs/`. A component repository's own
+  `docs/` is developer-facing only (`CLAUDE-*.md` and similar); its
+  reader-facing entry points are its top-level files (README,
+  WRITING-GUIDE.md, …)
 
 ### Working across the component repositories
 - Each subdirectory is an independent Git repository with its own history,
