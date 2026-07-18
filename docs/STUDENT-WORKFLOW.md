@@ -4,7 +4,7 @@
 
 - テンプレートの使い方・環境の詳細 → **使用中のリポジトリの README**（例: [sotsuron-template の README](https://github.com/smkwlab/sotsuron-template/blob/main/README.md)、[ise-report-template の README](https://github.com/smkwlab/ise-report-template/blob/main/README.md)）
 - LaTeX や GitHub Desktop の具体的な操作 → 使用中のテンプレートの執筆ガイド（例: [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md)）
-- 本書 → 執筆プロセス全体の流れとルール（全テンプレート共通）
+- 本書 → 執筆プロセス全体の流れとルール（draft サイクルを使うテンプレート共通）
 
 > 本ガイド中の org 名・URL は **smkwlab organization での運用を例**に記述しています。所属する研究室の運用が異なる場合は、担当教員の指示に従ってください。
 
