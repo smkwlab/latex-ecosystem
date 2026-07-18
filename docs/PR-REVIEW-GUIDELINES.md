@@ -304,7 +304,7 @@ branches:
 
 ### ドキュメント
 - [エコシステム全体構成](../ECOSYSTEM.md)
-- [ワークフロー詳細](MANAGEMENT-WORKFLOWS.ja.md)
+- [ワークフロー詳細](MANAGEMENT-WORKFLOWS.md)
 - [学生向け使用方法](https://github.com/smkwlab/sotsuron-template/blob/main/README.md)
 
 ### 完成レポート例
