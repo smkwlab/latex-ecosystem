@@ -268,6 +268,14 @@ smkwlab/thesis-monitor#14/#16/#18/#20、registry-manager#16/#18/#21):
 - **CHANGELOG.md**: リリース履歴(該当する場合)
 - **.devcontainer/**: VS Code 開発環境
 
+### 廃止リポジトリ名の再利用禁止
+
+改名で廃止されたリポジトリ名で新しいリポジトリを作成しない。GitHub のリネームリダイレクトは旧名のリポジトリが再作成された時点で無効になり、配布済みの旧 URL(学生の手元の手順・ブックマーク・キャッシュされた setup ワンライナー)が壊れるため。
+
+予約済みの旧名:
+
+- `thesis-management-tools`(現 [student-repo-management](https://github.com/smkwlab/student-repo-management))
+
 ### ブランチ戦略
 - **main**: 開発と真実の源
 - **release**: 利用者向けのクリーンなテンプレート(latex-environment のみ)
