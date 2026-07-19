@@ -371,6 +371,7 @@ smkwlab/thesis-monitor#14/#16/#18/#20、registry-manager#16/#18/#21):
 - アーキテクチャ変更時は ECOSYSTEM.md を最新に保つ
 - 各リポジトリの README.md を維持する
 - 本エコシステムのドキュメントは日本語で管理する(コード・コマンド・固有名詞は原語のまま)
+- 用語の定義は [docs/GLOSSARY.md](docs/GLOSSARY.md) を正とする
 - 破壊的変更には移行ガイドを含める
 
 ## サポートと連絡先

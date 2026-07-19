@@ -8,7 +8,7 @@ allowed-tools: Bash(git:*), Bash(gh:*), Bash(mix:*), Bash(./registry-manager/reg
 
 引数: 対象リポジトリ名（例 `k22rs001-sotsuron`）、または `--all --type thesis`。GitHub 操作は toshi0806。
 
-学生リポジトリは draft-to-draft PR ワークフロー（`2nd-draft` → `1st-draft` → `0th-draft` → `main`）を使う。workflow ファイルの更新が PR diff に現れると、GitHub Actions のセキュリティ制限で `pull_request` トリガの workflow がスキップされる。これを避けるため、**main から draft ブランチ階層を merge で辿って伝播する**必要がある。この手順は registry-manager の `propagate-workflow` コマンドが自動化している。
+学生リポジトリは draft PR サイクル（ブランチ階層 `2nd-draft` → `1st-draft` → `0th-draft` → `main`）を使う。workflow ファイルの更新が PR diff に現れると、GitHub Actions のセキュリティ制限で `pull_request` トリガの workflow がスキップされる。これを避けるため、**main から draft ブランチ階層を merge で辿って伝播する**必要がある。この手順は registry-manager の `propagate-workflow` コマンドが自動化している。
 
 ## 手順（必ずこの順序で）
 
