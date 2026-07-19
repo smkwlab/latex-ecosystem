@@ -286,6 +286,10 @@ STUDENT_ID=k21rs001 bash <(curl -fsSL https://repo-setup.smkwlab.net) wr
 
 # 末尾の引数で文書タイプを選択する。setup.sh は 5 種類に対応:
 # thesis, wr, latex, ise, poster。
+
+# latex で draft PR レビューフロー付きにする場合（研究会予稿など。
+# thesis/ise/poster は常時有効、既定の latex はレビューフローなし）
+REVIEW_FLOW=true STUDENT_ID=k21rs001 bash <(curl -fsSL https://repo-setup.smkwlab.net) latex
 ```
 
 ### 学生の進捗監視
