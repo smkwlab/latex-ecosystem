@@ -111,7 +111,7 @@ Student repository creation and progress-monitoring command examples live in
 
 ### Updating Workflow Files in Student Repositories
 
-**IMPORTANT**: Student repositories use draft-to-draft PR workflow (`2nd-draft` → `1st-draft` → `0th-draft` → `main`). Workflow changes must be propagated through the branch hierarchy via merge — pushing identical changes independently to each branch makes workflow diffs appear in PRs, which triggers GitHub Actions security restrictions and skips `pull_request` workflows.
+**IMPORTANT**: Student repositories use the draft PR cycle (branch hierarchy `2nd-draft` → `1st-draft` → `0th-draft` → `main`; terminology map in docs/GLOSSARY.md). Workflow changes must be propagated through the branch hierarchy via merge — pushing identical changes independently to each branch makes workflow diffs appear in PRs, which triggers GitHub Actions security restrictions and skips `pull_request` workflows.
 
 Use the **`/propagate` skill** ([.claude/skills/propagate/SKILL.md](.claude/skills/propagate/SKILL.md)) for the full procedure: registry-manager setup check → dry-run → `propagate-workflow` execution → PR diff verification, including the manual merge-chain fallback.
 

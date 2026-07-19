@@ -12,23 +12,35 @@
 
 | 層 | 主な文書 | 呼称 | 備考 |
 |---|---|---|---|
-| 学生向け | [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md)、各テンプレート README（sotsuron / ise / poster / latex） | **draft PR サイクル** | 採用語。初出には一文定義を付ける |
-| 教員向け | [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) ほか教員向け文書 | 「Pull Request ベース添削」「添削フロー」 | **サイクルより広い概念**（suggestion 運用・ブランチ保護・AI レビューを含む仕組み全体）を指す。その中核が draft PR サイクル |
-| 管理・開発者向け | latex-ecosystem CLAUDE.md、/propagate skill、[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)、student-repo-management | 「draft-to-draft PR workflow」「draft-chain」「ドラフトレビューワークフロー」 | 実装視点の呼称（ブランチ階層・workflow 群を指す文脈で使用） |
-| 学術文書 | 研究会論文（例: toshi-iot74） | 「レビューの工程化」「草稿ブランチ」／英文は "draft-to-draft PR workflow" | 広い読者を想定し、システムに依存しない一般的表現を意図的に採用 |
+| 学生向け・管理/開発者向け | [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md)、各テンプレート README（sotsuron / ise / poster / latex）、latex-ecosystem CLAUDE.md、/propagate skill、[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)、student-repo-management | **draft PR サイクル**（英語文書では **draft PR cycle**） | エコシステム内の文書はこの語で統一。初出には一文定義を付ける。旧呼称「draft-to-draft PR workflow」「draft-chain」「ドラフトレビューワークフロー」は #137 で廃止 |
+| 教員向け | [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) ほか教員向け文書 | 「Pull Request ベース添削」「添削フロー」 | 同一概念の言い換えではなく**上位概念**（次節参照） |
+| 学術文書 | 研究会論文（例: toshi-iot74） | 「レビューの工程化」「草稿ブランチ」／英文は "draft-to-draft PR workflow" | 広い読者を想定し、システムに依存しない一般的表現を意図的に採用（統一の対象外） |
+
+### 「Pull Request ベース添削」との関係（上位概念）
+
+教員向け文書の「Pull Request ベース添削（添削フロー）」は、draft PR サイクルの言い換えではなく、**それを中核として複数の仕組みを束ねた全体**を指します:
+
+- **draft PR サイクル**（中核）: 稿の反復そのもの
+- **suggestion 運用**: 教員の suggestion 適用と、次稿ブランチへの自動伝播（sync-next-draft）
+- **ブランチ保護**: main への誤マージ・直接 push の防止（prevent-draft-merge + branch protection）
+- **AI レビュー**: PR ごとの自動レビュー（ai-academic-paper-reviewer）
+- **レビュアー自動アサイン**、**最終提出処理**（`final-*` タグ）など
+
+つまり「Pull Request ベース添削」⊃「draft PR サイクル」です。学生は中核のサイクルだけ理解すれば執筆でき、教員向け文書は周辺の仕組みを含めた全体を扱う、という役割分担です。
 
 ### 呼び分けの方針
 
-- **学生向け**: 「これから学ぶ学生に伝わりやすいか」を試行錯誤している最中であり、「draft PR サイクル」は**現時点の採用語**。学生向け文書内ではこの語で統一し、「draft サイクル」「draft PR のサイクル」などのゆらぎは使わない
-- **教員向け**: 「Pull Request ベース添削」は同一概念の言い換えではなく上位概念のため、統一の対象外
+- **エコシステム内の文書（学生向け・管理/開発者向け）**: 「draft PR サイクル」で統一（英語文書では draft PR cycle）。「draft サイクル」「draft PR のサイクル」などのゆらぎは使わない。学生に伝わりやすい表現は試行錯誤中であり、この語は**現時点の採用語**
+- **教員向け**: 「Pull Request ベース添削」は上位概念のため別語のまま維持
 - **論文**: システム非依存の一般表現を優先するため、統一の対象外
 
-### 学生向け採用語を変更するときの手順
+### 採用語を変更するときの手順
 
 まず**本ファイルの呼称表と定義を更新**し、その後、次の文書へ伝播させる:
 
 1. [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md)（定義の本体）
 2. 各テンプレート README: sotsuron-template（+ WRITING-GUIDE.md）/ ise-report-template / poster-template / latex-template
 3. [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) の対応付けの一文
+4. 管理・開発文書: latex-ecosystem の CLAUDE.md・ECOSYSTEM.md・[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)・`.claude/skills/propagate`、student-repo-management のスクリプトコメント
 
 （経緯: [#137](https://github.com/smkwlab/latex-ecosystem/issues/137)、用語統一の議論は #135 / #136）

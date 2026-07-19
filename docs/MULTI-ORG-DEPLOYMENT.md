@@ -169,7 +169,7 @@ smkwlab の [Pages ワークフロー](https://github.com/smkwlab/student-repo-m
 
 | 共有サービス | 参照元 | org ごとの入力 |
 |---|---|---|
-| `smkwlab/.github` の再利用可能ワークフロー (`.github/workflows/<name>.yml@v1`) | テンプレートの呼び出し元ワークフロー（draft-chain、ML 通知、AI レビュー、LaTeX ビルド、QA） | シークレット / `secrets: inherit` |
+| `smkwlab/.github` の再利用可能ワークフロー (`.github/workflows/<name>.yml@v1`) | テンプレートの呼び出し元ワークフロー（draft PR サイクル、ML 通知、AI レビュー、LaTeX ビルド、QA） | シークレット / `secrets: inherit` |
 | `smkwlab/latex-release-action@v3` | `latex-build` / `latex-build-modified` 再利用可能ワークフロー | — |
 | `smkwlab/ai-academic-paper-reviewer@v1` | `ai-review` 再利用可能ワークフロー | `ANTHROPIC_API_KEY` / `GEMINI_API_KEY` |
 | `ghcr.io/smkwlab/texlive-ja-textlint` | `devcontainer.json`、ビルドワークフロー | — |
@@ -301,5 +301,5 @@ org と設定を準備したあと:
    代わりに `create-repo/main.sh` を直接実行してください。例:
    `TARGET_ORG=<org> DOC_TYPE=thesis ./main.sh <student-id>`。
 4. 作成された学生リポジトリでドラフト PR を開き、テンプレートワークフロー
-   （ビルド、draft-chain、レビュー）が、欠けているシークレットや private な
+   （ビルド、draft PR サイクル、レビュー）が、欠けているシークレットや private な
    `smkwlab` リソースを参照することなく実行されることを確認します。
