@@ -45,4 +45,5 @@
 | [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) | 教員（日常のレビュー操作） |
 | [TEACHER-GUIDE.md](TEACHER-GUIDE.md) | 教員（運用・提出プロセス管理） |
 | [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) | 学生 |
+| [GLOSSARY.md](GLOSSARY.md) | 全読者（層別呼称の対応表） |
 | [../ECOSYSTEM.md](../ECOSYSTEM.md) | 維持運用者 |
