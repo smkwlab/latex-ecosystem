@@ -1,10 +1,10 @@
 # 学生向け執筆ワークフローガイド
 
-本エコシステムの文書リポジトリで執筆する学生向けに、リポジトリ作成前の準備から最終提出までの**流れとルール**をまとめたガイドです。本書が説明する draft PR のサイクルは、**卒業論文・修士論文（sotsuron-template）、情報科学演習レポート（ise-report-template）、学会ポスター（poster-template）**で共通です。**汎用 LaTeX（latex-template）**は任意参加で、教員の指示でレビューフロー付きで作成された場合（または自分で `0th-draft` ブランチを作って PR を出す場合。具体的な手順は [latex-template の README](https://github.com/smkwlab/latex-template/blob/main/README.md) の「添削を受ける場合」を参照）に同じサイクルが使えます。週報リポジトリは draft サイクルを使わないため、README に従ってください。
+本エコシステムの文書リポジトリで執筆する学生向けに、リポジトリ作成前の準備から最終提出までの**流れとルール**をまとめたガイドです。本書が説明する **draft PR サイクル**（`0th-draft` などの draft ブランチで執筆し、Pull Request で添削を受け、自動作成される次の稿のブランチで改稿を続ける繰り返し）は、**卒業論文・修士論文（sotsuron-template）、情報科学演習レポート（ise-report-template）、学会ポスター（poster-template）**で共通です。**汎用 LaTeX（latex-template）**は任意参加で、教員の指示でレビューフロー付きで作成された場合（または自分で `0th-draft` ブランチを作って PR を出す場合。具体的な手順は [latex-template の README](https://github.com/smkwlab/latex-template/blob/main/README.md) の「添削を受ける場合」を参照）に同じ draft PR サイクルが使えます。週報リポジトリは draft PR サイクルを使わないため、README に従ってください。
 
 - テンプレートの使い方・環境の詳細 → **使用中のリポジトリの README**（例: [sotsuron-template の README](https://github.com/smkwlab/sotsuron-template/blob/main/README.md)、[ise-report-template の README](https://github.com/smkwlab/ise-report-template/blob/main/README.md)）
 - LaTeX や GitHub Desktop の具体的な操作 → 使用中のテンプレートの執筆ガイド（例: [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md)）
-- 本書 → 執筆プロセス全体の流れとルール（draft サイクルを使うテンプレート共通）
+- 本書 → 執筆プロセス全体の流れとルール（draft PR サイクルを使うテンプレート共通）
 
 > 本ガイド中の org 名・URL は **smkwlab organization での運用を例**に記述しています。所属する研究室の運用が異なる場合は、担当教員の指示に従ってください。
 
