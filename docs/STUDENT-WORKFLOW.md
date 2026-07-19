@@ -1,6 +1,6 @@
 # 学生向け執筆ワークフローガイド
 
-本エコシステムの文書リポジトリで執筆する学生向けに、リポジトリ作成前の準備から最終提出までの**流れとルール**をまとめたガイドです。本書が説明する draft PR のサイクルは、**卒業論文・修士論文（sotsuron-template）と情報科学演習レポート（ise-report-template）**で共通です（週報・汎用 LaTeX・ポスターのリポジトリは draft サイクルを使わないため、それぞれの README に従ってください）。
+本エコシステムの文書リポジトリで執筆する学生向けに、リポジトリ作成前の準備から最終提出までの**流れとルール**をまとめたガイドです。本書が説明する draft PR のサイクルは、**卒業論文・修士論文（sotsuron-template）、情報科学演習レポート（ise-report-template）、学会ポスター（poster-template）**で共通です（週報・汎用 LaTeX のリポジトリは draft サイクルを使わないため、それぞれの README に従ってください）。
 
 - テンプレートの使い方・環境の詳細 → **使用中のリポジトリの README**（例: [sotsuron-template の README](https://github.com/smkwlab/sotsuron-template/blob/main/README.md)、[ise-report-template の README](https://github.com/smkwlab/ise-report-template/blob/main/README.md)）
 - LaTeX や GitHub Desktop の具体的な操作 → 使用中のテンプレートの執筆ガイド（例: [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md)）
@@ -122,6 +122,8 @@ PR を作成する前に、毎回次の3点を確認してください。
 教員から「提出 OK」の許可が出たら、**教員の指示に従って**提出版のコミットにタグを付与します。`final-*` 形式のタグが付与されると、最終提出処理（main への提出 PR の自動作成とリリース作成）が自動で実行されます。提出 PR のマージは教員が行います。
 
 タグの名前と付け方の手順は使用中のリポジトリの README を参照してください（卒業論文・修士論文の例: [sotsuron-template README の「論文提出について」](https://github.com/smkwlab/sotsuron-template/blob/main/README.md#-論文提出について)）。概要完成後の手順は教員から口頭で説明されます。
+
+> **学会ポスターの場合**: `final-*` タグによる最終提出処理はありません。学会提出版が確定したら、教員の指示に従ってバージョンタグ（例: `v1.0.0`）を付与すると、完成版 PDF が添付されたリリースが自動作成されます。詳細は [poster-template の README](https://github.com/smkwlab/poster-template/blob/main/README.md) を参照してください。
 
 ## 8. してはいけないこと
 
