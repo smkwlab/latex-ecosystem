@@ -1,10 +1,12 @@
 # 学生向け執筆ワークフローガイド
 
-本エコシステムの文書リポジトリで執筆する学生向けに、リポジトリ作成前の準備から最終提出までの**流れとルール**をまとめたガイドです。本書が説明する **draft PR サイクル**（`0th-draft` などの draft ブランチで執筆し、Pull Request で添削を受け、自動作成される次の稿のブランチで改稿を続ける繰り返し）は、**卒業論文・修士論文（sotsuron-template）、情報科学演習レポート（ise-report-template）、学会ポスター（poster-template）**で共通です。**汎用 LaTeX（latex-template）**は任意参加で、教員の指示でレビューフロー付きで作成された場合（または自分で `0th-draft` ブランチを作って PR を出す場合。具体的な手順は [latex-template の README](https://github.com/smkwlab/latex-template/blob/main/README.md) の「添削を受ける場合」を参照）に同じ draft PR サイクルが使えます。週報リポジトリは draft PR サイクルを使わないため、README に従ってください。
+本エコシステムの文書リポジトリで執筆する学生向けに、リポジトリ作成前の準備から最終提出までの**流れとルール**をまとめたガイドです。本書が説明する **draft PR サイクル**（`0th-draft` などの draft ブランチで執筆し、Pull Request で添削を受け、自動作成される次の稿のブランチで改稿を続ける繰り返し）は、**卒業論文・修士論文（sotsuron-template）、情報科学演習レポート（ise-report-template）、学会ポスター（poster-template）**で共通です。**汎用 LaTeX（latex-template）**は任意参加で、教員の指示でレビューフロー付きで作成された場合（または自分で `0th-draft` ブランチを作って PR を出す場合。具体的な手順は [latex-template のテンプレート README](https://github.com/smkwlab/latex-template/blob/main/.github/README.md) の「添削を受ける場合」を参照）に同じ draft PR サイクルが使えます。週報リポジトリは draft PR サイクルを使わないため、[wr-template のテンプレート README](https://github.com/smkwlab/wr-template/blob/main/.github/README.md) に従ってください。
 
-- テンプレートの使い方・環境の詳細 → **使用中のリポジトリの README**（例: [sotsuron-template の README](https://github.com/smkwlab/sotsuron-template/blob/main/README.md)、[ise-report-template の README](https://github.com/smkwlab/ise-report-template/blob/main/README.md)）
+- テンプレートの使い方・環境の詳細 → **テンプレートリポジトリの README**（例: [sotsuron-template](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md)、[ise-report-template](https://github.com/smkwlab/ise-report-template/blob/main/.github/README.md)）
 - LaTeX や GitHub Desktop の具体的な操作 → 使用中のテンプレートの執筆ガイド（例: [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md)）
 - 本書 → 執筆プロセス全体の流れとルール（draft PR サイクルを使うテンプレート共通）
+
+> **自分のリポジトリの `README.md`** には、著者情報（氏名・学籍番号・種別・タイトル）と、執筆するファイルの案内が書かれています。環境構築や GitHub Desktop の操作手順は書かれていないので、それらは上記のテンプレートの README を参照してください。著者情報はプレースホルダのままなので、`0th-draft` での最初の作業として自分で書き換えてください。
 
 > 本ガイド中の org 名・URL は **smkwlab organization での運用を例**に記述しています。所属する研究室の運用が異なる場合は、担当教員の指示に従ってください。
 
@@ -67,16 +69,17 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 1. 作成されたリポジトリを手元にクローンする（GitHub Desktop 推奨）
 2. VS Code で開く。**Dev Containers 拡張機能**を入れておくと、開くだけで執筆環境（LaTeX Workshop・textlint など）が自動で使えるようになる
 
-具体的な手順は使用中のリポジトリの README を参照してください（卒業論文・修士論文の例: [sotsuron-template README の「学生向けクイックスタート」](https://github.com/smkwlab/sotsuron-template/blob/main/README.md#-学生向けクイックスタート)）。
+具体的な手順は使用中のテンプレートの README を参照してください（卒業論文・修士論文の例: [sotsuron-template README の「学生向けクイックスタート」](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md#-学生向けクイックスタート)）。
 
 ## 4. 第0稿（アウトライン）を提出する
 
 最初の提出は**章立てだけ**です。本文はまだ書きません。
 
 1. ブランチが `0th-draft` になっていることを確認する
-2. 文書のメインファイルに章・節の構成を書く（内容は未記入で OK）。卒業論文の場合は `sotsuron.tex`、修士論文の場合は `thesis.tex` に `\chapter`, `\section` などで書く。ファイル名は使用中のリポジトリの README を参照
-3. PDF（または成果物）を生成して構成を確認する
-4. commit & push して PR を作成する
+2. **`README.md` の著者情報を埋める** — 氏名・学籍番号・種別・タイトルがプレースホルダのままなので、自分の情報に書き換える
+3. 文書のメインファイルに章・節の構成を書く（内容は未記入で OK）。卒業論文の場合は `sotsuron.tex`、修士論文の場合は `thesis.tex` に `\chapter`, `\section` などで書く。ファイル名は自分のリポジトリの `README.md` の「執筆するファイル」を参照
+4. PDF（または成果物）を生成して構成を確認する
+5. commit & push して PR を作成する
    - タイトル例: `[0th-draft] アウトライン提出`
 
 この段階の教員レビューの観点は**構成のみ**です（章立て・対象範囲・論理構成）。文章の完成度はまだ問われません。
@@ -121,9 +124,9 @@ PR を作成する前に、毎回次の3点を確認してください。
 
 教員から「提出 OK」の許可が出たら、**教員の指示に従って**提出版のコミットにタグを付与します。`final-*` 形式のタグが付与されると、最終提出処理（main への提出 PR の自動作成とリリース作成）が自動で実行されます。提出 PR のマージは教員が行います。
 
-タグの名前と付け方の手順は使用中のリポジトリの README を参照してください（卒業論文・修士論文の例: [sotsuron-template README の「論文提出について」](https://github.com/smkwlab/sotsuron-template/blob/main/README.md#-論文提出について)）。概要完成後の手順は教員から口頭で説明されます。
+タグの名前と付け方の手順は使用中のテンプレートの README を参照してください（卒業論文・修士論文の例: [sotsuron-template README の「論文提出について」](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md#-論文提出について)）。概要完成後の手順は教員から口頭で説明されます。
 
-> **学会ポスターの場合**: `final-*` タグによる最終提出処理はありません。学会提出版が確定したら、教員の指示に従ってバージョンタグ（例: `v1.0.0`）を付与すると、完成版 PDF が添付されたリリースが自動作成されます。詳細は [poster-template の README](https://github.com/smkwlab/poster-template/blob/main/README.md) を参照してください。
+> **学会ポスターの場合**: `final-*` タグによる最終提出処理はありません。学会提出版が確定したら、教員の指示に従ってバージョンタグ（例: `v1.0.0`）を付与すると、完成版 PDF が添付されたリリースが自動作成されます。詳細は [poster-template のテンプレート README](https://github.com/smkwlab/poster-template/blob/main/.github/README.md) を参照してください。
 
 ## 8. してはいけないこと
 
@@ -146,6 +149,7 @@ PR を作成する前に、毎回次の3点を確認してください。
 
 ## 10. 参考リンク
 
-- **使用中のリポジトリの README** — テンプレートの使い方・環境構築・提出手順（卒業論文・修士論文の例: [sotsuron-template の README](https://github.com/smkwlab/sotsuron-template/blob/main/README.md)）
+- **使用中のテンプレートの README** — テンプレートの使い方・環境構築・提出手順（卒業論文・修士論文の例: [sotsuron-template の README](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md)）
+- **自分のリポジトリの `README.md`** — 著者情報（氏名・学籍番号・種別・タイトル）。`0th-draft` で自分で記入する
 - [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md) — GitHub Desktop の詳細操作・トラブルシューティング・FAQ（卒業論文・修士論文）
 - [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) — 添削ルールの正典（ブランチ命名・自動化の仕様）
