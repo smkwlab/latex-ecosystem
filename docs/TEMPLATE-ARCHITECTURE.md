@@ -61,7 +61,7 @@ sotsuron-template の上乗せ:
 - 文書の tex ファイル（と付随素材）
 - `.latexmkrc`（uplatex 版 / lualatex 版のどちらか）
 - `README.md`（著者情報のひな形。学生リポジトリのトップに表示される）と `.github/README.md`（テンプレート説明。テンプレートリポジトリのトップに表示され、作成時に削除される）— 使い分けの詳細は各テンプレートの CLAUDE.md「Which README is shown where」
-- `CLAUDE.md`
+- `CLAUDE.md`（AI エージェント向けのリポジトリ説明。ビルドコマンド・ファイル構成・README の使い分けを書く。既存テンプレートのものを雛形にする）
 - caller workflow（配布物。**個別に手で編集しない**。変更は smkwlab/.github の callers を直してから再配布する）
 
 置かないもの（共通レイヤーが担う）:
@@ -79,8 +79,8 @@ LaTeX 系の新しいテンプレート（例: 新しい提出物種別）を追
 3. **軸の選択**:
    - `.latexmkrc` を uplatex 版 / lualatex 版のどちらかから複製する
    - ビルド様式を決める（all-PR / modified-push）
-4. **caller の配布**: smkwlab/.github の `scripts/distribute-workflow.sh` で caller 一式（ビルド、draft 系、notify-ml-on-pr、AI レビュー系）をスタンプする。手でコピーしない
-5. **student-repo-management**: `create-repo` にタイプを追加する（テンプレートリポジトリ名・リポジトリ名規則・`USE_DRAFT_FLOW` などの設定と、完了メッセージ）。`docs/RELEASE.md` に従いリリースする
+4. **caller の配布**: smkwlab/.github の `scripts/distribute-workflow.sh` で必要な caller をスタンプする。手でコピーしない。配布できる caller の一覧は `--list-callers`（実体は smkwlab/.github の `scripts/callers/`）で確認する。必要な caller がまだ callers/ に無い場合は、先に smkwlab/.github へ追加する
+5. **student-repo-management**: `create-repo` にタイプを追加する（テンプレートリポジトリ名・リポジトリ名規則・`USE_DRAFT_FLOW` などの設定と、完了メッセージ）。[student-repo-management の docs/RELEASE.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/RELEASE.md) に従いリリースする
 6. **docs の追随**: 本文書の位置づけ表、[GLOSSARY](GLOSSARY.md)・[STUDENT-WORKFLOW](STUDENT-WORKFLOW.md) の対象一覧、教員向け文書（[TEACHER-GUIDE](TEACHER-GUIDE.md) ほか）を確認・更新する。registry の語彙（`review_flow` / type）への追加が要る場合は registry-manager 側も確認する
 
 ## 採らない設計
