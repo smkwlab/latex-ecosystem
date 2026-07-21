@@ -168,6 +168,8 @@ DevContainer イメージ(`ghcr.io/smkwlab/texlive-ja-textlint`)。これらは
 
 ## テンプレートの特化
 
+LaTeX 系テンプレート（sotsuron / wr / sotsuron-report / poster / latex）は latex-template を基底とする**派生**であり、テンプレート固有物は文書内容と少数の設定に限られる。共通部分の所在・派生の3軸（エンジン / ビルド様式 / draft サイクル）・新テンプレート追加手順は [docs/TEMPLATE-ARCHITECTURE.md](docs/TEMPLATE-ARCHITECTURE.md) を参照。
+
 ### 文書フォーマットの焦点
 - **sotsuron-template**: 高度な組版を備えた LaTeX ベースの学術論文
 - **ise-report-template**: Web アクセシビリティと品質自動化を備えた HTML ベースのレポート
