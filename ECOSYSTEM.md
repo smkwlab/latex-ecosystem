@@ -14,7 +14,7 @@
 - **ise-report-template**: HTML/textlint による品質管理を備えた情報科学演習レポートテンプレート
 - **wr-template**: 週間報告テンプレート
 - **latex-template**: 基本 LaTeX テンプレート
-- **sotsuron-report-template**: 論文執筆練習用レポートテンプレート
+- **sotsuron-report-template**: 卒業論文調査報告テンプレート
 - **poster-template**: 学会発表用ポスターテンプレート(A0 サイズ)
 
 ### 管理と自動化

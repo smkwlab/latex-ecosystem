@@ -80,7 +80,7 @@ LaTeX 系の新しいテンプレート（例: 新しい提出物種別）を追
    - `.latexmkrc` を uplatex 版 / lualatex 版のどちらかから複製する
    - ビルド様式を決める（all-PR / modified-push）
 4. **caller の配布**: smkwlab/.github の `scripts/distribute-workflow.sh` で必要な caller をスタンプする。手でコピーしない。配布できる caller の一覧は `--list-callers`（実体は smkwlab/.github の `scripts/callers/`）で確認する。必要な caller がまだ callers/ に無い場合は、先に smkwlab/.github へ追加する
-5. **student-repo-management**: `create-repo` にタイプを追加する（テンプレートリポジトリ名・リポジトリ名規則・`USE_DRAFT_FLOW` などの設定と、完了メッセージ）。[student-repo-management の docs/RELEASE.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/RELEASE.md) に従いリリースする
+5. **student-repo-management**: `create-repo` にタイプを追加する。単純なタイプは `create-repo/types/<type>.conf` 1 ファイル + `main.sh` / `setup.sh` の whitelist 各 1 行で完結する（conf の契約は `create-repo/types/README.md`。契約は CI で機械検証される）。**登録自動処理（`scripts/process-pending-issues.sh`）のタイプ対応**（処理経路・`--type` フィルタ・種別表示）も忘れないこと。[student-repo-management の docs/RELEASE.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/RELEASE.md) に従いリリースする
 6. **docs の追随**: 本文書の位置づけ表、[GLOSSARY](GLOSSARY.md)・[STUDENT-WORKFLOW](STUDENT-WORKFLOW.md) の対象一覧、教員向け文書（[TEACHER-GUIDE](TEACHER-GUIDE.md) ほか）を確認・更新する。registry の語彙（`review_flow` / type）への追加が要る場合は registry-manager 側も確認する
 
 ## 採らない設計
