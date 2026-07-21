@@ -7,7 +7,7 @@
 `0th-draft` などの draft ブランチで執筆し、Pull Request で添削を受け、自動作成される次の稿のブランチ（`1st-draft`, `2nd-draft`, ...）で改稿を続ける繰り返し。draft PR はマージせずクローズする。
 
 - **英語文書・コード中の表記**: draft PR cycle
-- **適用範囲**: thesis（卒業論文・修士論文）/ ise（情報科学演習レポート）/ poster（学会ポスター）の各テンプレートでは常時有効。latex（汎用 LaTeX 文書）は任意参加（作成時の `REVIEW_FLOW=true`、または自分で `0th-draft` ブランチを作成）。wr（週報）は対象外
+- **適用範囲**: thesis（卒業論文・修士論文）/ ise（情報科学演習レポート）/ poster（学会ポスター）の各テンプレートでは常時有効。latex（汎用 LaTeX 文書）は任意参加（作成時の `REVIEW_FLOW=true`、または自分で `0th-draft` ブランチを作成）。wr（週報）と sotsuron-report（卒業論文調査報告）は対象外
 - **表記ルール**: 文書の初出には一文定義を付ける。「draft サイクル」「draft PR のサイクル」などのゆらぎは使わない
 - **旧称（廃止）**: draft-to-draft PR workflow、draft-chain、ドラフトレビューワークフロー
 - **備考**: 学生に伝わりやすい名称は試行錯誤中であり、本語は現時点の採用語
