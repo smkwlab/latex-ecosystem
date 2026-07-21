@@ -6,7 +6,7 @@
 - LaTeX や GitHub Desktop の具体的な操作 → 使用中のテンプレートの執筆ガイド（例: [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md)）
 - 本書 → 執筆プロセス全体の流れとルール（draft PR サイクルを使うテンプレート共通）
 
-> **自分のリポジトリの `README.md`** は、著者情報（氏名・学籍番号・種別・タイトル）を書くためのものです。テンプレートの使い方は書かれていません。プレースホルダのままになっているので、`0th-draft` での最初の作業として自分で書き換えてください。
+> **自分のリポジトリの `README.md`** には、著者情報（氏名・学籍番号・種別・タイトル）と、執筆するファイルの案内が書かれています。環境構築や GitHub Desktop の操作手順は書かれていないので、それらは上記のテンプレートの README を参照してください。著者情報はプレースホルダのままなので、`0th-draft` での最初の作業として自分で書き換えてください。
 
 > 本ガイド中の org 名・URL は **smkwlab organization での運用を例**に記述しています。所属する研究室の運用が異なる場合は、担当教員の指示に従ってください。
 
