@@ -29,6 +29,7 @@
 3. [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md) — 管理タスクのワークフロー
 4. [RELEASE-OPERATIONS.md](RELEASE-OPERATIONS.md) — 依存関係更新・リリース運用
 5. [GIT-WORKFLOW.md](GIT-WORKFLOW.md) — Git 運用のベストプラクティス
+6. [TOOL-CLI-CONVENTIONS.md](TOOL-CLI-CONVENTIONS.md) — Elixir CLI ツールの共通コマンド体系
 
 ## 全ドキュメント一覧
 
@@ -40,6 +41,7 @@
 | [MANAGEMENT-REPOSITORY.md](MANAGEMENT-REPOSITORY.md) | 維持運用者 |
 | [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md) | 維持運用者 |
 | [GIT-WORKFLOW.md](GIT-WORKFLOW.md) | 維持運用者 |
+| [TOOL-CLI-CONVENTIONS.md](TOOL-CLI-CONVENTIONS.md) | 維持運用者 |
 | [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) | 学生・教員・管理者（ルールの正典） |
 | [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) | 論文指導を始める教員 |
 | [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) | 教員（日常のレビュー操作） |
