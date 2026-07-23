@@ -61,7 +61,8 @@ Supporting Infrastructure:
 ├── registry-manager → thesis-student-registry (writes registry data)
 ├── thesis-monitor → thesis-student-registry (reads registry data)
 ├── ecosystem-manager → (reads status of all ecosystem repos)
-└── elixir-tool-kit → (shared foundation for the three Elixir CLI tools above)
+└── registry-manager / thesis-monitor / ecosystem-manager → elixir-tool-kit
+    (shared CLI foundation, pinned by semver tag)
 ```
 
 ## バージョン互換性
