@@ -22,6 +22,21 @@ CLI エンジン上に実装されている。アーキテクチャ上の位置�
   省略時に `status` を実行する
 - **exit code**: 成功 0 / エラー 1
 
+## コマンド所有権(見る=thesis-monitor、書く=registry-manager)
+
+レジストリの読み/書きの境界はコマンドにも貫かれている。同じ機能を両ツールに重複させず、各機能で生き残るコマンドは 1 つ。
+
+| 機能 | コマンド | ツール |
+|---|---|---|
+| レジストリの登録内容を確認(GitHub を叩かない保存値ビュー) | `list` | registry-manager |
+| レジストリへの登録・更新・削除・保護マーク | `add` / `update` / `remove` / `protect` / `edit` ほか | registry-manager |
+| repo の live 状態一覧(活動時刻・保護・Latest Branch 等) | `status` | thesis-monitor |
+| 最近のコミット活動 | `activity` | thesis-monitor |
+| PR/Issue 状態(type/state/review-requested/sort) | `pr-stats` | thesis-monitor |
+
+- `--show-protection` は **rm=registry の保存値**(`protection_status`)、**tm=live 取得**で意味が異なる。rm 側の列見出しは `Protection (recorded)` として live と区別する。
+- registry-manager は per-repo の GitHub 監視(活動時刻・PR・live 保護)を行わない。これらは thesis-monitor の役割。
+
 ## 正準オプション語彙
 
 同じフラグは全ツールで同じ意味を持つ。ツール列は そのフラグを持つツール
