@@ -218,6 +218,13 @@ LaTeX 系テンプレート（sotsuron / wr / sotsuron-report / poster / latex�
   レジストリを書き、`thesis-monitor` はレジストリを索引として読み、学生の
   論文リポジトリを監視する。prefix の非対称は意図的である — 2 つのツールは
   異なる対象を操作している。
+- **コマンドレベルの役割分割**: この読み/書きの境界はコマンドにも貫かれている。
+  `registry-manager list` は registry.json の**保存値のみ**を表示するレジストリ
+  ビュー(GitHub の per-repo 監視は叩かない)。リポジトリの活動時刻・PR 状態・
+  ブランチ保護の live 確認といった GitHub 監視は `thesis-monitor` に一本化されて
+  いる(`status` / `activity` / `pr-stats`)。同じ機能を両ツールに重複させない。
+  コマンド所有権の一覧は [docs/TOOL-CLI-CONVENTIONS.md](docs/TOOL-CLI-CONVENTIONS.md)
+  を参照。
 - **データフィールド**: レジストリが管理するタイムスタンプは `registry_`
   prefix を持つ(`registry_created_at`、`registry_updated_at`)。素の
   `created_at`/`updated_at` はレガシーフィールドである(移行状況は
