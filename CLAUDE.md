@@ -22,18 +22,18 @@ The manager is an Elixir escript. Build it once with
 
 ```bash
 # Show status of all repositories (default command)
-./ecosystem-manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager list
 
 # Detailed status: branch, uncommitted changes, last commit, PRs, issues
-./ecosystem-manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager list --long
 
 # Fast status without GitHub API calls
-./ecosystem-manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager list --fast
 
 # Show only repositories with urgent issues / open PRs / PRs needing review
-./ecosystem-manager/ecosystem-manager status --urgent-issues
-./ecosystem-manager/ecosystem-manager status --with-prs
-./ecosystem-manager/ecosystem-manager status --needs-review
+./ecosystem-manager/ecosystem-manager list --urgent-issues
+./ecosystem-manager/ecosystem-manager list --with-prs
+./ecosystem-manager/ecosystem-manager list --needs-review
 
 # Show repository configuration and sources
 ./ecosystem-manager/ecosystem-manager repos

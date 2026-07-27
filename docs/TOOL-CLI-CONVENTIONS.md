@@ -19,7 +19,7 @@ CLI エンジン上に実装されている。アーキテクチャ上の位置�
 - **help の自動生成**: `--help`(全体)と `<command> --help`(コマンド別)は
   spec から生成される。help を手で編集することはない
 - **デフォルトコマンド**: thesis-monitor と ecosystem-manager はサブコマンド
-  省略時に `status` を実行する
+  省略時に `list` を実行する
 - **exit code**: 成功 0 / エラー 1
 
 ## コマンド所有権(見る=thesis-monitor、書く=registry-manager)
@@ -30,10 +30,11 @@ CLI エンジン上に実装されている。アーキテクチャ上の位置�
 |---|---|---|
 | レジストリの登録内容を確認(GitHub を叩かない保存値ビュー) | `list` | registry-manager |
 | レジストリへの登録・更新・削除・保護マーク | `add` / `update` / `remove` / `protect` / `edit` ほか | registry-manager |
-| repo の live 状態一覧(活動時刻・保護・Latest Branch 等) | `status` | thesis-monitor |
+| repo の live 状態一覧(活動時刻・保護・Latest Branch 等) | `list` | thesis-monitor |
 | 最近のコミット活動 | `activity` | thesis-monitor |
 | PR/Issue 状態(type/state/review-requested/sort) | `pr-stats` | thesis-monitor |
 
+- 各ツールの一覧コマンドは `list`(エイリアス `ls`)で統一されている。何の集合を列挙するかはツール名が示す — registry-manager=レジストリの保存エントリ、thesis-monitor=学生 repo の live 状態、ecosystem-manager=ワークスペースの全リポジトリ。thesis-monitor と ecosystem-manager ではサブコマンド省略時の既定コマンドでもある。
 - `--show-protection` は **rm=registry の保存値**(`protection_status`)、**tm=live 取得**で意味が異なる。rm 側の列見出しは `Protection (recorded)` として live と区別する。
 - registry-manager は per-repo の GitHub 監視(活動時刻・PR・live 保護)を行わない。これらは thesis-monitor の役割。
 
@@ -60,13 +61,16 @@ CLI エンジン上に実装されている。アーキテクチャ上の位置�
 |---|---|---|
 | `--format table\|csv\|json` | 出力形式(**long のみ**) | rm / tm |
 | `--type` | リポジトリタイプで絞り込み(enum 検証) | rm / tm |
+| `-a`, `--show-archived` | 一覧に archive 済みも含める(既定は現役のみ) | rm / tm |
 | `-l`, `--long` | 詳細表示 | rm / tm / em |
 | `-t` | 時刻順ソート | rm / tm(短縮形のみ・long なし)/ em(`--time-sort` の短縮形) |
-| `-r`, `--reverse` | ソート順を反転 | rm / tm |
+| `-r`, `--reverse` | ソート順を反転 | rm / tm / em |
 | `--no-cache` | キャッシュを使用しない | rm / tm / em |
 | `-d`, `--dry-run` | 実際の変更を行わない | rm |
 | `-f`, `--force` | 確認スキップ / 既存を上書き | rm / tm(init: long のみ) |
 | `--fast` | GitHub API を呼ばない高速モード(long のみ) | em |
+
+`-a` / `-l` / `-t` / `-r` は各ツールの `list` コマンドの表示・ソートオプションとして揃っている(archive 表示・詳細表示・時刻順ソート・反転)。
 
 ### 予約
 

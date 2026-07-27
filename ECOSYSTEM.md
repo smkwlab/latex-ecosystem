@@ -60,7 +60,7 @@ Supporting Infrastructure:
 ├── thesis-student-registry → (Student repository registry data, private)
 ├── registry-manager → thesis-student-registry (writes registry data)
 ├── thesis-monitor → thesis-student-registry (reads registry data)
-├── ecosystem-manager → (reads status of all ecosystem repos)
+├── ecosystem-manager → (reads the state of all ecosystem repos)
 └── registry-manager / thesis-monitor / ecosystem-manager → elixir-tool-kit
     (shared CLI foundation, pinned by semver tag)
 ```
@@ -222,7 +222,7 @@ LaTeX 系テンプレート（sotsuron / wr / sotsuron-report / poster / latex�
   `registry-manager list` は registry.json の**保存値のみ**を表示するレジストリ
   ビュー(GitHub の per-repo 監視は叩かない)。リポジトリの活動時刻・PR 状態・
   ブランチ保護の live 確認といった GitHub 監視は `thesis-monitor` に一本化されて
-  いる(`status` / `activity` / `pr-stats`)。同じ機能を両ツールに重複させない。
+  いる(`list` / `activity` / `pr-stats`)。同じ機能を両ツールに重複させない。
   コマンド所有権の一覧は [docs/TOOL-CLI-CONVENTIONS.md](docs/TOOL-CLI-CONVENTIONS.md)
   を参照。
 - **データフィールド**: レジストリが管理するタイムスタンプは `registry_`

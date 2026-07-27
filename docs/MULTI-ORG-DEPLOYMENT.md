@@ -287,7 +287,7 @@ org と設定を準備したあと:
    参照）、`registry-manager list` は新しい org のレジストリを読みます — そして
    設定が無い場合は、smkwlab にフォールバックせず明示的にエラーになるように
    なりました。
-2. `thesis-monitor status` は新しい org のリポジトリのみを報告します（同じく
+2. `thesis-monitor list` は新しい org のリポジトリのみを報告します（同じく
    設定が無ければ明示的にエラーになる保証）。
 3. 学生にフォークから `setup.sh` を実行してもらう
    （[create-repo フォークの設定](#5-create-repo-fork-configuration)に従って

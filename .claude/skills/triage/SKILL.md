@@ -21,15 +21,15 @@ ls ecosystem-manager/ecosystem-manager 2>/dev/null || (cd ecosystem-manager && m
 
 ```bash
 # 全体像（branch / uncommitted changes / last commit / PRs / issues）
-./ecosystem-manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager list --long
 
 # 注意が必要なリポジトリの抽出
-./ecosystem-manager/ecosystem-manager status --needs-review
-./ecosystem-manager/ecosystem-manager status --urgent-issues
-./ecosystem-manager/ecosystem-manager status --with-prs
+./ecosystem-manager/ecosystem-manager list --needs-review
+./ecosystem-manager/ecosystem-manager list --urgent-issues
+./ecosystem-manager/ecosystem-manager list --with-prs
 ```
 
-`--fast` 指定時は `status --fast` のみ（GitHub API 呼び出し無し）。
+`--fast` 指定時は `list --fast` のみ（GitHub API 呼び出し無し）。
 
 ### 3. ドリルダウン
 

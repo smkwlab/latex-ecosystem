@@ -12,25 +12,25 @@ manager は Elixir escript である。最初に
 
 ```bash
 # 全リポジトリの状態を表示(デフォルトコマンド)
-./ecosystem-manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager list
 
 # 詳細な状態: ブランチ、未コミットの変更、最新コミット、PR、issue
-./ecosystem-manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager list --long
 
 # GitHub API 呼び出しなしの高速な状態表示
-./ecosystem-manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager list --fast
 
 # フィルタ: 緊急 issue / オープンな PR / レビュー待ちの PR
-./ecosystem-manager/ecosystem-manager status --urgent-issues
-./ecosystem-manager/ecosystem-manager status --with-prs
-./ecosystem-manager/ecosystem-manager status --needs-review
+./ecosystem-manager/ecosystem-manager list --urgent-issues
+./ecosystem-manager/ecosystem-manager list --with-prs
+./ecosystem-manager/ecosystem-manager list --needs-review
 
 # 全ワークスペースの状態、または名前指定で特定のワークスペースの状態
-./ecosystem-manager/ecosystem-manager status --all
-./ecosystem-manager/ecosystem-manager status -w dns   # または --workspace NAME
+./ecosystem-manager/ecosystem-manager list --all
+./ecosystem-manager/ecosystem-manager list -w dns   # または --workspace NAME
 
 # 並列度を調整(デフォルト: 8)
-./ecosystem-manager/ecosystem-manager status --max-concurrency 4
+./ecosystem-manager/ecosystem-manager list --max-concurrency 4
 
 # リポジトリ設定とソースを表示
 ./ecosystem-manager/ecosystem-manager repos
@@ -53,11 +53,11 @@ manager は Elixir escript である。最初に
 ### 状態監視の例
 ```bash
 # エコシステムの簡易ヘルスチェック(ブランチ/コミット/変更情報を含む行)
-./ecosystem-manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager list --long
 
 # 対応が必要なリポジトリのみを表示
-./ecosystem-manager/ecosystem-manager status --urgent-issues
-./ecosystem-manager/ecosystem-manager status --needs-review
+./ecosystem-manager/ecosystem-manager list --urgent-issues
+./ecosystem-manager/ecosystem-manager list --needs-review
 
 # バージョン互換性は ECOSYSTEM.md(互換性マトリクス)で管理している
 ```
@@ -118,7 +118,7 @@ git push origin main
 #### リポジトリ横断の連携
 ```bash
 # 現在の状態を確認
-./ecosystem-manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager list
 
 # 更新の調整
 vim ECOSYSTEM.md  # 予定している変更を記録
@@ -191,7 +191,7 @@ done
 ### issue の追跡と連携
 ```bash
 # リポジトリ横断で進捗を追跡
-./ecosystem-manager/ecosystem-manager status --with-prs
+./ecosystem-manager/ecosystem-manager list --with-prs
 
 # エコシステム全体で issue の状態を確認
 for repo in */; do
@@ -209,7 +209,7 @@ done
 ### エコシステム全体のテスト
 ```bash
 # 全リポジトリを検証(ブランチ、未コミットの変更)
-./ecosystem-manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager list --long
 
 # テンプレート横断でコンパイルをテスト
 templates=("sotsuron-template" "wr-template" "latex-template")
@@ -243,7 +243,7 @@ grep -r "latex-environment" .devcontainer/
 ### リポジトリ横断のドキュメント更新
 ```bash
 # エコシステム全体で CLAUDE.md の構成が変わったとき
-./ecosystem-manager/ecosystem-manager status  # 現在の状態を確認
+./ecosystem-manager/ecosystem-manager list  # 現在の状態を確認
 
 # ドキュメント更新を計画
 for repo in texlive-ja-textlint latex-environment sotsuron-template; do
@@ -254,7 +254,7 @@ for repo in texlive-ja-textlint latex-environment sotsuron-template; do
 done
 
 # 進捗を追跡
-./ecosystem-manager/ecosystem-manager status  # 更新を確認
+./ecosystem-manager/ecosystem-manager list  # 更新を確認
 ```
 
 ### issue の連携
@@ -295,13 +295,13 @@ REVIEW_FLOW=true STUDENT_ID=k21rs001 bash <(curl -fsSL https://repo-setup.smkwla
 ### 学生の進捗監視
 ```bash
 # 全学生の卒論進捗を監視
-./thesis-monitor/thesis-monitor status
+./thesis-monitor/thesis-monitor list
 
 # 保護状態のみを表示
-./thesis-monitor/thesis-monitor status --show-protection
+./thesis-monitor/thesis-monitor list --show-protection
 
 # 詳細出力
-./thesis-monitor/thesis-monitor status --verbose
+./thesis-monitor/thesis-monitor list --verbose
 ```
 
 ## ベストプラクティス

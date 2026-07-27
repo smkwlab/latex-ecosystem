@@ -104,13 +104,13 @@ LATEX_ECOSYSTEM_BASE="$HOME/work/latex-ecosystem" \
 
 ```bash
 # Check status of all repositories
-./ecosystem-manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager list
 
 # Detailed status (branch, uncommitted changes, last commit, PRs, issues)
-./ecosystem-manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager list --long
 
 # Fast status without GitHub API calls
-./ecosystem-manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager list --fast
 
 # Show repository configuration and sources
 ./ecosystem-manager/ecosystem-manager repos
