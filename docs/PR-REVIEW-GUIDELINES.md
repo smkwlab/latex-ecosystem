@@ -230,8 +230,8 @@ PR の総合コメントで行う。
 ./registry-manager/registry-manager propagate-workflow --all --type thesis --dry-run
 
 # 学生リポジトリの進捗・保護状況の監視は thesis-monitor で行う
-./thesis-monitor/thesis-monitor status
-./thesis-monitor/thesis-monitor status --show-protection
+./thesis-monitor/thesis-monitor list
+./thesis-monitor/thesis-monitor list --show-protection
 ```
 
 ### 2. 品質管理システム

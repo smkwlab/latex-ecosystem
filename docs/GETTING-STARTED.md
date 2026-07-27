@@ -40,7 +40,7 @@ cd latex-ecosystem-dev   # setup.sh が既定で作成するディレクトリ�
 (cd ecosystem-manager && mix escript.build)
 
 # 動作確認: 全リポジトリの状態表示
-./ecosystem-manager/ecosystem-manager status
+./ecosystem-manager/ecosystem-manager list
 ```
 
 **手動 clone で構築する場合**（ワンライナーを使わない場合）:
@@ -97,7 +97,7 @@ clone されるリポジトリの一覧は `./ecosystem-manager/ecosystem-manage
 - `data/registry.json` に登録されていること:
 
   ```bash
-  ./thesis-monitor/thesis-monitor status
+  ./thesis-monitor/thesis-monitor list
   ```
 
 どちらかの確認に失敗した場合は、自動化のセットアップガイド
@@ -119,6 +119,6 @@ clone されるリポジトリの一覧は `./ecosystem-manager/ecosystem-manage
   [RELEASE-OPERATIONS.md](RELEASE-OPERATIONS.md)
 - **学生の進捗監視** →
   [thesis-monitor](https://github.com/smkwlab/thesis-monitor)
-  （`thesis-monitor status`）
+  （`thesis-monitor list`）
 - **添削ルールの正典** →
   [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md)

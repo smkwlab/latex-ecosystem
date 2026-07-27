@@ -163,12 +163,12 @@ gh issue create --title "Release Planning: texlive-ja-textlint 2025d" --body "
 
 ```bash
 # エコシステム全体の状態チェック (ブランチ、未コミット変更、PR)
-./ecosystem-manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager list --long
 
 # 重要なワークフローのテスト
 # (thesis-repo-manager.sh は student-repo-management#503 で削除済み。
 #  代わりに thesis-monitor でレジストリ／リポジトリの状態を検証する)
-./thesis-monitor/thesis-monitor status --show-protection
+./thesis-monitor/thesis-monitor list --show-protection
 
 # 学生ワークフローの検証
 cd test-repos/
@@ -267,7 +267,7 @@ Investigation ongoing.
 
 ```bash
 # 週次の保守
-./ecosystem-manager/ecosystem-manager status --long
+./ecosystem-manager/ecosystem-manager list --long
 
 # 月次の保守
 # 必要に応じて各リポジトリの最新変更を取得する (git pull)
@@ -290,7 +290,7 @@ Investigation ongoing.
 # - テンプレートのコンパイル失敗
 
 # 状態チェックには ecosystem-manager を利用する (cron / CI など)
-./ecosystem-manager/ecosystem-manager status --fast
+./ecosystem-manager/ecosystem-manager list --fast
 ```
 
 ## 開発のベストプラクティス
