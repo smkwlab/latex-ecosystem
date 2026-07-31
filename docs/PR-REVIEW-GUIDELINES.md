@@ -137,7 +137,9 @@ protected_patterns:
 ### 1. 基本作業フロー
 
 各 draft ブランチで執筆 → Pull Request 作成 → 教員のレビューに対応 →
-対応完了後は自分で PR をクローズし、次の draft ブランチで執筆を継続する。
+対応完了後は自分で PR をクローズし、次稿ブランチで執筆を継続する。
+PR は**前稿ブランチを base（マージ先）**にして作成する（例: `base: 1st-draft` ← `compare: 2nd-draft`）。
+前の稿がない最初の `0th-draft` の PR だけ `base: main` とする。
 
 具体的な操作手順（ブランチの切り替え、PR の作り方、レビュー対応の詳細）は
 [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) を参照。

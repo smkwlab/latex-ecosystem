@@ -1,6 +1,6 @@
 # 学生向け執筆ワークフローガイド
 
-本エコシステムの文書リポジトリで執筆する学生向けに、リポジトリ作成前の準備から最終提出までの**流れとルール**をまとめたガイドです。本書が説明する **draft PR サイクル**（`0th-draft` などの draft ブランチで執筆し、Pull Request で添削を受け、自動作成される次の稿のブランチで改稿を続ける繰り返し）は、**卒業論文・修士論文（sotsuron-template）、情報科学演習レポート（ise-report-template）、学会ポスター（poster-template）**で共通です。**汎用 LaTeX（latex-template）**は任意参加で、教員の指示でレビューフロー付きで作成された場合（または自分で `0th-draft` ブランチを作って PR を出す場合。具体的な手順は [latex-template のテンプレート README](https://github.com/smkwlab/latex-template/blob/main/.github/README.md) の「添削を受ける場合」を参照）に同じ draft PR サイクルが使えます。週報リポジトリは draft PR サイクルを使わないため、[wr-template のテンプレート README](https://github.com/smkwlab/wr-template/blob/main/.github/README.md) に従ってください。卒業論文調査報告（sotsuron-report）も同様に対象外で、[sotsuron-report-template のテンプレート README](https://github.com/smkwlab/sotsuron-report-template/blob/main/.github/README.md) に従ってください。
+本エコシステムの文書リポジトリで執筆する学生向けに、リポジトリ作成前の準備から最終提出までの**流れとルール**をまとめたガイドです。本書が説明する **draft PR サイクル**（`0th-draft` などの draft ブランチで執筆し、Pull Request で添削を受け、自動作成される次稿ブランチで改稿を続ける繰り返し）は、**卒業論文・修士論文（sotsuron-template）、情報科学演習レポート（ise-report-template）、学会ポスター（poster-template）**で共通です。**汎用 LaTeX（latex-template）**は任意参加で、教員の指示でレビューフロー付きで作成された場合（または自分で `0th-draft` ブランチを作って PR を出す場合。具体的な手順は [latex-template のテンプレート README](https://github.com/smkwlab/latex-template/blob/main/.github/README.md) の「添削を受ける場合」を参照）に同じ draft PR サイクルが使えます。週報リポジトリは draft PR サイクルを使わないため、[wr-template のテンプレート README](https://github.com/smkwlab/wr-template/blob/main/.github/README.md) に従ってください。卒業論文調査報告（sotsuron-report）も同様に対象外で、[sotsuron-report-template のテンプレート README](https://github.com/smkwlab/sotsuron-report-template/blob/main/.github/README.md) に従ってください。
 
 - テンプレートの使い方・環境の詳細 → **テンプレートリポジトリの README**（例: [sotsuron-template](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md)、[ise-report-template](https://github.com/smkwlab/ise-report-template/blob/main/.github/README.md)）
 - LaTeX や GitHub Desktop の具体的な操作 → 使用中のテンプレートの執筆ガイド（例: [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md)）
@@ -28,9 +28,10 @@
 
 1. その段階のブランチ（`0th-draft`, `1st-draft`, ...）で執筆する
 2. 書き上がったら Pull Request（PR）を作成し、教員のレビューを受ける
+   - PR は**前稿ブランチを base（マージ先）**にして作成する（例: `base: 0th-draft` ← `compare: 1st-draft`）。前の稿がない最初の `0th-draft` の PR だけ `base: main`
 3. レビューコメントに対応する
 4. 対応が完了したら、**自分で PR をクローズ**する（**マージはしない**）
-5. 自動作成された次の draft ブランチで執筆を続ける
+5. 自動作成された次稿ブランチで執筆を続ける
 
 各段階で「何を書くか」と「教員が何を見るか」の対応：
 
@@ -81,18 +82,22 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 4. PDF（または成果物）を生成して構成を確認する
 5. commit & push して PR を作成する
    - タイトル例: `[0th-draft] アウトライン提出`
+   - この PR だけは前の稿がないので `base: main` ← `compare: 0th-draft` でよい
 
 この段階の教員レビューの観点は**構成のみ**です（章立て・対象範囲・論理構成）。文章の完成度はまだ問われません。
 
 ## 5. レビューを受けて次の稿へ進む
 
-PR を作成すると、次の稿のブランチ（`1st-draft` など）が**自動で作成**されます。以降は、本書冒頭で述べた **draft PR サイクル**、すなわち次の手順の繰り返しです。
+PR を作成すると、次稿ブランチ（`0th-draft` の次なら `1st-draft`）が**自動で作成**されます。以降は、本書冒頭で述べた **draft PR サイクル**、すなわち次の手順の繰り返しです。
 
 1. **レビューコメントを確認する** — GitHub の PR ページで教員のコメントや Suggestion を確認する
 2. **指摘に対応する** — 修正・追記して commit & push する（Suggestion はそのまま適用でき、適用した修正は次稿ブランチへも自動で取り込まれる）
 3. **自分で PR をクローズする** — 対応が完了したら、PR ページの「Close pull request」ボタンでクローズする（**マージはしない**）
-4. **次の draft ブランチに切り替えて執筆を続ける** — GitHub Desktop で `Fetch origin` してから、自動作成されたブランチ（`origin/1st-draft` など）に切り替える
+4. **次稿ブランチに切り替えて執筆を続ける** — GitHub Desktop で `Fetch origin` してから、自動作成されたブランチ（`origin/1st-draft` など）に切り替える
 5. 書き上がったら PR を作成する（タイトル例: `[1st-draft] 第1章〜第3章初稿提出`）
+   - **base は前稿ブランチ**にする（例: `base: 0th-draft` ← `compare: 1st-draft`、`base: 1st-draft` ← `compare: 2nd-draft`）
+   - GitHub Desktop の `Create Pull Request` から開く画面では base が `main` のままになっているので、**必ず前稿ブランチに変更**する
+   - こうすると差分が前稿からの変更点だけになり、教員がその稿で何を書き直したかを追える
 
 補足：
 
@@ -140,6 +145,7 @@ PR を作成する前に、毎回次の3点を確認してください。
 ## 9. よくあるつまずき
 
 - **PR をいつクローズすべきか分からない** — 教員の添削を確認し、対応が完了したタイミングでクローズする。次稿の執筆前にクローズしておく必要はない（並行作業できる）
+- **PR の差分に前の稿の内容まで出てしまう** — base が `main` のままになっている。PR ページのタイトル横の `Edit` から base を前稿ブランチに変更する
 - **ブランチが切り替えられない** — 未 commit の変更が残っていないか確認する。commit してから切り替える
 - **自動作成されたはずの次稿ブランチが見えない** — GitHub Desktop で `Fetch origin` してからブランチ一覧を開き直す
 - **「Sync review suggestions from ...」という PR が自動で作られた** — 前稿で適用した Suggestion を次稿へ自動で取り込めなかった（同じ箇所を両方の稿で編集した）合図。その PR の説明に従い「Resolve conflicts」ボタンで残したい文に編集すれば、あとは自動で処理される
