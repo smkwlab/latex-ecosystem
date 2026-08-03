@@ -11,13 +11,13 @@
 | # | 原則 |
 |---|---|
 | 1 | 自動マージ対象は minor / patch / digest / lockFileMaintenance のみ。major は常に人間がレビューする |
-| 2 | マージの実行主体は Renovate bot。判定条件は「その PR の全 check run が green」で、リポジトリ設定に依存しない |
-| 3 | `platformAutomerge` は org 既定 false。ブランチ保護が CI 全体を過不足なく表現できていると確認できたリポジトリだけが opt-in する |
+| 2 | マージの実行主体は Renovate bot。判定条件は「その PR の全 check run が完了していて、失敗が 1 つも無いこと」で、リポジトリ設定に依存しない |
+| 3 | `platformAutomerge` は org 既定 false。ブランチ保護が CI 全体を過不足なく表現できていると確認できたリポジトリだけが opt-in する。opt-in しているリポジトリは無い |
 | 4 | required status checks は「床」として設定する。Renovate は全 check を見るのでリストの完全性を維持する義務はない。役割は人手マージ時の赤 PR 混入阻止と、`allow_auto_merge` 誤有効化時の被害限定 |
 | 5 | 流量はスケジュールだけで律する。`prHourlyLimit` / `prConcurrentLimit` による絞りは設けない |
 | 6 | 自動マージが到達するのは `main` まで。配布（Docker イメージタグ push、`v1` 付け替え、release 作成）は必ず人間の明示操作 |
 
-原則 2 の背景: GitHub の auto-merge は「ブランチ保護の要件が充足された時点」でマージするため、required status checks が空のリポジトリでは CI 完了前にマージされる。Renovate 自前の automerge は PR の全 check run が green になるのを待つため、リポジトリ設定が何であっても安全。
+原則 2 の背景: GitHub の auto-merge は「ブランチ保護の要件が充足された時点」でマージするため、required status checks が空のリポジトリでは CI 完了前にマージされる。Renovate 自前の automerge は PR の全 check run が出揃うのを待つため、リポジトリ設定が何であっても安全。skip されたジョブは success と同じく通過扱いになる（後述の required status checks と同じ扱い）。
 
 原則 6 が自動マージを許容できる構造的根拠。**`v1` を動かす前に `git log v1..main` を確認する**こと。自動マージで積み上がった更新が、無関係な修正のついでに全学生リポジトリへ配布されるのを防ぐ。
 
@@ -84,8 +84,8 @@ required に指定してよいのは、**その PR で必ず check run が生成
 
 変更する場合は本書も更新すること。
 
-- `allow_auto_merge` は latex 系 6 リポジトリで無効
-- `platformAutomerge` は org 既定 false。opt-in するリポジトリは、ブランチ保護が自リポジトリの CI 全体を表現できていることを確認する
+- `allow_auto_merge` は上記 required status checks の表にある 6 リポジトリ（`:latex#v1` を参照する 5 つと `.github`）で無効
+- `platformAutomerge` は org 既定 false で、opt-in しているリポジトリは無い。opt-in する場合は、ブランチ保護が自リポジトリの CI 全体を表現できていることを確認する
 - required status checks は `strict: false` / `enforce_admins: false`
 - 自動マージが到達するのは `main` まで。配布は人間の明示操作
 - 共有 preset は移動タグ `v1` で参照する（固定タグに pin しない）
