@@ -131,7 +131,7 @@ protected_patterns:
 1. タグの付いた commit を含むブランチを特定
 2. そのブランチ → `main` の提出 PR を作成（同じ PR が既にあれば作らず、その旨を出力）
 
-**マージは教員が行う**。この workflow は PR を作るところまでで、マージもリリース作成もしない。
+**マージは教員が行う**。この workflow が行うのは PR の作成までで、マージはしない。
 
 最終版 PDF 付きの GitHub Release は、同じタグ push に反応する `latex-build.yml` が作成する。
 
