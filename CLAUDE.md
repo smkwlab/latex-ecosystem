@@ -115,6 +115,16 @@ Student repository creation and progress-monitoring command examples live in
 
 Use the **`/propagate` skill** ([.claude/skills/propagate/SKILL.md](.claude/skills/propagate/SKILL.md)) for the full procedure: registry-manager setup check → dry-run → `propagate-workflow` execution → PR diff verification, including the manual merge-chain fallback.
 
+### 依存管理基盤（Renovate 一本化）
+
+Dependency updates for the development infrastructure repositories are handled by Renovate; Dependabot is not used. Shared presets live in `smkwlab/.github` and are referenced through the moving `v1` tag.
+
+The governing principle is that **Renovate checks and Renovate merges** — GitHub's auto-merge releases a merge as soon as branch protection is satisfied, which on a repository with no required status checks means before CI has run. Renovate waits for every check run on the PR instead, so the decision does not depend on repository settings. Branch protection is the floor for human merges, not the condition for automated ones.
+
+Auto-merge covers grouped minor/patch/digest updates; major updates always get individual review. Automated merges reach `main` only — publishing a Docker image tag, moving `v1`, and cutting a release stay manual.
+
+See [docs/DEPENDENCY-MANAGEMENT.md](docs/DEPENDENCY-MANAGEMENT.md) for the preset layout, per-repository required status checks, and the invariants to preserve when changing any of it.
+
 ## Security & Data Management
 
 - **Registry Data Separation**: student information lives only in the private registry data repository (`thesis-student-registry`), separate from tools and templates
@@ -128,6 +138,7 @@ Use the **`/propagate` skill** ([.claude/skills/propagate/SKILL.md](.claude/skil
 - **[ECOSYSTEM.md](ECOSYSTEM.md)** - Ecosystem-wide architecture, dependencies, version compatibility
 - **[Management Repository Guide](docs/MANAGEMENT-REPOSITORY.md)** - This management repository's structure and boundaries
 - **[Workflows & Examples](docs/MANAGEMENT-WORKFLOWS.md)** - Detailed command examples, cross-repository coordination
+- **[Dependency Management](docs/DEPENDENCY-MANAGEMENT.md)** - Renovate presets, auto-merge policy, required status checks
 
 ## Development Notes
 
