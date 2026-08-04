@@ -117,13 +117,13 @@ Use the **`/propagate` skill** ([.claude/skills/propagate/SKILL.md](.claude/skil
 
 ### 依存管理基盤（Renovate 一本化）
 
-Dependency updates for the development infrastructure repositories are handled by Renovate; Dependabot is not used. Shared presets live in `smkwlab/.github` and are referenced through the moving `v1` tag.
+Dependency updates for the development infrastructure repositories and the document templates are handled by Renovate; Dependabot is not used. Shared presets live in `smkwlab/.github` and are referenced through the moving `v1` tag.
 
 The governing principle is that **Renovate checks and Renovate merges** — GitHub's auto-merge releases a merge as soon as branch protection is satisfied, which on a repository with no required status checks means before CI has run. Renovate waits for every check run on the PR instead, so the decision does not depend on repository settings. Branch protection is the floor for human merges, not the condition for automated ones.
 
 Auto-merge covers grouped minor/patch/digest updates; major updates always get individual review. Automated merges reach `main` only — publishing a Docker image tag, moving `v1`, and cutting a release stay manual.
 
-Student repositories have no Renovate, so they must reach infrastructure through a shared workflow rather than referencing it directly: a pin nobody can bump never moves again, and the reference still resolves, so nothing fails to signal it.
+Student repositories have no Renovate, so they must reach infrastructure through a shared workflow rather than referencing it directly: a pin nobody can bump never moves again, and the reference still resolves, so nothing fails to signal it. Templates carry the same constraint because their contents are copied into every repository generated from them, which is why they use the `:template` preset instead of `:latex` and keep the shared-workflow reference unpinned.
 
 See [docs/DEPENDENCY-MANAGEMENT.md](docs/DEPENDENCY-MANAGEMENT.md) for the preset layout, reference modes, per-repository required status checks, and the invariants to preserve when changing any of it.
 
