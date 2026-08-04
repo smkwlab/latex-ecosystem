@@ -164,7 +164,7 @@ required に指定してよいのは、**その PR で必ず check run が生成
 
 変更する場合は本書も更新すること。
 
-- `allow_auto_merge` は全リポジトリで無効。GitHub の auto-merge はブランチ保護の要件が満たされた時点でマージするため、required に入っていない check（elixir 系の `security / …` など）を待たない。マージは Renovate 自前の automerge に任せる
+- `allow_auto_merge` は全リポジトリで無効。GitHub の auto-merge はブランチ保護の要件が満たされた時点でマージするため、required に入っていない check を待たない（elixir 系では `security / Secret Scanning` と `security / Dependency Security Audit` がこれにあたる）。マージは Renovate 自前の automerge に任せる
 - `platformAutomerge` は org 既定 false で、opt-in しているリポジトリは無い。opt-in する場合は、ブランチ保護が自リポジトリの CI 全体を表現できていることを確認する
 - `enforce_admins: false` は全リポジトリ共通。`strict: false` は latex 系のみ（elixir 系は true）
 - テストマトリクスは集約ジョブ 1 つで required にする。集約ジョブから `if: always()` を外さないこと（skip は通過扱いになるため、外すと止めるべきときに緑になる）
