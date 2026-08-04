@@ -1,6 +1,6 @@
 # 依存管理基盤（Renovate 一本化）
 
-開発インフラリポジトリの依存関係更新は Renovate に一元化しています（Dependabot は不使用）。本書はその方針と設定の所在をまとめたものです。
+開発インフラリポジトリとドキュメントテンプレートの依存関係更新は Renovate に一元化しています（Dependabot は不使用）。本書はその方針と設定の所在をまとめたものです。
 
 手動でのイメージ再ビルドとテンプレートへの伝播は [RELEASE-OPERATIONS.md](RELEASE-OPERATIONS.md) を参照してください。学生リポジトリには Renovate を導入しておらず、draft PR サイクルとは無関係です。
 
@@ -32,6 +32,7 @@
 | `npm.json` | `:npm` | npm の minor/patch/digest/lockFileMaintenance をグループ `npm dependencies` にまとめて自動マージ |
 | `elixir.json` | `:elixir` | default + `:github-actions` を extends。mix(hex) の minor まで自動マージ（org 全体の patch/digest 限定方針に対する意図的な例外） |
 | `latex.json` | `:latex` | default + `:github-actions` + `:npm` を extends。スケジュール・流量・pin 方針と `lockFileMaintenance` を担当 |
+| `template.json` | `:template` | `:latex` を extends。テンプレート専用に、共有ワークフロー参照の digest 固定だけを外す |
 
 major はどの preset でも自動マージ対象外。
 
@@ -40,8 +41,13 @@ major はどの preset でも自動マージ対象外。
 | リポジトリ | 参照 |
 |---|---|
 | texlive-ja-textlint / latex-environment / latex-release-action / ai-academic-paper-reviewer / student-repo-management | `:latex#v1` |
+| sotsuron-template / sotsuron-report-template / ise-report-template / wr-template / latex-template / poster-template | `:template#v1` |
 | tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap | `:elixir#v1` |
 | .github | `default` + `:github-actions`（`enabledManagers` は github-actions のみ） |
+
+テンプレートが `:latex` をそのまま参照しないのは、**テンプレートの内容が学生リポジトリへそのままコピーされる**ため。`:latex` は github-actions の参照を digest 固定するが、学生リポジトリには Renovate が居ないので、固定された参照はそこで永久に凍結する。これは[参照方式](#参照方式)の層 3 が守っている性質にあたる。サードパーティ action は SHA 固定のままにしている。学生リポジトリではこれも凍結するため、脆弱性が見つかっても古いまま残るというトレードオフを受け入れている。固定を外せば凍結は避けられるが、可変タグを学生リポジトリに配ることになり、そちらの危険の方が大きい。
+
+学生リポジトリ自体は Renovate の対象外で、生成時に `.github/renovate.json` を削除する（`dependabot.yml` と同じ扱い）。
 
 `.github` は `:latex` を extends していない。preset の変更で latex 系だけを対象にすると `.github` が漏れるため、org 全体に効かせたい設定は `default.json` に置く。
 
@@ -144,3 +150,5 @@ required に指定してよいのは、**その PR で必ず check run が生成
 - 自動マージが到達するのは `main` まで。配布は人間の明示操作
 - 参照方式は [参照方式](#参照方式) の 4 層に従う。とくに、移動タグを見る消費者は開発インフラ層を直接参照しない
 - 脆弱性の検知はリポジトリ設定に依存させない。`osvVulnerabilityAlerts` を無効に戻すなら、Dependabot alerts が全リポジトリで有効であることを別の手段で保証すること
+- テンプレートは `:template` を参照する。`:latex` に切り替えるなら、共有ワークフロー参照が digest 固定されて学生リポジトリで凍結しないことを別の手段で保証すること
+- 学生リポジトリに依存更新の設定を残さない。生成時に `dependabot.yml` と `renovate.json` を削除する
