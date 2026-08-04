@@ -131,7 +131,7 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 
 ## required status checks
 
-自動マージの条件ではなく、人手マージの床。latex 系は `strict: false`（up-to-date 要求なし）、`enforce_admins: false`（CI が壊れた緊急時に管理者が明示的に突破できる。Renovate App はブランチ保護をバイパスしないため bot 側は必ずゲートされる）。
+自動マージの条件ではなく、人手マージの床。`enforce_admins: false` は全リポジトリ共通（CI が壊れた緊急時に管理者が明示的に突破できる。Renovate App はブランチ保護をバイパスしないため bot 側は必ずゲートされる）。`strict: false`（up-to-date 要求なし）は latex 系のみ。
 
 | リポジトリ | contexts |
 |---|---|
@@ -143,7 +143,7 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 | .github | `actionlint` |
 | tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap | `ci / Code Quality`, `ci / All checks` |
 
-elixir 系 5 リポジトリは `strict: true`、`allow_auto_merge` は有効。`enforce_admins` は 5 つの中でも揃っておらず、elixir_dnstap だけ false で残り 4 つは true。latex 系の値に合わせるかは別途判断する。
+elixir 系 5 リポジトリは `strict: true`、`allow_auto_merge` は有効。この 2 つが latex 系との違いで、`enforce_admins` は揃えてある。`strict` は 1 本マージするたびに全 PR が rebase と再ビルドになるため latex 系では false にしているが、elixir 系は grouped PR が実質 2 本（`elixir dependencies` / `github actions`）で問題が出ていない。
 
 ### マトリクスは集約ジョブ 1 つで受ける
 
@@ -166,7 +166,7 @@ required に指定してよいのは、**その PR で必ず check run が生成
 
 - `allow_auto_merge` は latex 系の 6 リポジトリ（`:latex#v1` を参照する 5 つと `.github`）で無効。elixir 系 5 リポジトリでは有効
 - `platformAutomerge` は org 既定 false で、opt-in しているリポジトリは無い。opt-in する場合は、ブランチ保護が自リポジトリの CI 全体を表現できていることを確認する
-- required status checks は latex 系で `strict: false` / `enforce_admins: false`（elixir 系は未統一）
+- `enforce_admins: false` は全リポジトリ共通。`strict: false` は latex 系のみ（elixir 系は true）
 - テストマトリクスは集約ジョブ 1 つで required にする。集約ジョブから `if: always()` を外さないこと（skip は通過扱いになるため、外すと止めるべきときに緑になる）
 - 自動マージが到達するのは `main` まで。配布は人間の明示操作
 - 参照方式は [参照方式](#参照方式) の 4 層に従う。とくに、移動タグを見る消費者は開発インフラ層を直接参照しない
