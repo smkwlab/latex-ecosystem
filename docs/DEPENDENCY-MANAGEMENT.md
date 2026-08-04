@@ -143,7 +143,7 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 | .github | `actionlint` |
 | tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap | `ci / Code Quality`, `ci / All checks` |
 
-elixir 系 5 リポジトリは `strict: true`、`allow_auto_merge` は有効。この 2 つが latex 系との違いで、`enforce_admins` は揃えてある。`strict` は 1 本マージするたびに全 PR が rebase と再ビルドになるため latex 系では false にしているが、elixir 系は grouped PR が実質 2 本（`elixir dependencies` / `github actions`）で問題が出ていない。
+latex 系との違いは `strict` だけで、elixir 系は true。1 本マージするたびに全 PR が rebase と再ビルドになるため latex 系では false にしているが、elixir 系はマージが月 0〜4 件・open PR が 0〜2 件で、その費用が発生していない。引き換えに得ているのは、個別には緑でも組み合わせると壊れる PR の検出で、これを防ぐ仕組みは他に無い。流量が増えたら latex 系と同じ判断になる。
 
 ### マトリクスは集約ジョブ 1 つで受ける
 
@@ -164,7 +164,7 @@ required に指定してよいのは、**その PR で必ず check run が生成
 
 変更する場合は本書も更新すること。
 
-- `allow_auto_merge` は latex 系の 6 リポジトリ（`:latex#v1` を参照する 5 つと `.github`）で無効。elixir 系 5 リポジトリでは有効
+- `allow_auto_merge` は全リポジトリで無効。GitHub の auto-merge はブランチ保護の要件が満たされた時点でマージするため、required に入っていない check（elixir 系の `security / …` など）を待たない。マージは Renovate 自前の automerge に任せる
 - `platformAutomerge` は org 既定 false で、opt-in しているリポジトリは無い。opt-in する場合は、ブランチ保護が自リポジトリの CI 全体を表現できていることを確認する
 - `enforce_admins: false` は全リポジトリ共通。`strict: false` は latex 系のみ（elixir 系は true）
 - テストマトリクスは集約ジョブ 1 つで required にする。集約ジョブから `if: always()` を外さないこと（skip は通過扱いになるため、外すと止めるべきときに緑になる）
