@@ -27,11 +27,11 @@
 
 | preset | 参照名 | 内容 |
 |---|---|---|
-| `default.json` | `github>smkwlab/.github` | org 共通。`platformAutomerge: false`、`automergeStrategy: "squash"`、patch/digest/pinDigest を個別 PR で自動マージ |
+| `default.json` | `github>smkwlab/.github` | org 共通。`platformAutomerge: false`、`automergeStrategy: "squash"`、patch/digest/pinDigest を個別 PR で自動マージ、`osvVulnerabilityAlerts: true` |
 | `github-actions.json` | `:github-actions` | actions の minor/patch/digest をグループ `github actions` にまとめて自動マージ |
 | `npm.json` | `:npm` | npm の minor/patch/digest/lockFileMaintenance をグループ `npm dependencies` にまとめて自動マージ |
 | `elixir.json` | `:elixir` | default + `:github-actions` を extends。mix(hex) の minor まで自動マージ（org 全体の patch/digest 限定方針に対する意図的な例外） |
-| `latex.json` | `:latex` | default + `:github-actions` + `:npm` を extends。スケジュール・流量・pin 方針を担当 |
+| `latex.json` | `:latex` | default + `:github-actions` + `:npm` を extends。スケジュール・流量・pin 方針と `lockFileMaintenance` を担当 |
 
 major はどの preset でも自動マージ対象外。
 
@@ -93,12 +93,24 @@ Renovate が居ない消費者が固定タグを直接参照すると、pin を�
 
 | preset | 窓 | 上限 |
 |---|---|---|
-| `:latex` | 月曜 11:00 以降（Asia/Tokyo） | なし |
+| `:latex` | 日曜 21:00 以降（Asia/Tokyo） | なし |
 | `:elixir` | 月曜 6:00 前 | 既定 |
 
 `:latex` で上限を設けないのは、major が自動マージ対象外でレビューまで PR として残るため。上限があると major が枠を占有し、自動マージされる minor/patch の車線まで塞がる。
 
+lock ファイルの再生成（`lockFileMaintenance`）も同じ窓で回す。この設定は独自のスケジュールを持ち、トップレベルの `schedule` では上書きされないため、preset 側で窓を明示している。書かなければ Renovate 既定の月曜 4:00 前になり、週の更新が 2 つの波に割れる。
+
 窓の外で更新を取り込みたい場合は、Dependency Dashboard の該当項目にチェックを入れると即座に PR が作られる。
+
+### 脆弱性は窓を待たない
+
+`vulnerabilityAlerts` は既定でスケジュールを迂回し、検知次第すぐ PR を作る（`prCreation: "immediate"`、コミットメッセージ接尾辞 `[SECURITY]`）。routine 更新を週 1 回に絞っても、セキュリティ修正だけは窓を待たない。
+
+この経路の情報源は **osv.dev** である（`osvVulnerabilityAlerts: true`）。GitHub の Dependabot alerts ではないため、**リポジトリ設定の有効・無効に検知が左右されない**。原則 2 と同じ考え方を検知側にも適用したもので、新しいリポジトリが既定値次第で無検知になる事態を防ぐ。
+
+Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジトリで無効のまま維持する。依存更新は Renovate に一元化する方針を、セキュリティ修正でも崩さない。
+
+推移的依存の advisory は直接依存を上げても解消しない。依存ツリーの残りは書き換わらないためで、`lockFileMaintenance` はこれを定期的に洗い流す役割も持つ。
 
 ## required status checks
 
@@ -131,3 +143,4 @@ required に指定してよいのは、**その PR で必ず check run が生成
 - required status checks は `strict: false` / `enforce_admins: false`
 - 自動マージが到達するのは `main` まで。配布は人間の明示操作
 - 参照方式は [参照方式](#参照方式) の 4 層に従う。とくに、移動タグを見る消費者は開発インフラ層を直接参照しない
+- 脆弱性の検知はリポジトリ設定に依存させない。`osvVulnerabilityAlerts` を無効に戻すなら、Dependabot alerts が全リポジトリで有効であることを別の手段で保証すること
