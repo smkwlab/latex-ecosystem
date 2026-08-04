@@ -69,15 +69,15 @@ Supporting Infrastructure:
 
 | コンポーネント | 現行バージョン | 互換対象 | 更新頻度 |
 |-----------|----------------|-----------------|------------------|
-| texlive-ja-textlint | 2026a | TeXLive 2026 | 年次(TeXLive リリース) |
-| latex-environment | release ブランチ | texlive-ja-textlint:2026a | 自動(main へのマージ時) |
+| texlive-ja-textlint | 2026d | TeX Live 2025 | 随時(イメージ更新ごと) |
+| latex-environment | release ブランチ | texlive-ja-textlint:2026d | 自動(main へのマージ時) |
 | sotsuron-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
 | ise-report-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
 | latex-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
 | wr-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
 | sotsuron-report-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
 | poster-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
-| latex-release-action | v3.3.0 | 全テンプレート | 機能ごと |
+| latex-release-action | v3.5.0 | 全テンプレート | 機能ごと |
 | aldc | 最新 | latex-environment:release | 更新不要 |
 | ecosystem-manager | 最新 | Elixir ~> 1.17 (OTP 27+) | 機能ごと |
 | elixir-tool-kit | v0.3.0 | Elixir ~> 1.17 (OTP 27+) | 利用ツールが tag 固定で pin |
@@ -327,7 +327,8 @@ latex-ecosystem#146):
 
 ### タグ戦略
 - **セマンティックバージョニング**: v{MAJOR}.{MINOR}.{PATCH}
-- **カレンダーバージョニング**: texlive-ja-textlint 用(例: 2025b)
+- **カレンダーバージョニング**: texlive-ja-textlint 用(例: 2026d)。年はイメージの
+  リリース系列であって、同梱する TeX Live の版ではない
 - **協調リリース**: エコシステムの大規模更新時
 
 ## 開発ワークフロー
@@ -435,5 +436,5 @@ latex-ecosystem#146):
 
 ---
 
-*Last Updated: 2026-07-18*  
+*Last Updated: 2026-08-04*  
 *Document Version: 1.4(ドキュメントを日本語化)*
