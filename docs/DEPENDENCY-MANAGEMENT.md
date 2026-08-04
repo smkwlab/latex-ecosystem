@@ -131,7 +131,7 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 
 ## required status checks
 
-自動マージの条件ではなく、人手マージの床。`strict: false`（up-to-date 要求なし）、`enforce_admins: false`（CI が壊れた緊急時に管理者が明示的に突破できる。Renovate App はブランチ保護をバイパスしないため bot 側は必ずゲートされる）。
+自動マージの条件ではなく、人手マージの床。`enforce_admins: false` は全リポジトリ共通（CI が壊れた緊急時に管理者が明示的に突破できる。Renovate App はブランチ保護をバイパスしないため bot 側は必ずゲートされる）。`strict: false`（up-to-date 要求なし）は latex 系のみ。
 
 | リポジトリ | contexts |
 |---|---|
@@ -141,6 +141,15 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 | ai-academic-paper-reviewer | `test` |
 | student-repo-management | `Validate YAML files` |
 | .github | `actionlint` |
+| tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap | `ci / Code Quality`, `ci / All checks` |
+
+elixir 系 5 リポジトリは `strict: true`、`allow_auto_merge` は有効。この 2 つが latex 系との違いで、`enforce_admins` は揃えてある。`strict` は 1 本マージするたびに全 PR が rebase と再ビルドになるため latex 系では false にしているが、elixir 系は grouped PR が実質 2 本（`elixir dependencies` / `github actions`）で問題が出ていない。
+
+### マトリクスは集約ジョブ 1 つで受ける
+
+`ci / All checks` は `elixir-ci.yml` の `gate` ジョブで、`quality` と `test` の結果を集約するだけのジョブ。テストマトリクスのジョブ名は `Test on OTP 27.3.4.4 / Elixir 1.17.3` のように**版を含む**ため、直接 required にすると版を上げるたびに全リポジトリの保護設定を編集することになる。
+
+集約ジョブには `if: always()` が要る。これが無いと依存ジョブの失敗時に**集約ジョブ自体が skip され**、後述のとおり skip は通過扱いなので、止めるべきときに限って緑になる。`skipped` を成功と見なさないのも同じ理由で、走らなかったジョブは何も保証していない。
 
 `review / review`（AI レビュー）は required にしない。Renovate と Dependabot の PR ではジョブごと skip され、レビュー内容の合否も表さない。
 
@@ -155,9 +164,10 @@ required に指定してよいのは、**その PR で必ず check run が生成
 
 変更する場合は本書も更新すること。
 
-- `allow_auto_merge` は上記 required status checks の表にある 6 リポジトリ（`:latex#v1` を参照する 5 つと `.github`）で無効
+- `allow_auto_merge` は latex 系の 6 リポジトリ（`:latex#v1` を参照する 5 つと `.github`）で無効。elixir 系 5 リポジトリでは有効
 - `platformAutomerge` は org 既定 false で、opt-in しているリポジトリは無い。opt-in する場合は、ブランチ保護が自リポジトリの CI 全体を表現できていることを確認する
-- required status checks は `strict: false` / `enforce_admins: false`
+- `enforce_admins: false` は全リポジトリ共通。`strict: false` は latex 系のみ（elixir 系は true）
+- テストマトリクスは集約ジョブ 1 つで required にする。集約ジョブから `if: always()` を外さないこと（skip は通過扱いになるため、外すと止めるべきときに緑になる）
 - 自動マージが到達するのは `main` まで。配布は人間の明示操作
 - 参照方式は [参照方式](#参照方式) の 4 層に従う。とくに、移動タグを見る消費者は開発インフラ層を直接参照しない
 - preset 参照は移動タグに保つ。`renovate-config` manager の無効化を外すなら、固定タグへ書き換えられないことを別の手段で保証すること
