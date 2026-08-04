@@ -123,7 +123,7 @@ The governing principle is that **Renovate checks and Renovate merges** — GitH
 
 Auto-merge covers grouped minor/patch/digest updates; major updates always get individual review. Automated merges reach `main` only — publishing a Docker image tag, moving `v1`, and cutting a release stay manual.
 
-Student repositories have no Renovate, so they must reach infrastructure through a shared workflow rather than referencing it directly: a pin nobody can bump never moves again, and the reference still resolves, so nothing fails to signal it. Templates carry the same constraint because their contents are copied into every repository generated from them, which is why they use the `:template` preset instead of `:latex` and keep the shared-workflow reference unpinned.
+Student repositories have no Renovate, so they must reach infrastructure through a shared workflow rather than referencing it directly: a pin nobody can bump never moves again, and the reference still resolves, so nothing fails to signal it. Templates carry the same constraint because their contents are copied into every repository generated from them. Every consumer references the shared workflows through the moving `v1` tag, infrastructure repositories included — pinning there would deliver a change to students first and to the pinned repository last, so the pin costs the review opportunity it was meant to buy.
 
 See [docs/DEPENDENCY-MANAGEMENT.md](docs/DEPENDENCY-MANAGEMENT.md) for the preset layout, reference modes, per-repository required status checks, and the invariants to preserve when changing any of it.
 
