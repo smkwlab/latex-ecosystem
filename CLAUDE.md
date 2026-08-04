@@ -123,7 +123,9 @@ The governing principle is that **Renovate checks and Renovate merges** — GitH
 
 Auto-merge covers grouped minor/patch/digest updates; major updates always get individual review. Automated merges reach `main` only — publishing a Docker image tag, moving `v1`, and cutting a release stay manual.
 
-See [docs/DEPENDENCY-MANAGEMENT.md](docs/DEPENDENCY-MANAGEMENT.md) for the preset layout, per-repository required status checks, and the invariants to preserve when changing any of it.
+Student repositories have no Renovate, so they must reach infrastructure through a shared workflow rather than referencing it directly: a pin nobody can bump never moves again, and the reference still resolves, so nothing fails to signal it.
+
+See [docs/DEPENDENCY-MANAGEMENT.md](docs/DEPENDENCY-MANAGEMENT.md) for the preset layout, reference modes, per-repository required status checks, and the invariants to preserve when changing any of it.
 
 ## Security & Data Management
 
