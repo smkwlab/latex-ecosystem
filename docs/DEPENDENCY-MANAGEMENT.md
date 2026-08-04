@@ -143,7 +143,7 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 | .github | `actionlint` |
 | tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap | `ci / Code Quality`, `ci / All checks` |
 
-elixir 系 5 リポジトリは `strict: true` で、`enforce_admins` も揃っていない（elixir_dnstap のみ false）。latex 系の値に合わせるかは別途判断する。
+elixir 系 5 リポジトリは `strict: true`、`allow_auto_merge` は有効。`enforce_admins` は 5 つの中でも揃っておらず、elixir_dnstap だけ false で残り 4 つは true。latex 系の値に合わせるかは別途判断する。
 
 ### マトリクスは集約ジョブ 1 つで受ける
 
@@ -164,7 +164,7 @@ required に指定してよいのは、**その PR で必ず check run が生成
 
 変更する場合は本書も更新すること。
 
-- `allow_auto_merge` は上記 required status checks の表にある 6 リポジトリ（`:latex#v1` を参照する 5 つと `.github`）で無効
+- `allow_auto_merge` は latex 系の 6 リポジトリ（`:latex#v1` を参照する 5 つと `.github`）で無効。elixir 系 5 リポジトリでは有効
 - `platformAutomerge` は org 既定 false で、opt-in しているリポジトリは無い。opt-in する場合は、ブランチ保護が自リポジトリの CI 全体を表現できていることを確認する
 - required status checks は latex 系で `strict: false` / `enforce_admins: false`（elixir 系は未統一）
 - テストマトリクスは集約ジョブ 1 つで required にする。集約ジョブから `if: always()` を外さないこと（skip は通過扱いになるため、外すと止めるべきときに緑になる）
