@@ -45,7 +45,7 @@ major はどの preset でも自動マージ対象外。
 | tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap | `:elixir#v1` |
 | .github | `default` + `:github-actions`（`enabledManagers` は github-actions のみ） |
 
-テンプレートが `:latex` をそのまま参照しないのは、**テンプレートの内容が学生リポジトリへそのままコピーされる**ため。`:latex` は github-actions の参照を digest 固定するが、学生リポジトリには Renovate が居ないので、固定された参照はそこで永久に凍結する。これは[参照方式](#参照方式)の層 3 が守っている性質にあたる。サードパーティ action は実在するバージョンを指しており凍結しても無害なので、SHA 固定のままにしている。
+テンプレートが `:latex` をそのまま参照しないのは、**テンプレートの内容が学生リポジトリへそのままコピーされる**ため。`:latex` は github-actions の参照を digest 固定するが、学生リポジトリには Renovate が居ないので、固定された参照はそこで永久に凍結する。これは[参照方式](#参照方式)の層 3 が守っている性質にあたる。サードパーティ action は SHA 固定のままにしている。学生リポジトリではこれも凍結するため、脆弱性が見つかっても古いまま残るというトレードオフを受け入れている。固定を外せば凍結は避けられるが、可変タグを学生リポジトリに配ることになり、そちらの危険の方が大きい。
 
 学生リポジトリ自体は Renovate の対象外で、生成時に `.github/renovate.json` を削除する（`dependabot.yml` と同じ扱い）。
 
