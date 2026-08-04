@@ -27,7 +27,7 @@
 
 | preset | 参照名 | 内容 |
 |---|---|---|
-| `default.json` | `github>smkwlab/.github` | org 共通。`platformAutomerge: false`、`automergeStrategy: "squash"`、patch/digest/pinDigest を個別 PR で自動マージ、`osvVulnerabilityAlerts: true` |
+| `default.json` | `github>smkwlab/.github` | org 共通。`platformAutomerge: false`、`automergeStrategy: "squash"`、patch/digest/pinDigest を個別 PR で自動マージ、`osvVulnerabilityAlerts: true`、`renovate-config` manager の無効化 |
 | `github-actions.json` | `:github-actions` | actions の minor/patch/digest をグループ `github actions` にまとめて自動マージ |
 | `npm.json` | `:npm` | npm の minor/patch/digest/lockFileMaintenance をグループ `npm dependencies` にまとめて自動マージ |
 | `elixir.json` | `:elixir` | default + `:github-actions` を extends。mix(hex) の minor まで自動マージ（org 全体の patch/digest 限定方針に対する意図的な例外） |
@@ -51,7 +51,9 @@ major はどの preset でも自動マージ対象外。
 
 `.github` は `:latex` を extends していない。preset の変更で latex 系だけを対象にすると `.github` が漏れるため、org 全体に効かせたい設定は `default.json` に置く。
 
-`latex.json` は `renovate-config` manager を無効化している。この manager は preset 参照そのものを依存関係として読み取り、移動タグ `v1` を固定タグへ書き換える PR を出すため、原則 6 の配布経路が黙って壊れる。
+`default.json` は `renovate-config` manager を無効化している。この manager は preset 参照そのものを依存関係として読み取り、移動タグ `v1` を固定タグへ書き換える PR を出すため、配布経路が黙って壊れる。実際に student-repo-management は誰も pin する判断をしないまま 3 回書き換わった。
+
+無効化を共通の土台に置いているのは、preset ごとに事情が違っても**意図として同じ 1 箇所に表明する**ため。`elixir.json` は `enabledManagers` の allow-list に `renovate-config` を含めないことで結果的に守られていたが、これは「mix と github-actions を見る」ために書かれた設定の副作用であり、allow-list に manager を足せば黙って保護が外れる。
 
 ## 参照方式
 
@@ -149,6 +151,7 @@ required に指定してよいのは、**その PR で必ず check run が生成
 - required status checks は `strict: false` / `enforce_admins: false`
 - 自動マージが到達するのは `main` まで。配布は人間の明示操作
 - 参照方式は [参照方式](#参照方式) の 4 層に従う。とくに、移動タグを見る消費者は開発インフラ層を直接参照しない
+- preset 参照は移動タグに保つ。`renovate-config` manager の無効化を外すなら、固定タグへ書き換えられないことを別の手段で保証すること
 - 脆弱性の検知はリポジトリ設定に依存させない。`osvVulnerabilityAlerts` を無効に戻すなら、Dependabot alerts が全リポジトリで有効であることを別の手段で保証すること
 - テンプレートは `:template` を参照する。`:latex` に切り替えるなら、共有ワークフロー参照が digest 固定されて学生リポジトリで凍結しないことを別の手段で保証すること
 - 学生リポジトリに依存更新の設定を残さない。生成時に `dependabot.yml` と `renovate.json` を削除する
