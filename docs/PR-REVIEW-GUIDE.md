@@ -3,7 +3,8 @@
 > **本書の位置づけ**: 日常のレビュー操作（コメント・Suggestion・複数教員レビュー）は本書が正典です。
 > 初期設定・スクリプト・提出プロセス管理は [TEACHER-GUIDE.md](TEACHER-GUIDE.md)、初回の全体像は [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) を参照してください。
 >
-> 本ガイド中の org 名・コマンド例・連絡先は **smkwlab organization での運用を例**に記述しています。他の org に展開した環境では、自 org の値に読み替えてください（展開方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)）。
+> 本ガイド中の org 名・コマンド例・連絡先は **smkwlab organization での運用を例**に記述しています。
+> 他の org に展開した環境では、自 org の値に読み替えてください（展開方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)）。
 
 ## はじめに
 
@@ -26,8 +27,8 @@ PR確認 → コメント・修正提案 → 承認（マージはしない。�
 
 ### draft PR での効率的な添削
 
-各稿の PR（例：1st-draft PR）は直前の draft をベースにするため、
-**直前版からの変更点だけ**が表示されます。増分レビューに集中できます。
+各稿の PR（例：1st-draft PR）は直前の draft をベースにするため、**直前版からの変更点だけ**が表示されます。
+増分レビューに集中できます。
 
 - **論文全体に関わる指摘**（全体構成、章をまたぐ整合性）も、その時点の最新の draft PR にコメントします
 - **全体を通して読む**場合は、各 PR で自動ビルドされる PDF アーティファクトを利用します
@@ -274,7 +275,9 @@ gh api repos/smkwlab/{repo}/branches/main/protection \
 学生: 自分でPRをクローズ → 次稿執筆へ ✅
 ```
 
-**次稿への自動反映**: 学生が Suggestion を適用すると、その修正は次稿ブランチへも自動で merge されます（`sync-next-draft.yml`）。教員・学生とも追加操作は不要です。学生が次稿で同じ箇所を既に書き換えていた場合は、前稿→次稿の同期 PR が自動作成され、学生がブラウザの「Resolve conflicts」で解決します。
+**次稿への自動反映**: 学生が Suggestion を適用すると、その修正は次稿ブランチへも自動で merge されます（`sync-next-draft.yml`）。
+教員・学生とも追加操作は不要です。
+学生が次稿で同じ箇所を既に書き換えていた場合は、前稿→次稿の同期 PR が自動作成され、学生がブラウザの「Resolve conflicts」で解決します。
 
 ## 段階ごとのレビューの重点
 
@@ -293,7 +296,8 @@ gh api repos/smkwlab/{repo}/branches/main/protection \
 ## よくある質問
 
 ### Q: GitHubアカウントが必要ですか？
-A: はい。無料アカウントで十分です。
+A: はい。
+無料アカウントで十分です。
 ```
 アカウント作成: https://github.com
 学生リポジトリへのアクセス権限は個別に付与されます
@@ -307,7 +311,8 @@ A: 編集・削除が可能です。
 ```
 
 ### Q: PDFでの確認はできますか？
-A: はい。GitHub Actions で自動生成されます。
+A: はい。
+GitHub Actions で自動生成されます。
 ```
 PR画面下部の「Checks」セクションでPDF確認可能
 印刷しての確認も併用してください

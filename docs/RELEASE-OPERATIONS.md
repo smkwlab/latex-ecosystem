@@ -6,8 +6,7 @@
 ## 依存関係管理
 
 本節はイメージ再ビルドとテンプレートへの伝播という、人手で進める連鎖を扱います。
-個々のパッケージ更新を Renovate がどう自動化しているかは
-[DEPENDENCY-MANAGEMENT.md](DEPENDENCY-MANAGEMENT.md) を参照してください。
+個々のパッケージ更新を Renovate がどう自動化しているかは [DEPENDENCY-MANAGEMENT.md](DEPENDENCY-MANAGEMENT.md) を参照してください。
 
 ### エコシステムの依存関係構造
 

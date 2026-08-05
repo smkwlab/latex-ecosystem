@@ -119,19 +119,18 @@ protected_patterns:
 - 学生は次稿ブランチで `git pull` するだけ
 
 **コンフリクト時**: 前稿→次稿の同期 PR が自動作成される。
-学生がブラウザの「Resolve conflicts」で解決すると同期は自動で再開する
-（解決後、同期 PR は自動的に merged になる）。
+学生がブラウザの「Resolve conflicts」で解決すると同期は自動で再開する（解決後、同期 PR は自動的に merged になる）。
 
 ### 4. 最終提出処理
 
 **ファイル**: `.github/workflows/auto-final-merge.yml`
 
-**トリガー**: `final-*` タグの付与  
-**処理**:
+**トリガー**: `final-*` タグの付与 **処理**:
 1. タグの付いた commit を含むブランチを特定
 2. そのブランチ → `main` の提出 PR を作成（同じ PR が既にあれば作らず、その旨を出力）
 
-**マージは教員が行う**。この workflow が行うのは PR の作成までで、マージはしない。
+**マージは教員が行う**。
+この workflow が行うのは PR の作成までで、マージはしない。
 
 最終版 PDF 付きの GitHub Release は、同じタグ push に反応する `latex-build.yml` が作成する。
 
@@ -139,13 +138,11 @@ protected_patterns:
 
 ### 1. 基本作業フロー
 
-各 draft ブランチで執筆 → Pull Request 作成 → 教員のレビューに対応 →
-対応完了後は自分で PR をクローズし、次稿ブランチで執筆を継続する。
+各 draft ブランチで執筆 → Pull Request 作成 → 教員のレビューに対応 → 対応完了後は自分で PR をクローズし、次稿ブランチで執筆を継続する。
 PR は**前稿ブランチを base（マージ先）**にして作成する（例: `base: 1st-draft` ← `compare: 2nd-draft`）。
 前の稿がない最初の `0th-draft` の PR だけ `base: main` とする。
 
-具体的な操作手順（ブランチの切り替え、PR の作り方、レビュー対応の詳細）は
-[STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) を参照。
+具体的な操作手順（ブランチの切り替え、PR の作り方、レビュー対応の詳細）は [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) を参照。
 
 ### 2. 品質管理遵守
 
@@ -186,12 +183,9 @@ PR は**前稿ブランチを base（マージ先）**にして作成する（�
 
 ### 2. レビューコメント作成
 
-個別の指摘は該当行へのファイル内コメントで、全体的なフィードバックは
-PR の総合コメントで行う。
+個別の指摘は該当行へのファイル内コメントで、全体的なフィードバックは PR の総合コメントで行う。
 
-コメントの具体的な書き方・操作手順は
-[PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) と
-[TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) を参照。
+コメントの具体的な書き方・操作手順は [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) と [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) を参照。
 
 ### 3. レビュー承認基準
 
@@ -209,8 +203,7 @@ PR の総合コメントで行う。
 ### 1. 自動リポジトリ管理
 
 #### A. Issue処理ワークフロー
-**トリガー**: 「📋 リポジトリ登録依頼」Issue作成  
-**処理内容**:
+**トリガー**: 「📋 リポジトリ登録依頼」Issue作成 **処理内容**:
 1. 学生リポジトリの自動登録
 2. ブランチ保護設定の適用
 3. thesis-student-registryの更新
@@ -218,17 +211,9 @@ PR の総合コメントで行う。
 
 #### B. レジストリ管理
 
-> **前提**: registry-manager / thesis-monitor はいずれも独立リポジトリ
-> （[smkwlab/registry-manager](https://github.com/smkwlab/registry-manager) /
-> [smkwlab/thesis-monitor](https://github.com/smkwlab/thesis-monitor)）。
+> **前提**: registry-manager / thesis-monitor はいずれも独立リポジトリ（[smkwlab/registry-manager](https://github.com/smkwlab/registry-manager) / [smkwlab/thesis-monitor](https://github.com/smkwlab/thesis-monitor)）。
 > latex-ecosystem ルートに clone して escript をビルドしておく（初回のみ）:
-> ```bash
-> [ -d registry-manager ] || git clone git@github.com:smkwlab/registry-manager.git
-> (cd registry-manager && mix escript.build)
-> [ -d thesis-monitor ] || git clone git@github.com:smkwlab/thesis-monitor.git
-> (cd thesis-monitor && mix deps.get && mix escript.build)
-> ```
-> 未ビルドだと `./registry-manager/registry-manager` 等が存在せずコマンドが失敗する。
+> ```bash [ -d registry-manager ] || git clone git@github.com:smkwlab/registry-manager.git (cd registry-manager && mix escript.build) [ -d thesis-monitor ] || git clone git@github.com:smkwlab/thesis-monitor.git (cd thesis-monitor && mix deps.get && mix escript.build) ``` 未ビルドだと `./registry-manager/registry-manager` 等が存在せずコマンドが失敗する。
 
 ```bash
 # レジストリ操作・workflow 伝播（latex-ecosystem ルートから実行）
@@ -267,7 +252,8 @@ gh run view <run-id> --log
 - `gaiyou-1st`, `gaiyou-2nd`: 日本語概要
 
 #### 提出タグ（ブランチではなくタグで運用）
-- `submit`: 論文本体の提出許可版。提出許可の記録用で、main への自動処理は無い（タグ push により PDF 付き Release は作成される）
+- `submit`: 論文本体の提出許可版。
+  提出許可の記録用で、main への自動処理は無い（タグ push により PDF 付き Release は作成される）
 - `final`, `final-*`: 最終提出（main への提出 PR が自動作成され、教員がマージ）
 
 ### 2. ワークフロー設定
@@ -326,5 +312,5 @@ branches:
 
 ---
 
-*このドキュメントは本エコシステムの運用に関わる全ての関係者（学生・教員・管理者）を対象としています。*  
-*最終更新: 2026-07-12*
+*このドキュメントは本エコシステムの運用に関わる全ての関係者（学生・教員・管理者）を対象としています。
+* *最終更新: 2026-07-12*

@@ -3,7 +3,8 @@
 > **本書の位置づけ**: 初期設定・スクリプト・提出プロセス管理・セキュリティは本書が正典です。
 > 日常のレビュー操作（コメント・Suggestion・複数教員レビュー）は [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md)、初回の全体像は [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) を参照してください。
 >
-> 本ガイド中の org 名・URL・コマンド例・連絡先は **smkwlab organization での運用を例**に記述しています。他の org に展開した環境では、自 org の値に読み替えてください（展開方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)）。
+> 本ガイド中の org 名・URL・コマンド例・連絡先は **smkwlab organization での運用を例**に記述しています。
+> 他の org に展開した環境では、自 org の値に読み替えてください（展開方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)）。
 
 ## 概要
 
@@ -26,9 +27,8 @@ main (最終成果物)
 各 draft PR は直前の draft をベースにするため、直前版からの差分だけが表示されます。
 次稿ブランチは PR 作成時に GitHub Actions が自動作成します（create-next-draft）。
 
-> **旧構成についての補足**: 2025年10月以前に作成されたリポジトリには
-> `initial` / `review-branch` と「レビュー用 PR」が存在しますが、この仕組みは
-> 廃止されました（sotsuron-template #74）。現行のリポジトリには存在しません。
+> **旧構成についての補足**: 2025年10月以前に作成されたリポジトリには `initial` / `review-branch` と「レビュー用 PR」が存在しますが、この仕組みは 廃止されました（sotsuron-template #74）。
+> 現行のリポジトリには存在しません。
 
 ### レビューの使い分け
 
@@ -50,7 +50,8 @@ main (最終成果物)
 bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 ```
 
-> 上記 URL は **smkwlab デプロイの**エントリポイントです。他の org に展開した環境では、fork 設定済みの**自 org の `setup.sh`**（[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の fork 設定表を参照）を学生に案内してください。
+> 上記 URL は **smkwlab デプロイの**エントリポイントです。
+> 他の org に展開した環境では、fork 設定済みの**自 org の `setup.sh`**（[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の fork 設定表を参照）を学生に案内してください。
 > **注意**: smkwlab の URL のままでは smkwlab の既定値でリポジトリが作成されます。
 
 **自動実行される内容**：
@@ -83,8 +84,8 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 
 ## 日常的な添削作業
 
-日々のレビュー操作の詳細な手順（差分の見方・コメント・Suggestion・レビュー送信）は
-[PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) が正典です。ここでは運用上の要点のみまとめます。
+日々のレビュー操作の詳細な手順（差分の見方・コメント・Suggestion・レビュー送信）は [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) が正典です。
+ここでは運用上の要点のみまとめます。
 
 ### 1. 学生からPRが来たとき
 
@@ -96,7 +97,8 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 ### 2. Suggestion対応フロー
 
 Suggestion 提示後は学生の適用と Re-request review を待ち、確認後に承認コメントします。
-**教員はPRをマージしません。学生が自分でクローズします。**
+**教員はPRをマージしません。**
+**学生が自分でクローズします。**
 適用された Suggestion は次稿ブランチへも自動で merge されます（`sync-next-draft.yml`）。
 コンフリクト時は前稿→次稿の同期 PR が自動作成され、学生がブラウザで解決します。
 詳細フローは [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の「Suggestion対応フロー」を参照。
@@ -147,14 +149,12 @@ PRをマージしない運用のメリット：
 
 ## 複数人レビューの運用方法
 
-役割分担（主指導・副指導・外部）、順次/並行/段階的レビューの各パターン、CODEOWNERS や必要承認数の
-GitHub 設定、通知管理、レビュー遅延時の対応は、[PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の
-「複数教員での添削」を参照してください。教員間で意見が相違した場合は PR 上で協議し、学生には統一見解を提示します。
+役割分担（主指導・副指導・外部）、順次/並行/段階的レビューの各パターン、CODEOWNERS や必要承認数の GitHub 設定、通知管理、レビュー遅延時の対応は、[PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の「複数教員での添削」を参照してください。
+教員間で意見が相違した場合は PR 上で協議し、学生には統一見解を提示します。
 
 ## 効率的な添削のコツ
 
-Suggestion の効果的な使用、優先順位付け、週次の推奨スケジュールは、
-[PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の「効率的な添削のコツ」を参照してください。
+Suggestion の効果的な使用、優先順位付け、週次の推奨スケジュールは、[PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) の「効率的な添削のコツ」を参照してください。
 
 ## トラブルシューティング
 
@@ -266,10 +266,8 @@ gh pr list --label abstract
 
 #### 2. final tag による提出 PR の自動作成
 
-学生が `final-*` タグを作成すると、GitHub Actions（auto-final-merge.yml）が
-**タグの付いたブランチ → main の提出 PR**（タイトル "Final Submission: final-*"）を
-自動作成します。同時に、タグ push に対して latex-build が最終版 PDF 付きの
-GitHub Release を作成します。
+学生が `final-*` タグを作成すると、GitHub Actions（auto-final-merge.yml）が **タグの付いたブランチ → main の提出 PR**（タイトル "Final Submission: final-*"）を 自動作成します。
+同時に、タグ push に対して latex-build が最終版 PDF 付きの GitHub Release を作成します。
 
 #### 3. 提出 PR の確認・マージ
 
