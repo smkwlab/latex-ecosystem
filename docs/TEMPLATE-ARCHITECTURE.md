@@ -47,7 +47,7 @@ sotsuron-template の上乗せ:
 
 - **fat template + 作成時剪定**: 卒業論文用（`sotsuron.tex` ほか）と修士論文用（`thesis.tex` ほか）の両方を持ち、student-repo-management が学籍番号から判定して不要な方を削除する。「1 テンプレートで 2 種の文書」はテンプレートを分けずこの方式で実現する
 - textlint のカスタム語彙（`.textlintrc` / `.textlintignore` を自前で持つ。aldc の注入より優先される）
-- `WRITING-GUIDE.md`（詳細な執筆ガイド）と `plistings.sty`
+- `WRITING-GUIDE.md`（概要執筆・提出タグなど卒論固有のガイド）と `plistings.sty`
 - `auto-final-merge.yml`（`final-*` タグによる最終提出処理）
 
 ### ise-report-template は派生ではない

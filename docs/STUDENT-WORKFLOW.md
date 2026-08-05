@@ -160,5 +160,5 @@ PR を作成する前に、毎回次の3点を確認してください。
 - [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) — GitHub Desktop とブラウザの操作手順・FAQ（テンプレート共通）
 - **使用中のテンプレートの README** — テンプレートの使い方・環境構築・提出手順（卒業論文・修士論文の例: [sotsuron-template の README](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md)）
 - **自分のリポジトリの `README.md`** — 著者情報（氏名・学籍番号・種別・タイトル）。`0th-draft` で自分で記入する
-- [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md) — 概要執筆・提出・LaTeX 記法（卒業論文・修士論文固有）
+- [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md) — 概要執筆・提出タグ・卒論固有の FAQ（卒業論文・修士論文）
 - [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) — 添削ルールの正典（ブランチ命名・自動化の仕様）
