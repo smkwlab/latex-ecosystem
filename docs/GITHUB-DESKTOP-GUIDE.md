@@ -95,7 +95,9 @@ base を前稿ブランチにすると、差分がその稿で書き直した部
 2. 複数あるときは `Add suggestion to batch` で選び、まとめて適用できる
 3. `Commit suggestions` をクリックして反映
 
-適用した修正は、執筆中の次稿ブランチへも自動で取り込まれます。次稿の作業を再開するときは GitHub Desktop で `Fetch origin` してから `Pull origin` で手元に取り込んでください。
+適用した修正は、執筆中の次稿ブランチへも自動で取り込まれます（同じ箇所を次稿でも編集していた場合を除く）。次稿の作業を再開するときは GitHub Desktop で `Fetch origin` してから `Pull origin` で手元に取り込んでください。
+
+取り込めなかったときは同期 PR が自動作成されるので、下の「7.「Sync review suggestions from ...」という PR が来たら」を参照してください。
 
 ### 再レビューの依頼
 
