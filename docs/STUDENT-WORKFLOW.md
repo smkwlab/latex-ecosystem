@@ -2,11 +2,11 @@
 
 本エコシステムの文書リポジトリで執筆する学生向けに、リポジトリ作成前の準備から最終提出までの**流れとルール**をまとめたガイドです。本書が説明する **draft PR サイクル**（`0th-draft` などの draft ブランチで執筆し、Pull Request で添削を受け、自動作成される次稿ブランチで改稿を続ける繰り返し）は、**卒業論文・修士論文（sotsuron-template）、情報科学演習レポート（ise-report-template）、学会ポスター（poster-template）**で共通です。**汎用 LaTeX（latex-template）**は任意参加で、教員の指示でレビューフロー付きで作成された場合（または自分で `0th-draft` ブランチを作って PR を出す場合。具体的な手順は [latex-template のテンプレート README](https://github.com/smkwlab/latex-template/blob/main/.github/README.md) の「添削を受ける場合」を参照）に同じ draft PR サイクルが使えます。週報リポジトリは draft PR サイクルを使わないため、[wr-template のテンプレート README](https://github.com/smkwlab/wr-template/blob/main/.github/README.md) に従ってください。卒業論文調査報告（sotsuron-report）も同様に対象外で、[sotsuron-report-template のテンプレート README](https://github.com/smkwlab/sotsuron-report-template/blob/main/.github/README.md) に従ってください。
 
-- テンプレートの使い方・環境の詳細 → **テンプレートリポジトリの README**（例: [sotsuron-template](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md)、[ise-report-template](https://github.com/smkwlab/ise-report-template/blob/main/.github/README.md)）
-- LaTeX や GitHub Desktop の具体的な操作 → 使用中のテンプレートの執筆ガイド（例: [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md)）
 - 本書 → 執筆プロセス全体の流れとルール（draft PR サイクルを使うテンプレート共通）
+- GitHub Desktop・ブラウザの具体的な操作 → [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md)（テンプレート共通）
+- テンプレートの使い方・執筆環境・提出方法 → **テンプレートリポジトリの README**（例: [sotsuron-template](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md)、[ise-report-template](https://github.com/smkwlab/ise-report-template/blob/main/.github/README.md)）
 
-> **自分のリポジトリの `README.md`** には、著者情報（氏名・学籍番号・種別・タイトル）と、執筆するファイルの案内が書かれています。環境構築や GitHub Desktop の操作手順は書かれていないので、それらは上記のテンプレートの README を参照してください。著者情報はプレースホルダのままなので、`0th-draft` での最初の作業として自分で書き換えてください。
+> **自分のリポジトリの `README.md`** には、著者情報（氏名・学籍番号・種別・タイトル）と、執筆するファイルの案内が書かれています。環境構築や GitHub Desktop の操作手順は書かれていないので、それらは上記の操作ガイドとテンプレートの README を参照してください。著者情報はプレースホルダのままなので、`0th-draft` での最初の作業として自分で書き換えてください。
 
 > 本ガイド中の org 名・URL は **smkwlab organization での運用を例**に記述しています。所属する研究室の運用が異なる場合は、担当教員の指示に従ってください。
 
@@ -70,7 +70,7 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 1. 作成されたリポジトリを手元にクローンする（GitHub Desktop 推奨）
 2. VS Code で開く。**Dev Containers 拡張機能**を入れておくと、開くだけで執筆環境（LaTeX Workshop・textlint など）が自動で使えるようになる
 
-具体的な手順は使用中のテンプレートの README を参照してください（卒業論文・修士論文の例: [sotsuron-template README の「学生向けクイックスタート」](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md#-学生向けクイックスタート)）。
+クローンと VS Code の起動手順は [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) を、執筆環境で使えるツールは使用中のテンプレートの README を参照してください（卒業論文・修士論文の例: [sotsuron-template README の「学生向けクイックスタート」](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md#-学生向けクイックスタート)）。
 
 ## 4. 第0稿（アウトライン）を提出する
 
@@ -93,11 +93,12 @@ PR を作成すると、次稿ブランチ（`0th-draft` の次なら `1st-draft
 1. **レビューコメントを確認する** — GitHub の PR ページで教員のコメントや Suggestion を確認する
 2. **指摘に対応する** — 修正・追記して commit & push する（Suggestion はそのまま適用でき、適用した修正は次稿ブランチへも自動で取り込まれる）
 3. **自分で PR をクローズする** — 対応が完了したら、PR ページの「Close pull request」ボタンでクローズする（**マージはしない**）
-4. **次稿ブランチに切り替えて執筆を続ける** — GitHub Desktop で `Fetch origin` してから、自動作成されたブランチ（`origin/1st-draft` など）に切り替える
+4. **次稿ブランチに切り替えて執筆を続ける** — 自動作成された次稿ブランチに切り替える
 5. 書き上がったら PR を作成する（タイトル例: `[1st-draft] 第1章〜第3章初稿提出`）
    - **base は前稿ブランチ**にする（例: `base: 0th-draft` ← `compare: 1st-draft`、`base: 1st-draft` ← `compare: 2nd-draft`）
-   - GitHub Desktop の `Create Pull Request` から開く画面では base が `main` のままになっているので、**必ず前稿ブランチに変更**する
    - こうすると差分が前稿からの変更点だけになり、教員がその稿で何を書き直したかを追える
+
+各手順の操作方法（ブランチの切り替え、Suggestion の適用、base の変更）は [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) を参照してください。
 
 補足：
 
@@ -144,18 +145,20 @@ PR を作成する前に、毎回次の3点を確認してください。
 
 ## 9. よくあるつまずき
 
+進め方についての迷い：
+
 - **PR をいつクローズすべきか分からない** — 教員の添削を確認し、対応が完了したタイミングでクローズする。次稿の執筆前にクローズしておく必要はない（並行作業できる）
-- **PR の差分に前の稿の内容まで出てしまう** — base が `main` のままになっている。PR ページのタイトル横の `Edit` から base を前稿ブランチに変更する
-- **ブランチが切り替えられない** — 未 commit の変更が残っていないか確認する。commit してから切り替える
-- **自動作成されたはずの次稿ブランチが見えない** — GitHub Desktop で `Fetch origin` してからブランチ一覧を開き直す
-- **「Sync review suggestions from ...」という PR が自動で作られた** — 前稿で適用した Suggestion を次稿へ自動で取り込めなかった（同じ箇所を両方の稿で編集した）合図。その PR の説明に従い「Resolve conflicts」ボタンで残したい文に編集すれば、あとは自動で処理される
-- **PDF が生成されない** — VS Code の「問題」タブでコンパイルエラーの内容を確認する
+- **いつ概要の執筆を始めればよいか分からない** — 教員から指示があるまで始めない。通常は論文本体の構成が固まった段階で指示がある
+- **どの稿で何を書けばよいか分からない** — 「1. 全体像」の表を確認する。稿が進むにつれてレビューの観点も深まっていく
+
+操作でつまずいたとき（ブランチが見つからない・切り替えられない、PR の差分に前の稿の内容まで出る、「Sync review suggestions from ...」という PR が自動で作られた、など）は [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) の「よくある質問」を参照してください。PDF やビルドのエラーは使用中のテンプレートの README を参照してください。
 
 解決しないときは担当教員に相談してください（smkwlab では smkwlabML でも質問できます）。
 
 ## 10. 参考リンク
 
+- [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) — GitHub Desktop とブラウザの操作手順・FAQ（テンプレート共通）
 - **使用中のテンプレートの README** — テンプレートの使い方・環境構築・提出手順（卒業論文・修士論文の例: [sotsuron-template の README](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md)）
 - **自分のリポジトリの `README.md`** — 著者情報（氏名・学籍番号・種別・タイトル）。`0th-draft` で自分で記入する
-- [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md) — GitHub Desktop の詳細操作・トラブルシューティング・FAQ（卒業論文・修士論文）
+- [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md) — 概要執筆・提出・LaTeX 記法（卒業論文・修士論文固有）
 - [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) — 添削ルールの正典（ブランチ命名・自動化の仕様）

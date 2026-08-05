@@ -42,7 +42,8 @@ draft PR サイクルを**中核として、添削に関わる複数の仕組み
 
 まず**本ファイルの定義を更新**し、その後、次の文書へ伝播させる:
 
-1. [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md)（学生向け説明の本体）
-2. 各テンプレート README: sotsuron-template（+ WRITING-GUIDE.md）/ ise-report-template / poster-template / latex-template
-3. [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) の対応付けの一文
-4. 管理・開発文書: latex-ecosystem の CLAUDE.md・ECOSYSTEM.md・[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)・`.claude/skills/propagate`、student-repo-management のスクリプトコメント
+1. [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md)（学生向け説明の本体。流れとルール）
+2. [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md)（学生向けの操作手順。テンプレート共通）
+3. 各テンプレート README: sotsuron-template（+ 卒論固有の WRITING-GUIDE.md）/ ise-report-template / poster-template / latex-template
+4. [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) の対応付けの一文
+5. 管理・開発文書: latex-ecosystem の CLAUDE.md・ECOSYSTEM.md・[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)・`.claude/skills/propagate`、student-repo-management のスクリプトコメント

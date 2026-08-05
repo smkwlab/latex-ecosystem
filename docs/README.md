@@ -21,6 +21,7 @@
 
 1. 自分のリポジトリの README
 2. [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) — 執筆プロセス全体の流れとルール
+3. [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) — GitHub Desktop とブラウザの操作手順（テンプレート共通）
 
 ### 4. エコシステムの維持運用者
 
@@ -48,6 +49,7 @@
 | [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md) | 論文指導を始める教員 |
 | [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md) | 教員（日常のレビュー操作） |
 | [TEACHER-GUIDE.md](TEACHER-GUIDE.md) | 教員（運用・提出プロセス管理） |
-| [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) | 学生 |
+| [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md) | 学生（流れとルール） |
+| [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) | 学生（操作手順） |
 | [GLOSSARY.md](GLOSSARY.md) | 全読者（用語定義） |
 | [../ECOSYSTEM.md](../ECOSYSTEM.md) | 維持運用者 |
