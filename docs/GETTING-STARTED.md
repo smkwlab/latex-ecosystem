@@ -5,18 +5,15 @@ LaTeX 卒論エコシステムの運用を引き継ぐ（または新しく始�
 
 ## 1. 対象読者
 
-このエコシステムを**運用**しようとしている人 — 学生リポジトリの作成、
-PR ベースの添削フロー、学生レジストリの管理を担う人 — が対象です。
-論文を*書く*だけ、*添削する*だけの場合は
-[ドキュメントガイド](README.md) を参照してください。
+このエコシステムを**運用**しようとしている人 — 学生リポジトリの作成、PR ベースの添削フロー、学生レジストリの管理を担う人 — が対象です。
+論文を*書く*だけ、*添削する*だけの場合は [ドキュメントガイド](README.md) を参照してください。
 
 ## 2. 前提条件
 
 - 対象 GitHub org の **admin 権限**
 - **GitHub CLI (`gh`)**（認証済み: `gh auth login`）
 - **Docker**（学生リポジトリ作成はコンテナ内で実行されます）
-- **Elixir/Mix** — 開発用ワークスペースを構築する場合、または
-  `ecosystem-manager` / `registry-manager` / `thesis-monitor` を使う場合のみ
+- **Elixir/Mix** — 開発用ワークスペースを構築する場合、または `ecosystem-manager` / `registry-manager` / `thesis-monitor` を使う場合のみ
 
 GitHub CLI のインストール例:
 
@@ -53,8 +50,7 @@ gh repo clone smkwlab/latex-ecosystem .   # または git clone https://github.c
 
 clone されるリポジトリの一覧は `./ecosystem-manager/ecosystem-manager repos` で確認できます。
 
-**セットアップが失敗する場合**: `gh auth status` で認証を、
-`gh repo view smkwlab/latex-ecosystem` でアクセス権を確認してください。
+**セットアップが失敗する場合**: `gh auth status` で認証を、`gh repo view smkwlab/latex-ecosystem` でアクセス権を確認してください。
 
 続けて [最初の学生リポジトリ](#5-最初の学生リポジトリ) へ。
 
@@ -67,29 +63,24 @@ clone されるリポジトリの一覧は `./ecosystem-manager/ecosystem-manage
 - org 内にコピーした**文書テンプレート**
 - 少数の **secrets / variables**
 
-正確な権限、secrets の一覧表、fork の設定、検証チェックリストまで、すべて
-[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) にあります。
+正確な権限、secrets の一覧表、fork の設定、検証チェックリストまで、すべて [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) にあります。
 最後まで実施してから、ここに戻ってきてください。
 
 ## 5. 最初の学生リポジトリ
 
 作成方法は2通り:
 
-1. **学生自身が実行（通常経路）** —
-   [student-repo-management/create-repo/setup.sh](https://github.com/smkwlab/student-repo-management/blob/v1/create-repo/setup.sh)
-   のワンライナーを学生に実行してもらう:
+1. **学生自身が実行（通常経路）** — [student-repo-management/create-repo/setup.sh](https://github.com/smkwlab/student-repo-management/blob/v1/create-repo/setup.sh) のワンライナーを学生に実行してもらう:
 
    ```bash
    bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
    ```
 
-   > 上記 URL は **smkwlab デプロイの**エントリポイントです。それ以外のデプロイでは、
-   > **自 org のフォーク**の `setup.sh`（[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)
-   > の fork 設定表に従って設定済みのもの）を学生に実行させてください。
+   > 上記 URL は **smkwlab デプロイの**エントリポイントです。
+   > それ以外のデプロイでは、**自 org のフォーク**の `setup.sh`（[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の fork 設定表に従って設定済みのもの）を学生に実行させてください。
    > **注意**: smkwlab の URL のままでは smkwlab の既定値でリポジトリが作成されます。
 
-2. **登録 Issue 経由** — org の `student-repo-management` に
-   リポジトリ作成依頼 Issue を作成すると、あとは GitHub Actions が処理します。
+2. **登録 Issue 経由** — org の `student-repo-management` に リポジトリ作成依頼 Issue を作成すると、あとは GitHub Actions が処理します。
 
 作成後の確認:
 
@@ -100,25 +91,16 @@ clone されるリポジトリの一覧は `./ecosystem-manager/ecosystem-manage
   ./thesis-monitor/thesis-monitor list
   ```
 
-どちらかの確認に失敗した場合は、自動化のセットアップガイド
-[GITHUB-ACTIONS-SETUP.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/GITHUB-ACTIONS-SETUP.md)
-を参照してください。
+どちらかの確認に失敗した場合は、自動化のセットアップガイド [GITHUB-ACTIONS-SETUP.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/GITHUB-ACTIONS-SETUP.md) を参照してください。
 
 ## 6. 教員と学生のオンボーディング
 
-- **教員** →
-  [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md)
-- **学生** → 各学生リポジトリに生成される README、および
-  [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md)
+- **教員** → [TEACHER-ONBOARDING.md](TEACHER-ONBOARDING.md)
+- **学生** → 各学生リポジトリに生成される README、および [STUDENT-WORKFLOW.md](STUDENT-WORKFLOW.md)
 
 ## 7. 日常運用（Day-2 operations）
 
-- **定常的な管理**（状態確認、リポジトリ横断の調整）→
-  [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md)
-- **依存関係の更新・リリース** →
-  [RELEASE-OPERATIONS.md](RELEASE-OPERATIONS.md)
-- **学生の進捗監視** →
-  [thesis-monitor](https://github.com/smkwlab/thesis-monitor)
-  （`thesis-monitor list`）
-- **添削ルールの正典** →
-  [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md)
+- **定常的な管理**（状態確認、リポジトリ横断の調整）→ [MANAGEMENT-WORKFLOWS.md](MANAGEMENT-WORKFLOWS.md)
+- **依存関係の更新・リリース** → [RELEASE-OPERATIONS.md](RELEASE-OPERATIONS.md)
+- **学生の進捗監視** → [thesis-monitor](https://github.com/smkwlab/thesis-monitor)（`thesis-monitor list`）
+- **添削ルールの正典** → [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md)

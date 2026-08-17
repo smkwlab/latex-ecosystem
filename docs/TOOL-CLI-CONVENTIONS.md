@@ -1,30 +1,24 @@
 # ツール CLI 規約
 
-エコシステムの 3 つの Elixir CLI ツール — **registry-manager** /
-**thesis-monitor** / **ecosystem-manager** — が共有するコマンド体系の正準定義。
+エコシステムの 3 つの Elixir CLI ツール — **registry-manager** / **thesis-monitor** / **ecosystem-manager** — が共有するコマンド体系の正準定義。
 読者はエコシステムの維持運用者を想定する。
 
-3 ツールは共通基盤ライブラリ
-[smkwlab/elixir-tool-kit](https://github.com/smkwlab/elixir-tool-kit) の
-CLI エンジン上に実装されている。アーキテクチャ上の位置づけは
-[ECOSYSTEM.md](../ECOSYSTEM.md) の「ツール CLI 規約」を参照。
+3 ツールは共通基盤ライブラリ [smkwlab/elixir-tool-kit](https://github.com/smkwlab/elixir-tool-kit) の CLI エンジン上に実装されている。
+アーキテクチャ上の位置づけは [ECOSYSTEM.md](../ECOSYSTEM.md) の「ツール CLI 規約」を参照。
 
 ## 体系の骨格
 
-- **宣言的 spec**: 各ツールはオプションカタログ(名前・型・短フラグ・enum・
-  説明)とコマンド表(usage・summary・コマンド別オプション・例)を
-  `<Tool>.CLI.Spec` モジュールに単一情報源として持つ
-- **strict パース**: spec に無いオプション、enum 違反、コマンドに属さない
-  オプションはすべてパース段階のエラー(exit 1)
-- **help の自動生成**: `--help`(全体)と `<command> --help`(コマンド別)は
-  spec から生成される。help を手で編集することはない
-- **デフォルトコマンド**: thesis-monitor と ecosystem-manager はサブコマンド
-  省略時に `list` を実行する
+- **宣言的 spec**: 各ツールはオプションカタログ(名前・型・短フラグ・enum・説明)とコマンド表(usage・summary・コマンド別オプション・例)を `<Tool>.CLI.Spec` モジュールに単一情報源として持つ
+- **strict パース**: spec に無いオプション、enum 違反、コマンドに属さない オプションはすべてパース段階のエラー(exit 1)
+- **help の自動生成**: `--help`(全体)と `<command> --help`(コマンド別)は spec から生成される。
+  help を手で編集することはない
+- **デフォルトコマンド**: thesis-monitor と ecosystem-manager はサブコマンド 省略時に `list` を実行する
 - **exit code**: 成功 0 / エラー 1
 
 ## コマンド所有権(見る=thesis-monitor、書く=registry-manager)
 
-レジストリの読み/書きの境界はコマンドにも貫かれている。同じ機能を両ツールに重複させず、各機能で生き残るコマンドは 1 つ。
+レジストリの読み/書きの境界はコマンドにも貫かれている。
+同じ機能を両ツールに重複させず、各機能で生き残るコマンドは 1 つ。
 
 | 機能 | コマンド | ツール |
 |---|---|---|
@@ -34,14 +28,18 @@ CLI エンジン上に実装されている。アーキテクチャ上の位置�
 | 最近のコミット活動 | `activity` | thesis-monitor |
 | PR/Issue 状態(type/state/review-requested/sort) | `pr-stats` | thesis-monitor |
 
-- 各ツールの一覧コマンドは `list`(エイリアス `ls`)で統一されている。何の集合を列挙するかはツール名が示す — registry-manager=レジストリの保存エントリ、thesis-monitor=学生 repo の live 状態、ecosystem-manager=ワークスペースの全リポジトリ。thesis-monitor と ecosystem-manager ではサブコマンド省略時の既定コマンドでもある。
-- `--show-protection` は **rm=registry の保存値**(`protection_status`)、**tm=live 取得**で意味が異なる。rm 側の列見出しは `Protection (recorded)` として live と区別する。
-- registry-manager は per-repo の GitHub 監視(活動時刻・PR・live 保護)を行わない。これらは thesis-monitor の役割。
+- 各ツールの一覧コマンドは `list`(エイリアス `ls`)で統一されている。
+  何の集合を列挙するかはツール名が示す — registry-manager=レジストリの保存エントリ、thesis-monitor=学生 repo の live 状態、ecosystem-manager=ワークスペースの全リポジトリ。
+  thesis-monitor と ecosystem-manager ではサブコマンド省略時の既定コマンドでもある。
+- `--show-protection` は **rm=registry の保存値**(`protection_status`)、**tm=live 取得**で意味が異なる。
+  rm 側の列見出しは `Protection (recorded)` として live と区別する。
+- registry-manager は per-repo の GitHub 監視(活動時刻・PR・live 保護)を行わない。
+  これらは thesis-monitor の役割。
 
 ## 正準オプション語彙
 
-同じフラグは全ツールで同じ意味を持つ。ツール列は そのフラグを持つツール
-(rm = registry-manager、tm = thesis-monitor、em = ecosystem-manager)。
+同じフラグは全ツールで同じ意味を持つ。
+ツール列は そのフラグを持つツール (rm = registry-manager、tm = thesis-monitor、em = ecosystem-manager)。
 
 ### グローバルオプション
 
@@ -74,9 +72,10 @@ CLI エンジン上に実装されている。アーキテクチャ上の位置�
 
 ### 予約
 
-- **`-f` は force に予約**する。`--format` と `--fast` に短縮形はない
-- **`-v` は verbose**。バージョン表示は `--version`(long のみ)または
-  `version` コマンド
+- **`-f` は force に予約**する。
+  `--format` と `--fast` に短縮形はない
+- **`-v` は verbose**。
+  バージョン表示は `--version`(long のみ)または `version` コマンド
 
 ## ライブラリの提供モジュールと責務境界
 
@@ -88,8 +87,7 @@ CLI エンジン上に実装されている。アーキテクチャ上の位置�
 | `ToolKit.GitHub.Client` | Req ベースの REST ラッパ(token はプロバイダ注入、既定は `gh auth token`) |
 | `ToolKit.Cache` | カテゴリ + TTL のファイルキャッシュと `get_or_fetch/3` |
 
-コマンド語彙・位置引数の解釈・設定スキーマ・ドメインロジック・出力の印字は
-各ツールの責務である(機構はライブラリ、方針はツール)。
+コマンド語彙・位置引数の解釈・設定スキーマ・ドメインロジック・出力の印字は 各ツールの責務である(機構はライブラリ、方針はツール)。
 
 ## 依存の張り方
 
@@ -99,17 +97,15 @@ CLI エンジン上に実装されている。アーキテクチャ上の位置�
 {:tool_kit, github: "smkwlab/elixir-tool-kit", tag: "vX.Y.Z"}
 ```
 
-- タグは semver。ライブラリの変更は新タグとして発行する
-- 採用側は PR で明示的に pin を上げる。`mix.lock` の commit hash が再現性を
-  担保する
+- タグは semver。
+  ライブラリの変更は新タグとして発行する
+- 採用側は PR で明示的に pin を上げる。
+  `mix.lock` の commit hash が再現性を 担保する
 - ブランチ参照は使わない
 
 ## 実装・テスト規約
 
 CLI 体系の採用に伴って 3 ツールが共有する実装上の規約:
 
-- CLI の exit 検証: 各ツールの test_helper が
-  `Application.put_env(:<app>, :test_mode, true)` を設定し、テストは
-  `catch_throw(... ) == {:cli_test_exit, code}` で検証する
-- dialyzer の no_return 抑制は構造化形式 `dialyzer.ignore-warnings.exs`
-  (`{"path", :warning_type}` のタプル)で行う
+- CLI の exit 検証: 各ツールの test_helper が `Application.put_env(:<app>, :test_mode, true)` を設定し、テストは `catch_throw(... ) == {:cli_test_exit, code}` で検証する
+- dialyzer の no_return 抑制は構造化形式 `dialyzer.ignore-warnings.exs` (`{"path", :warning_type}` のタプル)で行う

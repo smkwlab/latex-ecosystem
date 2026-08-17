@@ -6,9 +6,8 @@
 
 ### コマンドリファレンス
 
-manager は Elixir escript である。最初に
-`(cd ecosystem-manager && mix escript.build)`
-で一度ビルドしておき、その後は以下を実行する:
+manager は Elixir escript である。
+最初に `(cd ecosystem-manager && mix escript.build)` で一度ビルドしておき、その後は以下を実行する:
 
 ```bash
 # 全リポジトリの状態を表示(デフォルトコマンド)

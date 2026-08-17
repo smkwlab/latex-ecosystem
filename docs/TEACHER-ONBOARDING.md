@@ -2,11 +2,14 @@
 
 ## このガイドについて
 
-本エコシステム（GitHub Pull Request ベースの論文添削ワークフロー）で**初めて論文指導を始める教員**向けの入門ガイドです。初回セットアップから最初のレビュー完了までの手順を、順を追って説明します。
+本エコシステム（GitHub Pull Request ベースの論文添削ワークフロー）で**初めて論文指導を始める教員**向けの入門ガイドです。
+初回セットアップから最初のレビュー完了までの手順を、順を追って説明します。
 
-日常の添削操作の詳細は [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md)、提出期の管理・スクリプト運用は [TEACHER-GUIDE.md](TEACHER-GUIDE.md) を参照してください。本ガイドは両者への入口です。
+日常の添削操作の詳細は [PR-REVIEW-GUIDE.md](PR-REVIEW-GUIDE.md)、提出期の管理・スクリプト運用は [TEACHER-GUIDE.md](TEACHER-GUIDE.md) を参照してください。
+本ガイドは両者への入口です。
 
-> 本ガイド中の org 名・URL・連絡先は **smkwlab organization での運用を例**に記述しています。他の org に展開した環境では、自 org の値に読み替えてください（展開方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)）。
+> 本ガイド中の org 名・URL・連絡先は **smkwlab organization での運用を例**に記述しています。
+> 他の org に展開した環境では、自 org の値に読み替えてください（展開方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md)）。
 
 ### ワークフローの全体像
 
@@ -22,13 +25,15 @@
 最終稿: final-* タグで main への提出 PR が自動作成 → 教員がマージして提出確定（詳細は TEACHER-GUIDE.md）
 ```
 
-各稿の PR には**直前版からの差分**だけが表示されるので、効率よくレビューできます。論文全体に関わる指摘も、その時点の最新の draft PR にコメントします（全体を通して読みたいときは、PR ごとに自動ビルドされる PDF アーティファクトが使えます）。
+各稿の PR には**直前版からの差分**だけが表示されるので、効率よくレビューできます。
+論文全体に関わる指摘も、その時点の最新の draft PR にコメントします（全体を通して読みたいときは、PR ごとに自動ビルドされる PDF アーティファクトが使えます）。
 
 ## 前提条件
 
 - **GitHub アカウント**があり、**デプロイ先 organization のメンバー**であること（例: smkwlab）
   - まだメンバーでない場合は、管理者（smkwlab では smkwlabML）に GitHub ユーザ名を伝えて招待を依頼してください
-- GitHub CLI (`gh`) は**必須ではありません**。レビュー作業は GitHub の Web UI だけで完結できます
+- GitHub CLI (`gh`) は**必須ではありません**。
+  レビュー作業は GitHub の Web UI だけで完結できます
   - スクリプトによる一括管理を行う場合のみ [INSTALL-GH.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/INSTALL-GH.md)（student-repo-management）を参照
 
 ## Step 1: 学生にリポジトリを作らせる
@@ -39,7 +44,8 @@
 bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 ```
 
-> 上記 URL は **smkwlab デプロイの**エントリポイントです。他の org に展開した環境では、fork 設定済みの**自 org の `setup.sh`**（[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の fork 設定表を参照）を学生に案内してください。
+> 上記 URL は **smkwlab デプロイの**エントリポイントです。
+> 他の org に展開した環境では、fork 設定済みの**自 org の `setup.sh`**（[MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の fork 設定表を参照）を学生に案内してください。
 > **注意**: smkwlab の URL のままでは smkwlab の既定値でリポジトリが作成されます。
 
 リポジトリが作成されると、以下が**すべて自動で**実行されます：
@@ -48,13 +54,16 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 - 学生レジストリ（thesis-student-registry）への登録
 - レビュアー（教員）のアサイン
 
-**教員側の作業は何もありません。** 学生からの最初の PR を待つだけです。
+**教員側の作業は何もありません。**
+学生からの最初の PR を待つだけです。
 
 ## Step 2: 最初の PR（0th-draft）が来る
 
-リポジトリ作成時に、教員をレビュアーへ自動アサインする設定（環境変数 `AUTO_ASSIGN_REVIEWER` で指定された GitHub アカウント）が組み込まれます。このため、学生が目次案を書いて PR を作成すると、その教員が GitHub 上でレビュアーにアサインされ、レビュー依頼の通知が発生します。
+リポジトリ作成時に、教員をレビュアーへ自動アサインする設定（環境変数 `AUTO_ASSIGN_REVIEWER` で指定された GitHub アカウント）が組み込まれます。
+このため、学生が目次案を書いて PR を作成すると、その教員が GitHub 上でレビュアーにアサインされ、レビュー依頼の通知が発生します。
 
-この通知がメールで届くかどうかは、各自の GitHub [Settings] → [Notifications] の設定に依存します。メールで届く場合の例：
+この通知がメールで届くかどうかは、各自の GitHub [Settings] → [Notifications] の設定に依存します。
+メールで届く場合の例：
 
 ```
 [GitHub] k21rs001 opened PR #1: 0th-draft
@@ -68,9 +77,12 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 - レビュアーにアサインされた PR は「Pull requests」の [Review requests](https://github.com/pulls/review-requested/@me) 画面からも一覧できます
 - 通知に依らない確認手段として、学生リポジトリを **Watch** しておく方法もあります
 
-> **他 org 展開時の注意**: `AUTO_ASSIGN_REVIEWER` を自 org の教員アカウントに設定していない場合、自動アサインは行われず**通知は届きません**（既定値が org 外のアカウントのため、アサイン設定ごとスキップされます）。設定方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の「create-repo fork configuration」を参照してください。
+> **他 org 展開時の注意**: `AUTO_ASSIGN_REVIEWER` を自 org の教員アカウントに設定していない場合、自動アサインは行われず**通知は届きません**（既定値が org 外のアカウントのため、アサイン設定ごとスキップされます）。
+> 設定方法は [MULTI-ORG-DEPLOYMENT.md](MULTI-ORG-DEPLOYMENT.md) の「create-repo fork configuration」を参照してください。
 
-**0th-draft で見るべき観点は「構成・章立てのみ」です。** 章立て・研究範囲・論理構成が妥当かを確認します。文章表現や詳細には踏み込みません（それは 1st-draft 以降の観点です）。
+**0th-draft で見るべき観点は「構成・章立てのみ」です。**
+章立て・研究範囲・論理構成が妥当かを確認します。
+文章表現や詳細には踏み込みません（それは 1st-draft 以降の観点です）。
 
 ## Step 3: レビューする
 
@@ -87,13 +99,16 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 
 ## Step 4: 承認後の流れを知っておく
 
-**PR はマージしません。** 承認（またはコメント対応の完了）後は、**学生が自分で PR をクローズ**し、自動作成された次稿ブランチ（`1st-draft` の次は `2nd-draft`、以降も同様）で執筆を続けます。
+**PR はマージしません。**
+承認（またはコメント対応の完了）後は、**学生が自分で PR をクローズ**し、自動作成された次稿ブランチ（`1st-draft` の次は `2nd-draft`、以降も同様）で執筆を続けます。
 
 - 学生の draft PR は添削専用で、マージせず履歴として残します
 - 次稿ブランチの作成と、適用された Suggestion の次稿ブランチへの反映は GitHub Actions が自動で行います
-- 学生は前稿ブランチを base にして PR を作成します（例: `base: 1st-draft` ← `compare: 2nd-draft`）。base が `main` のままだと前の稿の内容まで差分に出るので、その場合は base の変更を指示してください
+- 学生は前稿ブランチを base にして PR を作成します（例: `base: 1st-draft` ← `compare: 2nd-draft`）。
+  base が `main` のままだと前の稿の内容まで差分に出るので、その場合は base の変更を指示してください
 
-以降は Step 2〜4 の繰り返しです。各版の PR で直前版からの差分をレビューします。
+以降は Step 2〜4 の繰り返しです。
+各版の PR で直前版からの差分をレビューします。
 
 ## 次に読むもの
 
