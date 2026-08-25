@@ -47,9 +47,9 @@ major はどの preset でも自動マージ対象外。
 
 | リポジトリ | 参照 |
 |---|---|
-| texlive-ja-textlint / latex-environment / latex-release-action / ai-academic-paper-reviewer / student-repo-management | `:latex#v1` |
+| texlive-ja-textlint / latex-environment / latex-release-action / ai-academic-paper-reviewer / student-repo-management / latex-ecosystem | `:latex#v1` |
 | sotsuron-template / sotsuron-report-template / ise-report-template / wr-template / latex-template / poster-template | `:template#v1` |
-| tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap | `:elixir#v1` |
+| tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap / ecosystem-manager / registry-manager / thesis-monitor / elixir-tool-kit | `:elixir#v1` |
 | .github | `default` + `:github-actions`（`enabledManagers` は github-actions のみ） |
 
 テンプレートが `:latex` をそのまま参照しないのは、**テンプレートの内容が学生リポジトリへそのままコピーされる**ため。
@@ -60,6 +60,9 @@ major はどの preset でも自動マージ対象外。
 固定を外せば凍結は避けられるが、可変タグを学生リポジトリに配ることになり、そちらの危険の方が大きい。
 
 学生リポジトリ自体は Renovate の対象外で、生成時に `.github/renovate.json` を削除する（`dependabot.yml` と同じ扱い）。
+
+aldc と thesis-student-registry も対象外。
+ワークフローが共有ワークフローを移動タグで呼ぶだけで、Renovate が更新できる依存を 1 つも持たない。
 
 `.github` は `:latex` を extends していない。
 preset の変更で latex 系だけを対象にすると `.github` が漏れるため、org 全体に効かせたい設定は `default.json` に置く。
