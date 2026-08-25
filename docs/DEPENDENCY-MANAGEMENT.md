@@ -189,7 +189,7 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 
 自動マージの条件ではなく、人手マージの床。
 `enforce_admins: false` は全リポジトリ共通（CI が壊れた緊急時に管理者が明示的に突破できる。Renovate App はブランチ保護をバイパスしないため bot 側は必ずゲートされる）。
-`strict: false`（up-to-date 要求なし）は latex 系のみ。
+`strict: false`（up-to-date 要求なし）は、保護を設定している全リポジトリで共通。
 
 | リポジトリ | contexts |
 |---|---|
@@ -199,12 +199,15 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 | ai-academic-paper-reviewer | `test` |
 | student-repo-management | `Validate YAML files` |
 | .github | `actionlint` |
-| tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap | `ci / Code Quality`, `ci / All checks` |
+| ecosystem-manager / registry-manager / thesis-monitor / elixir-tool-kit | 未設定 |
 
-latex 系との違いは `strict` だけで、elixir 系は true。
-1 本マージするたびに全 PR が rebase と再ビルドになるため latex 系では false にしているが、elixir 系はマージが月 0〜4 件・open PR が 0〜2 件で、その費用が発生していない。
-引き換えに得ているのは、個別には緑でも組み合わせると壊れる PR の検出で、これを防ぐ仕組みは他に無い。
-流量が増えたら latex 系と同じ判断になる。
+elixir 系に設定する場合の contexts は `ci / Code Quality` と `ci / All checks` の 2 つ。
+どちらも共有ワークフロー `elixir-ci.yml` のジョブなので、リポジトリごとに違う名前になることはない。
+
+`strict`（マージ前に main を取り込むことの要求）は latex 系では false にしている。
+1 本マージするたびに全 PR が rebase と再ビルドになるためで、流量が少なければこの費用は発生しない。
+true で得られるのは、個別には緑でも組み合わせると壊れる PR の検出で、これを防ぐ仕組みは他に無い。
+流量の少ないリポジトリでは true を選ぶ余地がある。
 
 ### マトリクスは集約ジョブ 1 つで受ける
 
@@ -234,12 +237,12 @@ required に指定してよいのは、**その PR で必ず check run が生成
 変更する場合は本書も更新すること。
 
 - `allow_auto_merge` は全リポジトリで無効。
-  GitHub の auto-merge はブランチ保護の要件が満たされた時点でマージするため、required に入っていない check を待たない（elixir 系では `security / Secret Scanning` と `security / Dependency Security Audit` がこれにあたる）。
+  GitHub の auto-merge はブランチ保護の要件が満たされた時点でマージするため、required に入っていない check（`review / review` など）を待たない。
   マージは Renovate 自前の automerge に任せる
 - `platformAutomerge` は org 既定 false で、opt-in しているリポジトリは無い。
   opt-in する場合は、ブランチ保護が自リポジトリの CI 全体を表現できていることを確認する
 - `enforce_admins: false` は全リポジトリ共通。
-  `strict: false` は latex 系のみ（elixir 系は true）
+  `strict: false` も保護を設定している全リポジトリで共通
 - テストマトリクスは集約ジョブ 1 つで required にする。
   集約ジョブから `if: always()` を外さないこと（skip は通過扱いになるため、外すと止めるべきときに緑になる）
 - 自動マージが到達するのは `main` まで。
