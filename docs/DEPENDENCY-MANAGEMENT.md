@@ -49,7 +49,7 @@ major はどの preset でも自動マージ対象外。
 |---|---|
 | texlive-ja-textlint / latex-environment / latex-release-action / ai-academic-paper-reviewer / student-repo-management / latex-ecosystem | `:latex#v1` |
 | sotsuron-template / sotsuron-report-template / ise-report-template / wr-template / latex-template / poster-template | `:template#v1` |
-| tenbin_dns / tdig / tenbin_ex / tenbin_cache / elixir_dnstap / ecosystem-manager / registry-manager / thesis-monitor / elixir-tool-kit | `:elixir#v1` |
+| ecosystem-manager / registry-manager / thesis-monitor / elixir-tool-kit | `:elixir#v1` |
 | .github | `default` + `:github-actions`（`enabledManagers` は github-actions のみ） |
 
 テンプレートが `:latex` をそのまま参照しないのは、**テンプレートの内容が学生リポジトリへそのままコピーされる**ため。
