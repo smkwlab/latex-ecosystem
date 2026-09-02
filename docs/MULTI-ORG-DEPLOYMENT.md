@@ -167,7 +167,7 @@ GitHub Actions の `uses:`/`container:` 参照には式を含められない た
 
 - **`latex-environment` フォーク** — `devcontainer.json` の `image`、**および** `check-texlive-updates.yml` の `IMAGE=` 定数（自動更新が org のイメージを 追跡するように）。
   `aldc` はこの devcontainer を注入するため、`aldc` も org の `latex-environment` に、aldc の `ALDC_REPOSITORY_OWNER` / `ALDC_REPOSITORY_NAME` 環境変数で向ける（[aldc#32](https://github.com/smkwlab/aldc/issues/32)）。
-- **CI ビルドイメージ** — `latex-build-modified.yml` は `container: ghcr.io/smkwlab/texlive-ja-textlint:2026d` で *同じ* イメージと タグを固定します（PDF ビルドが開発環境を再現するよう、意図的に DevContainer に 一致させている）。
+- **CI ビルドイメージ** — `latex-build-modified.yml` は `container: ghcr.io/smkwlab/texlive-ja-textlint:2026e` で *同じ* イメージと タグを固定します（PDF ビルドが開発環境を再現するよう、意図的に DevContainer に 一致させている）。
   一方 `latex-build.yml` は `smkwlab/latex-release-action` を 通じて間接的にイメージに到達します。
   どちらも `smkwlab/.github` にあるため、向け直すには `.github`（およびアクション）もフォークする必要があります — [フォークすべきとき](#when-to-fork)を参照。
 

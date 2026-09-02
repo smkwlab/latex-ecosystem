@@ -69,8 +69,8 @@ Supporting Infrastructure:
 
 | コンポーネント | 現行バージョン | 互換対象 | 更新頻度 |
 |-----------|----------------|-----------------|------------------|
-| texlive-ja-textlint | 2026d | TeX Live 2025 | 随時(イメージ更新ごと) |
-| latex-environment | release ブランチ | texlive-ja-textlint:2026d | 自動(main へのマージ時) |
+| texlive-ja-textlint | 2026e | TeX Live 2025 | 随時(イメージ更新ごと) |
+| latex-environment | release ブランチ | texlive-ja-textlint:2026e | 自動(main へのマージ時) |
 | sotsuron-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
 | ise-report-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
 | latex-template | 最新 | aldc 経由で自動更新 | 手動更新不要 |
