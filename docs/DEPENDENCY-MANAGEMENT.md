@@ -125,12 +125,15 @@ git fetch --tags --force && git log v1..main
 gh pr list -R smkwlab/.github --state open
 
 # 2. v1 を動かし、同じコミットに vX.Y.Z を切る
-gh api -X PATCH /repos/smkwlab/.github/git/refs/tags/v1 -f sha=<main-HEAD> -F force=true
+git tag -f v1 <main-HEAD> && git push origin v1 --force
 git tag -a v1.<N>.0 <main-HEAD> -m "chore(release): v1.<N>.0 - <要旨>" && git push origin v1.<N>.0
 
 # 3. 配布された実体を確認する（push の成功は内容の確認にならない）
 gh api /repos/smkwlab/.github/contents/latex.json?ref=v1 --jq '.content' | base64 -d
 ```
+
+2 は 2 行とも git から push する。
+片方だけ API でリモートへ直接書くと、ローカルの `v1` が古いまま残り、次に 1 を実行するまで手元とリモートが食い違う。
 
 3 を省かないこと。
 ローカルの push が成功したことと、狙った内容が `v1` に乗ったことは別である。
