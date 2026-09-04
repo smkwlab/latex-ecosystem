@@ -189,7 +189,7 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 
 自動マージの条件ではなく、人手マージの床。
 `enforce_admins: false` は全リポジトリ共通（CI が壊れた緊急時に管理者が明示的に突破できる。Renovate App はブランチ保護をバイパスしないため bot 側は必ずゲートされる）。
-`strict: false`（up-to-date 要求なし）は、保護を設定している全リポジトリで共通。
+`strict`（up-to-date 要求）は latex 系が false、elixir 系が true。理由は表の下に書く。
 
 | リポジトリ | contexts |
 |---|---|
@@ -199,15 +199,22 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 | ai-academic-paper-reviewer | `test` |
 | student-repo-management | `Validate YAML files` |
 | .github | `actionlint` |
-| ecosystem-manager / registry-manager / thesis-monitor / elixir-tool-kit | 未設定 |
+| ecosystem-manager / registry-manager / thesis-monitor / elixir-tool-kit | `ci / Code Quality`, `ci / All checks` |
 
-elixir 系に設定する場合の contexts は `ci / Code Quality` と `ci / All checks` の 2 つ。
+elixir 系の contexts は `ci / Code Quality` と `ci / All checks` の 2 つ。
 どちらも共有ワークフロー `elixir-ci.yml` のジョブなので、リポジトリごとに違う名前になることはない。
 
 `strict`（マージ前に main を取り込むことの要求）は latex 系では false にしている。
 1 本マージするたびに全 PR が rebase と再ビルドになるためで、流量が少なければこの費用は発生しない。
 true で得られるのは、個別には緑でも組み合わせると壊れる PR の検出で、これを防ぐ仕組みは他に無い。
-流量の少ないリポジトリでは true を選ぶ余地がある。
+流量の少ない elixir 系 4 ツールでは true にしている（2026-09-03 に設定。smkwlab/.github#152）。
+マージが月 0〜4 件で再ビルドの費用が出ておらず、組み合わせ由来の破損検出を優先している。
+
+elixir 系 4 ツールに保護を入れた直接の動機は、人手マージの床ではなく Renovate の automerge だった。
+保護が無い間、全 check が緑で `Automerge: Enabled` の PR が 4 日間マージされずに残った。
+同じ preset を extend し保護のある 5 リポジトリでは同じ日の更新が数時間で自動マージされている。
+相関は明確だが因果は未確認で、冒頭の「自動マージの条件ではなく」が正しいかどうかも含めて
+smkwlab/.github#165 で検証中。
 
 ### マトリクスは集約ジョブ 1 つで受ける
 
@@ -242,7 +249,7 @@ required に指定してよいのは、**その PR で必ず check run が生成
 - `platformAutomerge` は org 既定 false で、opt-in しているリポジトリは無い。
   opt-in する場合は、ブランチ保護が自リポジトリの CI 全体を表現できていることを確認する
 - `enforce_admins: false` は全リポジトリ共通。
-  `strict: false` も保護を設定している全リポジトリで共通
+  `strict` は latex 系が false、elixir 系が true
 - テストマトリクスは集約ジョブ 1 つで required にする。
   集約ジョブから `if: always()` を外さないこと（skip は通過扱いになるため、外すと止めるべきときに緑になる）
 - 自動マージが到達するのは `main` まで。
