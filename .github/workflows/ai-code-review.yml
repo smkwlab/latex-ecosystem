@@ -5,7 +5,7 @@ name: AI Code Review
 
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review]   # no synchronize: avoid re-reviewing every push
+    types: [opened, reopened, ready_for_review, synchronize]   # synchronize: the review has to cover what actually gets merged. concurrency below cancels superseded runs.
 
 concurrency:
   group: ai-code-review-${{ github.event.pull_request.number }}
