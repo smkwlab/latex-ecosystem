@@ -263,7 +263,7 @@ latex-ecosystem と aldc の contexts は空である。
 レビュー基盤が落ちた日に全リポジトリの作業が止まる。
 
 したがって保護の実質は `require_pull_request` だけになる。
-main への直接 push は止まるが、赤い PR は止まらない。
+main への直接 push は止まる一方、required contexts が無いので CI の失敗はマージをブロックしない。
 それでも登録する価値があるのは、登録しない限り週次監査が見ないためで、
 実際この 2 本は監査の外で `enforce_admins` が `true` に転んでいた（smkwlab/.github#153）。
 
