@@ -238,6 +238,7 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 | student-repo-management | `Validate YAML files` |
 | .github | `actionlint` |
 | ecosystem-manager / registry-manager / thesis-monitor / elixir-tool-kit | `ci / Code Quality`, `ci / All checks` |
+| latex-ecosystem / aldc | なし（後述） |
 
 elixir 系の contexts は `ci / Code Quality` と `ci / All checks` の 2 つ。
 どちらも共有ワークフロー `elixir-ci.yml` のジョブなので、リポジトリごとに違う名前になることはない。
@@ -253,6 +254,21 @@ elixir 系 4 ツールに保護を入れた直接の動機は、人手マージ�
 同じ preset を extend し保護のある 5 リポジトリでは同じ日の更新が数時間で自動マージされている。
 相関は明確だが因果は未確認で、冒頭の「自動マージの条件ではなく」が正しいかどうかも含めて
 smkwlab/.github#165 で検証中。
+
+### contexts を持たないリポジトリがある
+
+latex-ecosystem と aldc の contexts は空である。
+両者が PR 上で走らせる workflow は AI レビューだけで、この org には AI レビューを required にしている例が無い。
+表の他の行はすべて決定的な CI ジョブで、非決定的な助言をゲートに据えると、
+レビュー基盤が落ちた日に全リポジトリの作業が止まる。
+
+したがって保護の実質は `require_pull_request` だけになる。
+main への直接 push は止まるが、赤い PR は止まらない。
+それでも登録する価値があるのは、登録しない限り週次監査が見ないためで、
+実際この 2 本は監査の外で `enforce_admins` が `true` に転んでいた（smkwlab/.github#153）。
+
+宣言は `required_status_checks: null` で行う。
+書き忘れと区別するための明示で、監査もこの形を「無いのが正しい」として突き合わせる。
 
 ### マトリクスは集約ジョブ 1 つで受ける
 
