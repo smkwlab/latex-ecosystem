@@ -238,7 +238,7 @@ Dependabot 自身の自動 PR（`automated-security-fixes`）は全リポジト�
 | student-repo-management | `Validate YAML files` |
 | .github | `actionlint` |
 | ecosystem-manager / registry-manager / thesis-monitor / elixir-tool-kit | `ci / Code Quality`, `ci / All checks` |
-| latex-ecosystem / aldc | なし（後述） |
+| latex-ecosystem / aldc | なし（[後述](#contexts-を持たないリポジトリがある)） |
 
 elixir 系の contexts は `ci / Code Quality` と `ci / All checks` の 2 つ。
 どちらも共有ワークフロー `elixir-ci.yml` のジョブなので、リポジトリごとに違う名前になることはない。
