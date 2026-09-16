@@ -7,7 +7,7 @@
 # workflow. The update-dashboard.yml workflow captures this output and upserts
 # it into a single pinned issue.
 #
-# Requires: gh (authenticated via GH_TOKEN), jq, base64.
+# Requires: gh (authenticated via GH_TOKEN), jq.
 set -euo pipefail
 
 OWNER="${DASHBOARD_OWNER:-smkwlab}"
@@ -23,13 +23,21 @@ LATEST="$(gh api "repos/${OWNER}/texlive-ja-textlint/tags" --paginate --jq '.[].
 [ -z "$LATEST" ] && LATEST="?"
 
 # Image tag pinned in latex-environment's devcontainer.json on a given ref.
+# Accept: raw returns the file body directly, so there is no base64 stage whose
+# exit code could stand in for gh's.
 pin_of() {
-  gh api "repos/${OWNER}/latex-environment/contents/.devcontainer/devcontainer.json?ref=$1" \
-    --jq '.content' | base64 -d | sed -e 's|//.*||g' | jq -r '.image' \
+  gh api -H 'Accept: application/vnd.github.raw' \
+    "repos/${OWNER}/latex-environment/contents/.devcontainer/devcontainer.json?ref=$1" \
+    | sed -e 's|//.*||g' | jq -r '.image' \
     | sed -n 's/.*texlive-ja-textlint://p'
 }
+# An empty pin is a failed read, not a pin that differs from the latest release.
+# Without this, state() takes neither the "?" branch nor the equality branch and
+# reports 更新可能 -- the dashboard would invent an update out of a broken query.
 MAIN_PIN="$(pin_of main || echo '?')"
+[ -z "$MAIN_PIN" ] && MAIN_PIN="?"
 REL_PIN="$(pin_of release || echo '?')"
+[ -z "$REL_PIN" ] && REL_PIN="?"
 
 # Status cell: ❓ when either side is unknown, ✅ when already current, ⚠️ when
 # the pin lags the latest release.

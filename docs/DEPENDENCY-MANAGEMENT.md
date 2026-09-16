@@ -129,7 +129,7 @@ git tag -f v1 <main-HEAD> && git push origin v1 --force
 git tag -a v1.<N>.0 <main-HEAD> -m "chore(release): v1.<N>.0 - <要旨>" && git push origin v1.<N>.0
 
 # 3. 配布された実体を確認する（push の成功は内容の確認にならない）
-gh api /repos/smkwlab/.github/contents/latex.json?ref=v1 --jq '.content' | base64 -d
+gh api -H 'Accept: application/vnd.github.raw' "/repos/smkwlab/.github/contents/latex.json?ref=v1"
 ```
 
 2 は 2 行とも git から push する。
@@ -138,6 +138,18 @@ gh api /repos/smkwlab/.github/contents/latex.json?ref=v1 --jq '.content' | base6
 3 を省かないこと。
 ローカルの push が成功したことと、狙った内容が `v1` に乗ったことは別である。
 確認すべきは主要な設定値そのもので、タグの SHA が一致していることではない。
+
+3 をパイプで書かないこと。
+`--jq '.content' | base64 -d` の形にすると、`gh` が失敗してもパイプラインの終了ステータスは
+`base64` のものになり、**空入力で exit 0** になる。
+対話的に打つ限り `gh` のエラーが stderr に見えるので気付けるが、
+この行をスクリプトへ写した瞬間に、確認しているつもりの手順が黙って通る。
+`Accept: application/vnd.github.raw` は本文をそのまま返すので 2 段目が要らず、
+`gh` の終了コードがそのままコマンドの終了コードになる。
+存在しない ref では exit 1 で落ちることを確認済み。
+
+ガードを足すのではなく段を減らすほうを選ぶのは、後から手を入れた人が再び壊しにくいからである。
+`|| exit 1` は消せるが、パイプが無ければ消す対象が無い。
 
 さらに確実を期すなら、配布後に消費者側で 1 本走らせる。
 再利用ワークフローの re-run は元コミット時点のタグ解決を再利用するため、古い内容のまま緑になることがある。
