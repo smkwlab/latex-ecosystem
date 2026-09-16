@@ -121,16 +121,27 @@ pin を上げる主体が居るので、固定しても更新が止まらない�
 
 ```bash
 # 1. 何が配られるかを確認する（原則 6 の対価。オープン PR の有無も見る）
-git fetch --tags --force && git log v1..main
+#    1 と 2 は間を空けずに続けて実行する。空いたら 1 からやり直すこと
+git fetch origin --tags --force && git log v1..origin/main
 gh pr list -R smkwlab/.github --state open
 
-# 2. v1 を動かし、同じコミットに vX.Y.Z を切る
-git tag -f v1 <main-HEAD> && git push origin v1 --force
-git tag -a v1.<N>.0 <main-HEAD> -m "chore(release): v1.<N>.0 - <要旨>" && git push origin v1.<N>.0
+# 2. 1 で見た origin/main に v1 を合わせ、同じコミットに vX.Y.Z を切る
+git tag -f v1 origin/main && git push origin v1 --force
+git tag -a v1.<N>.0 origin/main -m "chore(release): v1.<N>.0 - <要旨>" && git push origin v1.<N>.0
 
 # 3. 配布された実体を確認する（push の成功は内容の確認にならない）
-gh api /repos/smkwlab/.github/contents/latex.json?ref=v1 --jq '.content' | base64 -d
+gh api -H 'Accept: application/vnd.github.raw' "/repos/smkwlab/.github/contents/latex.json?ref=v1"
 ```
+
+1 と 2 で `main` ではなく `origin/main` を見る。
+`git fetch` はリモート追跡参照を更新するが、ローカルの `main` は動かさない。
+`git log v1..main` と書くと、pull を忘れている手元では**まだ配られていない commit が差分から抜ける**。
+その状態で `main` にタグを張れば、確認した範囲より古いものを配ることになる。
+実際にこの手順を直した時点で、手元の `main` は `origin/main` より 1 commit 遅れていた。
+`git fetch` の失敗は行頭の `&&` が止めるので、`origin/main` が古いまま使われる経路はこれで塞がる。
+
+`origin/main` は確認した時点の commit を固定しない。
+1 と 2 の間が空くほど、1 で読んだ差分と実際に配るものがずれる。手順そのものはコードブロックに書いた。
 
 2 は 2 行とも git から push する。
 片方だけ API でリモートへ直接書くと、ローカルの `v1` が古いまま残り、次に 1 を実行するまで手元とリモートが食い違う。
@@ -138,6 +149,18 @@ gh api /repos/smkwlab/.github/contents/latex.json?ref=v1 --jq '.content' | base6
 3 を省かないこと。
 ローカルの push が成功したことと、狙った内容が `v1` に乗ったことは別である。
 確認すべきは主要な設定値そのもので、タグの SHA が一致していることではない。
+
+3 をパイプで書かないこと。
+`--jq '.content' | base64 -d` の形にすると、`gh` が失敗してもパイプラインの終了ステータスは
+`base64` のものになり、**空入力で exit 0** になる。
+対話的に打つ限り `gh` のエラーが stderr に見えるので気付けるが、
+この行をスクリプトへ写した瞬間に、確認しているつもりの手順が黙って通る。
+`Accept: application/vnd.github.raw` は本文をそのまま返すので 2 段目が要らず、
+`gh` の終了コードがそのままコマンドの終了コードになる。
+存在しない ref では exit 1 で落ちることを確認済み。
+
+ガードを足すのではなく段を減らすほうを選ぶのは、後から手を入れた人が再び壊しにくいからである。
+`|| exit 1` は消せるが、パイプが無ければ消す対象が無い。
 
 さらに確実を期すなら、配布後に消費者側で 1 本走らせる。
 再利用ワークフローの re-run は元コミット時点のタグ解決を再利用するため、古い内容のまま緑になることがある。
