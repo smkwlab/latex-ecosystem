@@ -26,10 +26,15 @@ LATEST="$(gh api "repos/${OWNER}/texlive-ja-textlint/tags" --paginate --jq '.[].
 # Accept: raw returns the file body directly, so there is no base64 stage whose
 # exit code could stand in for gh's.
 #
-# jq -e so a devcontainer.json with no .image fails here rather than printing
-# the string "null" and exiting 0. Without it, "the schema moved" and "the image
-# is not a texlive-ja-textlint one" both arrive at the trailing sed as text that
-# does not match, and become the same empty string.
+# jq -e so an .image that is absent, or present and null, fails here instead of
+# printing the string "null" and exiting 0.
+#
+# That covers what can be told apart, not every way this can go wrong. An .image
+# naming some other registry still reaches the trailing sed, matches nothing and
+# comes out empty, and the -z guard below reads that as unknown. The split is
+# deliberate: a missing key is the file not saying what we asked, while a
+# non-texlive image is the file answering something we cannot use. Only the first
+# is a defect, so only the first fails.
 #
 # Every stage's failure reaches the caller: pipefail makes the pipeline carry the
 # first non-zero status, and `pin_of x || echo '?'` catches it before errexit can
