@@ -23,31 +23,28 @@ LATEST="$(gh api "repos/${OWNER}/texlive-ja-textlint/tags" --paginate --jq '.[].
 [ -z "$LATEST" ] && LATEST="?"
 
 # Image tag pinned in latex-environment's devcontainer.json on a given ref.
-# Accept: raw returns the file body directly, so there is no base64 stage whose
-# exit code could stand in for gh's.
 #
-# jq -e so an .image that is absent, or present and null, fails here instead of
+# Accept: raw returns the body directly, so no base64 stage can stand in for
+# gh's exit code. jq -e fails on an .image that is absent or null, rather than
 # printing the string "null" and exiting 0.
 #
-# That covers what can be told apart, not every way this can go wrong. An .image
-# naming some other registry still reaches the trailing sed, matches nothing and
-# comes out empty, and the -z guard below reads that as unknown. The split is
-# deliberate: a missing key is the file not saying what we asked, while a
-# non-texlive image is the file answering something we cannot use. Only the first
-# is a defect, so only the first fails.
-#
-# Every stage's failure reaches the caller: pipefail makes the pipeline carry the
-# first non-zero status, and `pin_of x || echo '?'` catches it before errexit can
-# abort the script.
+# Anything else that yields no texlive-ja-textlint tag -- another registry, a
+# non-string .image -- reaches the trailing sed, matches nothing, and comes out
+# empty. That is not a defect but an answer this script cannot use, so the
+# callers read it as unknown instead of failing.
 pin_of() {
   gh api -H 'Accept: application/vnd.github.raw' \
     "repos/${OWNER}/latex-environment/contents/.devcontainer/devcontainer.json?ref=$1" \
     | sed -e 's|//.*||g' | jq -e -r '.image' \
     | sed -n 's/.*texlive-ja-textlint://p'
 }
+
+# pipefail carries the first non-zero status out of pin_of's pipeline, and the
+# `||` catches it before errexit can abort the script.
+#
 # An empty pin is a failed read, not a pin that differs from the latest release.
-# Without this, state() takes neither the "?" branch nor the equality branch and
-# reports 更新可能 -- the dashboard would invent an update out of a broken query.
+# Without the -z guard, state() takes neither the "?" branch nor the equality
+# branch and reports 更新可能 -- inventing an update out of a broken query.
 MAIN_PIN="$(pin_of main || echo '?')"
 [ -z "$MAIN_PIN" ] && MAIN_PIN="?"
 REL_PIN="$(pin_of release || echo '?')"

@@ -121,6 +121,7 @@ pin を上げる主体が居るので、固定しても更新が止まらない�
 
 ```bash
 # 1. 何が配られるかを確認する（原則 6 の対価。オープン PR の有無も見る）
+#    1 と 2 は間を空けずに続けて実行する。空いたら 1 からやり直すこと
 git fetch origin --tags --force && git log v1..origin/main
 gh pr list -R smkwlab/.github --state open
 
