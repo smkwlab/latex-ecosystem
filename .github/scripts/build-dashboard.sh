@@ -39,12 +39,12 @@ pin_of() {
     | sed -n 's/.*texlive-ja-textlint://p'
 }
 
-# pipefail carries the first non-zero status out of pin_of's pipeline, and the
-# `||` catches it before errexit can abort the script.
-#
-# An empty pin is a failed read, not a pin that differs from the latest release.
-# Without the -z guard, state() takes neither the "?" branch nor the equality
-# branch and reports 更新可能 -- inventing an update out of a broken query.
+# Two kinds of failure, two different catches. A stage that exits non-zero -- a
+# bad ref, an absent .image -- travels out through pipefail and is taken by the
+# `||` before errexit can abort the script. A stage that succeeds while yielding
+# nothing never gets there, and is taken by the -z guard instead; without it
+# state() matches neither "?" nor the latest tag and reports 更新可能, inventing
+# an update out of a read that came back empty.
 MAIN_PIN="$(pin_of main || echo '?')"
 [ -z "$MAIN_PIN" ] && MAIN_PIN="?"
 REL_PIN="$(pin_of release || echo '?')"

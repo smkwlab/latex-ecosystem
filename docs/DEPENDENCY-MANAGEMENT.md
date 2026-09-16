@@ -140,8 +140,8 @@ gh api -H 'Accept: application/vnd.github.raw' "/repos/smkwlab/.github/contents/
 実際にこの手順を直した時点で、手元の `main` は `origin/main` より 1 commit 遅れていた。
 `git fetch` の失敗は行頭の `&&` が止めるので、`origin/main` が古いまま使われる経路はこれで塞がる。
 
-1 と 2 は続けて実行する。
-間が空いたら 1 からやり直すこと。`origin/main` は確認した時点の commit を固定しない。
+`origin/main` は確認した時点の commit を固定しない。
+1 と 2 の間が空くほど、1 で読んだ差分と実際に配るものがずれる。手順そのものはコードブロックに書いた。
 
 2 は 2 行とも git から push する。
 片方だけ API でリモートへ直接書くと、ローカルの `v1` が古いまま残り、次に 1 を実行するまで手元とリモートが食い違う。
