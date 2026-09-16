@@ -25,10 +25,19 @@ LATEST="$(gh api "repos/${OWNER}/texlive-ja-textlint/tags" --paginate --jq '.[].
 # Image tag pinned in latex-environment's devcontainer.json on a given ref.
 # Accept: raw returns the file body directly, so there is no base64 stage whose
 # exit code could stand in for gh's.
+#
+# jq -e so a devcontainer.json with no .image fails here rather than printing
+# the string "null" and exiting 0. Without it, "the schema moved" and "the image
+# is not a texlive-ja-textlint one" both arrive at the trailing sed as text that
+# does not match, and become the same empty string.
+#
+# Every stage's failure reaches the caller: pipefail makes the pipeline carry the
+# first non-zero status, and `pin_of x || echo '?'` catches it before errexit can
+# abort the script.
 pin_of() {
   gh api -H 'Accept: application/vnd.github.raw' \
     "repos/${OWNER}/latex-environment/contents/.devcontainer/devcontainer.json?ref=$1" \
-    | sed -e 's|//.*||g' | jq -r '.image' \
+    | sed -e 's|//.*||g' | jq -e -r '.image' \
     | sed -n 's/.*texlive-ja-textlint://p'
 }
 # An empty pin is a failed read, not a pin that differs from the latest release.
