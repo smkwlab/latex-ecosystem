@@ -13,7 +13,7 @@
 
 | # | 原則 |
 |---|---|
-| 1 | 自動マージ対象は minor / patch / digest / lockFileMaintenance のみ。major は常に人間がレビューする |
+| 1 | 自動マージ対象は minor / patch / digest / lockFileMaintenance のみ。major は常に人間がレビューする。minor は manager ごとに可否が分かれる（下記） |
 | 2 | マージの実行主体は Renovate bot。判定条件は「その PR の全 check run が完了していて、失敗が 1 つも無いこと」で、リポジトリ設定に依存しない |
 | 3 | `platformAutomerge` は org 既定 false。ブランチ保護が CI 全体を過不足なく表現できていると確認できたリポジトリだけが opt-in する。opt-in しているリポジトリは無い |
 | 4 | required status checks は「床」として設定する。Renovate は全 check を見るのでリストの完全性を維持する義務はない。役割は人手マージ時の赤 PR 混入阻止と、`allow_auto_merge` 誤有効化時の被害限定 |
@@ -38,10 +38,37 @@ skip されたジョブは success と同じく通過扱いになる（後述の
 | `github-actions.json` | `:github-actions` | actions の minor/patch/digest をグループ `github actions` にまとめて自動マージ |
 | `npm.json` | `:npm` | npm の minor/patch/digest/lockFileMaintenance をグループ `npm dependencies` にまとめて自動マージ |
 | `elixir.json` | `:elixir` | default + `:github-actions` を extends。mix(hex) の minor まで自動マージ（org 全体の patch/digest 限定方針に対する意図的な例外） |
-| `latex.json` | `:latex` | default + `:github-actions` + `:npm` を extends。スケジュール・流量・pin 方針と `lockFileMaintenance` を担当 |
+| `latex.json` | `:latex` | default + `:github-actions` + `:npm` を extends。スケジュール・流量・pin 方針と `lockFileMaintenance`、dockerfile の minor 自動マージ、texlive イメージのタグ順序を担当 |
 | `template.json` | `:template` | `:latex` を extends。テンプレート専用に、共有ワークフロー参照の digest 固定だけを外す |
 
 major はどの preset でも自動マージ対象外。
+
+### minor の自動マージは manager ごとに分かれる
+
+patch と digest は `default.json` が manager を問わず自動マージする。
+minor は preset ごとに名指しされた manager にしか付かない。
+
+| manager | minor | 根拠 |
+|---|---|---|
+| github-actions | ✅ | `github-actions.json` |
+| npm | ✅ | `npm.json` |
+| mix (hex) | ✅ | `elixir.json` |
+| dockerfile | ✅ | `latex.json`。merge 前に build ジョブがイメージのビルドを通す |
+| **custom.regex**（OTP / Elixir の版） | ❌ | 下記 |
+
+分けているのは慎重さの度合いではなく、**merge 前に何がその変更を検証するか**である。
+
+dockerfile の minor は `build-alpine` / `build-debian` / `build-debian-arm64` が実際にビルドを通す。
+イメージが人に届くのはタグを手で push したときなので（原則 6）、main へのマージ自体は誰にも影響しない。
+
+`custom.regex` は `elixir-ci.yml` の OTP / Elixir 既定値を管理しており、こちらは条件が揃わない。
+`smkwlab/.github` にはこの再利用ワークフローを実行するものが無く（required check は `actionlint` だけ）、
+minor が検証されないまま main に入り、次の `v1` 移動で consumer 9 リポジトリへ同時に出る。
+patch は `default.json` が自動マージするので、この manager を入れた動機である「放置すると腐る」（#146 で LTS の OTP が 12 パッチ遅れていた）は満たしている。
+
+この区別は 2026-09-20 に付けた。
+それまで dockerfile の minor にも規則が無く、debian 13.6-slim → 13.7-slim が
+`Automerge: Disabled by config` のまま開き、同じ窓の actionlint の patch は自動マージされていた（smkwlab/.github#194）。
 
 各リポジトリの参照先:
 
