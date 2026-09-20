@@ -7,7 +7,7 @@
 # workflow. The update-dashboard.yml workflow captures this output and upserts
 # it into a single pinned issue.
 #
-# Requires: gh (authenticated via GH_TOKEN), jq, base64.
+# Requires: gh (authenticated via GH_TOKEN), jq.
 set -euo pipefail
 
 OWNER="${DASHBOARD_OWNER:-smkwlab}"
@@ -23,13 +23,32 @@ LATEST="$(gh api "repos/${OWNER}/texlive-ja-textlint/tags" --paginate --jq '.[].
 [ -z "$LATEST" ] && LATEST="?"
 
 # Image tag pinned in latex-environment's devcontainer.json on a given ref.
+#
+# Accept: raw returns the body directly, so no base64 stage can stand in for
+# gh's exit code. jq -e fails on an .image that is absent or null, rather than
+# printing the string "null" and exiting 0.
+#
+# Anything else that yields no texlive-ja-textlint tag -- another registry, a
+# non-string .image -- reaches the trailing sed, matches nothing, and comes out
+# empty. That is not a defect but an answer this script cannot use, so the
+# callers read it as unknown instead of failing.
 pin_of() {
-  gh api "repos/${OWNER}/latex-environment/contents/.devcontainer/devcontainer.json?ref=$1" \
-    --jq '.content' | base64 -d | sed -e 's|//.*||g' | jq -r '.image' \
+  gh api -H 'Accept: application/vnd.github.raw' \
+    "repos/${OWNER}/latex-environment/contents/.devcontainer/devcontainer.json?ref=$1" \
+    | sed -e 's|//.*||g' | jq -e -r '.image' \
     | sed -n 's/.*texlive-ja-textlint://p'
 }
+
+# Two kinds of failure, two different catches. A stage that exits non-zero -- a
+# bad ref, an absent .image -- travels out through pipefail and is taken by the
+# `||` before errexit can abort the script. A stage that succeeds while yielding
+# nothing never gets there, and is taken by the -z guard instead; without it
+# state() matches neither "?" nor the latest tag and reports 更新可能, inventing
+# an update out of a read that came back empty.
 MAIN_PIN="$(pin_of main || echo '?')"
+[ -z "$MAIN_PIN" ] && MAIN_PIN="?"
 REL_PIN="$(pin_of release || echo '?')"
+[ -z "$REL_PIN" ] && REL_PIN="?"
 
 # Status cell: ❓ when either side is unknown, ✅ when already current, ⚠️ when
 # the pin lags the latest release.
