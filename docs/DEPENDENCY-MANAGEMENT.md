@@ -13,7 +13,7 @@
 
 | # | 原則 |
 |---|---|
-| 1 | 自動マージ対象は minor / patch / digest / lockFileMaintenance のみ。major は常に人間がレビューする |
+| 1 | patch / digest は全 manager で自動マージ。minor / lockFileMaintenance は manager ごとに可否が分かれる（[minor の自動マージは manager ごとに分かれる](#minor-の自動マージは-manager-ごとに分かれる)）。major は常に人間がレビューする |
 | 2 | マージの実行主体は Renovate bot。判定条件は「その PR の全 check run が完了していて、失敗が 1 つも無いこと」で、リポジトリ設定に依存しない |
 | 3 | `platformAutomerge` は org 既定 false。ブランチ保護が CI 全体を過不足なく表現できていると確認できたリポジトリだけが opt-in する。opt-in しているリポジトリは無い |
 | 4 | required status checks は「床」として設定する。Renovate は全 check を見るのでリストの完全性を維持する義務はない。役割は人手マージ時の赤 PR 混入阻止と、`allow_auto_merge` 誤有効化時の被害限定 |
@@ -38,10 +38,44 @@ skip されたジョブは success と同じく通過扱いになる（後述の
 | `github-actions.json` | `:github-actions` | actions の minor/patch/digest をグループ `github actions` にまとめて自動マージ |
 | `npm.json` | `:npm` | npm の minor/patch/digest/lockFileMaintenance をグループ `npm dependencies` にまとめて自動マージ |
 | `elixir.json` | `:elixir` | default + `:github-actions` を extends。mix(hex) の minor まで自動マージ（org 全体の patch/digest 限定方針に対する意図的な例外） |
-| `latex.json` | `:latex` | default + `:github-actions` + `:npm` を extends。スケジュール・流量・pin 方針と `lockFileMaintenance` を担当 |
+| `latex.json` | `:latex` | default + `:github-actions` + `:npm` を extends。スケジュール・流量・pin 方針と `lockFileMaintenance`、dockerfile の minor 自動マージ、texlive イメージのタグ順序を担当 |
 | `template.json` | `:template` | `:latex` を extends。テンプレート専用に、共有ワークフロー参照の digest 固定だけを外す |
 
 major はどの preset でも自動マージ対象外。
+
+### minor の自動マージは manager ごとに分かれる
+
+patch と digest は `default.json` が manager を問わず自動マージする。
+minor は preset ごとに名指しされた manager にしか付かない。
+
+| manager | minor | 根拠 |
+|---|---|---|
+| github-actions | ✅ | `github-actions.json` |
+| npm | ✅ | `npm.json` |
+| mix (hex) | ✅ | `elixir.json` |
+| dockerfile | ✅ | `latex.json`。merge 前に build ジョブがイメージのビルドを通す |
+| **custom.regex**（OTP / Elixir の版） | ❌ | 下記 |
+
+`lockFileMaintenance` も同じで、有効なのは `npm.json`（npm）と `elixir.json`（mix）だけである。
+lock ファイルを持たないリポジトリでは no-op なので、manager を名指ししていないことが問題になる場面は今のところ無い。
+
+なお `ghcr.io/smkwlab/texlive-ja-textlint` は update type にかかわらず自動マージしない。
+新しいタグは学生が lint される textlint のルールを変えるため、上げるのは人の判断に残す（`latex.json` と `.github` の `renovate.json` の両方で `automerge: false`）。
+
+分けているのは慎重さの度合いではなく、**merge 前に何がその変更を検証するか**である。
+
+dockerfile の minor は `build-alpine` / `build-debian` / `build-debian-arm64` が実際にビルドを通す。
+イメージが人に届くのはタグを手で push したときなので（原則 6）、main へのマージ自体は誰にも影響しない。
+
+`custom.regex` は `elixir-ci.yml` の OTP / Elixir 既定値を管理しており、こちらは条件が揃わない。
+現時点の `smkwlab/.github` にはこの再利用ワークフローを実行するものが無く（required check は `actionlint` だけ）、
+minor が検証されないまま main に入り、次の `v1` 移動で consumer 9 リポジトリへ同時に出る。
+自動マージを見送る根拠は「`smkwlab/.github` 内に `elixir-ci.yml` を実行する CI が無いこと」だけなので、それを走らせる CI が入ったら、この manager も dockerfile と同じ扱いに移してよい。
+patch は `default.json` が自動マージするので、この manager を入れた動機である「放置すると腐る」（#146 で LTS の OTP が 12 パッチ遅れていた）は満たしている。
+
+dockerfile の minor に規則が無かった間、debian 13.6-slim → 13.7-slim が
+`Automerge: Disabled by config` のまま開き、同じ窓に出た actionlint の patch は自動マージされていた。
+同じ「routine な更新」が manager 次第で別扱いになることが、この表を書く動機になった（smkwlab/.github#194）。
 
 各リポジトリの参照先:
 

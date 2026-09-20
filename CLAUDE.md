@@ -121,7 +121,7 @@ Dependency updates for the development infrastructure repositories and the docum
 
 The governing principle is that **Renovate checks and Renovate merges** — GitHub's auto-merge releases a merge as soon as branch protection is satisfied, which on a repository with no required status checks means before CI has run. Renovate waits for every check run on the PR instead, so the decision does not depend on repository settings. Branch protection is the floor for human merges, not the condition for automated ones.
 
-Auto-merge covers grouped minor/patch/digest updates; major updates always get individual review. Automated merges reach `main` only — publishing a Docker image tag, moving `v1`, and cutting a release stay manual.
+Auto-merge covers patch and digest everywhere, and minor for GitHub Actions, npm and Docker base images; major updates always get individual review, and so do the OTP and Elixir versions the shared Elixir CI runs on. What separates them is whether anything verifies the change before it merges. Automated merges reach `main` only — publishing a Docker image tag, moving `v1`, and cutting a release stay manual.
 
 Student repositories have no Renovate, so they must reach infrastructure through a shared workflow rather than referencing it directly: a pin nobody can bump never moves again, and the reference still resolves, so nothing fails to signal it. Templates carry the same constraint because their contents are copied into every repository generated from them. Every consumer references the shared workflows through the moving `v1` tag, infrastructure repositories included — pinning there would deliver a change to students first and to the pinned repository last, so the pin costs the review opportunity it was meant to buy.
 
