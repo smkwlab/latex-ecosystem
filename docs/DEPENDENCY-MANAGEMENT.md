@@ -13,7 +13,7 @@
 
 | # | 原則 |
 |---|---|
-| 1 | 自動マージ対象は minor / patch / digest / lockFileMaintenance のみ。major は常に人間がレビューする。minor は manager ごとに可否が分かれる（下記） |
+| 1 | 自動マージ対象は minor / patch / digest / lockFileMaintenance のみ。major は常に人間がレビューする。minor の可否は manager ごとに分かれる（「minor の自動マージは manager ごとに分かれる」節） |
 | 2 | マージの実行主体は Renovate bot。判定条件は「その PR の全 check run が完了していて、失敗が 1 つも無いこと」で、リポジトリ設定に依存しない |
 | 3 | `platformAutomerge` は org 既定 false。ブランチ保護が CI 全体を過不足なく表現できていると確認できたリポジトリだけが opt-in する。opt-in しているリポジトリは無い |
 | 4 | required status checks は「床」として設定する。Renovate は全 check を見るのでリストの完全性を維持する義務はない。役割は人手マージ時の赤 PR 混入阻止と、`allow_auto_merge` 誤有効化時の被害限定 |
@@ -62,8 +62,9 @@ dockerfile の minor は `build-alpine` / `build-debian` / `build-debian-arm64` 
 イメージが人に届くのはタグを手で push したときなので（原則 6）、main へのマージ自体は誰にも影響しない。
 
 `custom.regex` は `elixir-ci.yml` の OTP / Elixir 既定値を管理しており、こちらは条件が揃わない。
-`smkwlab/.github` にはこの再利用ワークフローを実行するものが無く（required check は `actionlint` だけ）、
+現時点の `smkwlab/.github` にはこの再利用ワークフローを実行するものが無く（required check は `actionlint` だけ）、
 minor が検証されないまま main に入り、次の `v1` 移動で consumer 9 リポジトリへ同時に出る。
+判定の根拠はここだけなので、`elixir-ci.yml` を実際に走らせる CI が入ったら、この manager も dockerfile と同じ扱いに移してよい。
 patch は `default.json` が自動マージするので、この manager を入れた動機である「放置すると腐る」（#146 で LTS の OTP が 12 パッチ遅れていた）は満たしている。
 
 dockerfile の minor に規則が無かった間、debian 13.6-slim → 13.7-slim が
