@@ -66,9 +66,9 @@ dockerfile の minor は `build-alpine` / `build-debian` / `build-debian-arm64` 
 minor が検証されないまま main に入り、次の `v1` 移動で consumer 9 リポジトリへ同時に出る。
 patch は `default.json` が自動マージするので、この manager を入れた動機である「放置すると腐る」（#146 で LTS の OTP が 12 パッチ遅れていた）は満たしている。
 
-この区別は 2026-09-20 に付けた。
-それまで dockerfile の minor にも規則が無く、debian 13.6-slim → 13.7-slim が
-`Automerge: Disabled by config` のまま開き、同じ窓の actionlint の patch は自動マージされていた（smkwlab/.github#194）。
+dockerfile の minor に規則が無かった間、debian 13.6-slim → 13.7-slim が
+`Automerge: Disabled by config` のまま開き、同じ窓に出た actionlint の patch は自動マージされていた。
+同じ「routine な更新」が manager 次第で別扱いになることが、この表を書く動機になった（smkwlab/.github#194）。
 
 各リポジトリの参照先:
 
