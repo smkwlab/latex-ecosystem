@@ -13,7 +13,7 @@
 
 | # | 原則 |
 |---|---|
-| 1 | 自動マージ対象は minor / patch / digest / lockFileMaintenance のみ。major は常に人間がレビューする。minor の可否は manager ごとに分かれる（[minor の自動マージは manager ごとに分かれる](#minor-の自動マージは-manager-ごとに分かれる)） |
+| 1 | patch / digest は全 manager で自動マージ。minor / lockFileMaintenance は manager ごとに可否が分かれる（[minor の自動マージは manager ごとに分かれる](#minor-の自動マージは-manager-ごとに分かれる)）。major は常に人間がレビューする |
 | 2 | マージの実行主体は Renovate bot。判定条件は「その PR の全 check run が完了していて、失敗が 1 つも無いこと」で、リポジトリ設定に依存しない |
 | 3 | `platformAutomerge` は org 既定 false。ブランチ保護が CI 全体を過不足なく表現できていると確認できたリポジトリだけが opt-in する。opt-in しているリポジトリは無い |
 | 4 | required status checks は「床」として設定する。Renovate は全 check を見るのでリストの完全性を維持する義務はない。役割は人手マージ時の赤 PR 混入阻止と、`allow_auto_merge` 誤有効化時の被害限定 |
@@ -55,6 +55,12 @@ minor は preset ごとに名指しされた manager にしか付かない。
 | mix (hex) | ✅ | `elixir.json` |
 | dockerfile | ✅ | `latex.json`。merge 前に build ジョブがイメージのビルドを通す |
 | **custom.regex**（OTP / Elixir の版） | ❌ | 下記 |
+
+`lockFileMaintenance` も同じで、有効なのは `npm.json`（npm）と `elixir.json`（mix）だけである。
+lock ファイルを持たないリポジトリでは no-op なので、manager を名指ししていないことが問題になる場面は今のところ無い。
+
+なお `ghcr.io/smkwlab/texlive-ja-textlint` は update type にかかわらず自動マージしない。
+新しいタグは学生が lint される textlint のルールを変えるため、上げるのは人の判断に残す（`latex.json` と `.github` の `renovate.json` の両方で `automerge: false`）。
 
 分けているのは慎重さの度合いではなく、**merge 前に何がその変更を検証するか**である。
 
