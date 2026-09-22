@@ -18,7 +18,7 @@
 | 3 | `platformAutomerge` は org 既定 false。ブランチ保護が CI 全体を過不足なく表現できていると確認できたリポジトリだけが opt-in する。opt-in しているリポジトリは無い |
 | 4 | required status checks は「床」として設定する。Renovate は全 check を見るのでリストの完全性を維持する義務はない。役割は人手マージ時の赤 PR 混入阻止と、`allow_auto_merge` 誤有効化時の被害限定 |
 | 5 | 流量はスケジュールだけで律する。`prHourlyLimit` / `prConcurrentLimit` による絞りは設けない |
-| 6 | 自動マージが到達するのは `main` まで。配布（Docker イメージタグ push、`v1` 付け替え、release 作成）は必ず人間の明示操作 |
+| 6 | 自動マージが到達するのは `main` まで。配布は必ず人間の明示操作（何が配布行為かはリポジトリで違う。下記） |
 
 原則 2 の背景: GitHub の auto-merge は「ブランチ保護の要件が充足された時点」でマージするため、required status checks が空のリポジトリでは CI 完了前にマージされる。
 Renovate 自前の automerge は PR の全 check run が出揃うのを待つため、リポジトリ設定が何であっても安全。
@@ -27,6 +27,22 @@ skip されたジョブは success と同じく通過扱いになる（後述の
 原則 6 が自動マージを許容できる構造的根拠。
 **`v1` を動かす前に `git log v1..origin/main` を確認する**こと。
 自動マージで積み上がった更新が、無関係な修正のついでに全学生リポジトリへ配布されるのを防ぐ。
+
+原則 6 の「配布」が何を指すかはリポジトリで違う。同じ言葉で括ると、片方で必要な作業が片方では二重管理になる。
+
+| リポジトリ | 配布行為 | 消費者への届き方 |
+|---|---|---|
+| `texlive-ja-textlint` | Docker イメージタグの push | `FROM ghcr.io/...:2026e` |
+| action 系（`ai-academic-paper-reviewer` / `latex-release-action`） | **GitHub Release の作成** | `uses: ...@v1.36`。release が配布そのもの |
+| `smkwlab/.github` | `v1` 付け替えと版数タグ発行 | `@v1` / `github>smkwlab/.github:latex#v1` |
+
+`smkwlab/.github` では **GitHub Release を作らない**。
+配布は `v1` の付け替えで完結し、release があってもなくても消費者に届くものは変わらない。
+かつては作っていたが（v1.37.0 まで 31 件）、それは版数タグが軽量タグでメッセージを持てず、
+配布内容を書く場所が他に無かったためである。
+v1.38.0 から注釈付きタグに切り替えて同じ内容をタグ本体に入れているので、
+いま release を作れば同じものを 2 箇所で保つことになる。
+**配布内容はタグメッセージに書く**（実例は v1.51.0 / v1.54.0）。
 
 ## preset の構成
 
@@ -154,6 +170,7 @@ pin を上げる主体が居るので、固定しても更新が止まらない�
 
 `v1` の付け替えと `vX.Y.Z` の新規発行は 1 組で行う。
 `v1` だけを動かすと、その時点で何が配られたのかを後から指せる名前が残らない。
+GitHub Release は作らない（[原則 6](#原則) のとおり、注釈付きタグが兼ねる）。
 非破壊な変更のときだけ行うという条件は [smkwlab/.github の README](https://github.com/smkwlab/.github#readme) にある。
 
 ```bash
