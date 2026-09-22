@@ -69,7 +69,7 @@ dockerfile の minor は `build-alpine` / `build-debian` / `build-debian-arm64` 
 
 `custom.regex` は `elixir-ci.yml` と `security.yml` の OTP / Elixir 既定値を管理しており、こちらは条件が揃わない。
 現時点の `smkwlab/.github` にはこれらの再利用ワークフローを実行するものが無く（required check は `actionlint` だけ）、
-minor が検証されないまま main に入り、次の `v1` 移動で consumer へ同時に出る。
+minor が検証されないまま main に入り、次の `v1` 移動で下表の consumer 全部へ同時に出る。
 自動マージを見送る根拠は「`smkwlab/.github` 内にこれらを実行する CI が無いこと」だけなので、それを走らせる CI が入ったら、この manager も dockerfile と同じ扱いに移してよい。
 対象が 2 本になったのは `security.yml` も同じ腐り方をしていたためで（29.0.2 / 1.20.1 対 29.1 / 1.20.4、smkwlab/.github#204）、
 どのファイルが対象かは `renovate.json` の `managerFilePatterns` が唯一の定義である。
@@ -199,9 +199,15 @@ gh api -H 'Accept: application/vnd.github.raw' "/repos/smkwlab/.github/contents/
 `smkwlab/.github` のタグを見れば今でも辿れる。`v1.52.0` が先に存在し、振り直された `v1.53.0` がその次に並んでいる。
 `v1` は動いているので配布そのものは済んでおり、気付かなければ「どの版が配られたか」を後から辿れないまま次へ進む。
 
-このとき「main を指す版数タグがあるか」を数えて確かめるなら、**`v1` 自身を除くこと**。
+このとき「main を指す版数タグがあるか」を数えて確かめるなら、**版数の形に一致するものだけを数えること**。
 `v1` も main を指しているので、そのまま数えると 1 件見つかり、欠けていることが分からない。
-`git tag --points-at origin/main | grep -v '^v1$'` の形にする。
+
+```bash
+git tag --points-at origin/main | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$'
+```
+
+`grep -v '^v1$'` でも `v1` は落ちるが、それは**除きたいものを 1 つずつ挙げる**書き方で、
+版数でないタグが他に付いた日に黙って数に入る。残したいものの形で絞るほうが増えない。
 
 3 を省かないこと。
 ローカルの push が成功したことと、狙った内容が `v1` に乗ったことは別である。
