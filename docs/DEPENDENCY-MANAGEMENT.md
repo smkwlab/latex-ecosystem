@@ -67,10 +67,13 @@ lock ファイルを持たないリポジトリでは no-op なので、manager 
 dockerfile の minor は `build-alpine` / `build-debian` / `build-debian-arm64` が実際にビルドを通す。
 イメージが人に届くのはタグを手で push したときなので（原則 6）、main へのマージ自体は誰にも影響しない。
 
-`custom.regex` は `elixir-ci.yml` の OTP / Elixir 既定値を管理しており、こちらは条件が揃わない。
-現時点の `smkwlab/.github` にはこの再利用ワークフローを実行するものが無く（required check は `actionlint` だけ）、
-minor が検証されないまま main に入り、次の `v1` 移動で consumer 9 リポジトリへ同時に出る。
-自動マージを見送る根拠は「`smkwlab/.github` 内に `elixir-ci.yml` を実行する CI が無いこと」だけなので、それを走らせる CI が入ったら、この manager も dockerfile と同じ扱いに移してよい。
+`custom.regex` は `elixir-ci.yml` と `security.yml` の OTP / Elixir 既定値を管理しており、こちらは条件が揃わない。
+現時点の `smkwlab/.github` にはこれらの再利用ワークフローを実行するものが無く（required check は `actionlint` だけ）、
+minor が検証されないまま main に入り、次の `v1` 移動で下表の consumer 全部へ同時に出る。
+自動マージを見送る根拠は「`smkwlab/.github` 内にこれらを実行する CI が無いこと」だけなので、それを走らせる CI が入ったら、この manager も dockerfile と同じ扱いに移してよい。
+対象が 2 本になったのは `security.yml` も同じ腐り方をしていたためで（29.0.2 / 1.20.1 対 29.1 / 1.20.4、smkwlab/.github#204）、
+どのファイルが対象かは `renovate.json` の `managerFilePatterns` が唯一の定義である。
+lint の前提チェックもそこから読むので、ここに 3 本目を足しても検査は付いてくる。
 patch は `default.json` が自動マージするので、この manager を入れた動機である「放置すると腐る」（#146 で LTS の OTP が 12 パッチ遅れていた）は満たしている。
 
 dockerfile の minor に規則が無かった間、debian 13.6-slim → 13.7-slim が
@@ -159,9 +162,9 @@ pin を上げる主体が居るので、固定しても更新が止まらない�
 git fetch origin --tags --force && git log v1..origin/main
 gh pr list -R smkwlab/.github --state open
 
-# 2. 1 で見た origin/main に v1 を合わせ、同じコミットに vX.Y.Z を切る
-git tag -f v1 origin/main && git push origin v1 --force
+# 2. 版数タグを先に切り、そのあと v1 を同じコミットへ合わせる（順序に意味がある）
 git tag -a v1.<N>.0 origin/main -m "chore(release): v1.<N>.0 - <要旨>" && git push origin v1.<N>.0
+git tag -f v1 origin/main && git push origin v1 --force
 
 # 3. 配布された実体を確認する（push の成功は内容の確認にならない）
 gh api -H 'Accept: application/vnd.github.raw' "/repos/smkwlab/.github/contents/latex.json?ref=v1"
@@ -179,6 +182,32 @@ gh api -H 'Accept: application/vnd.github.raw' "/repos/smkwlab/.github/contents/
 
 2 は 2 行とも git から push する。
 片方だけ API でリモートへ直接書くと、ローカルの `v1` が古いまま残り、次に 1 を実行するまで手元とリモートが食い違う。
+
+2 の 2 行は独立に成否を持つ。`&&` は行の中しか繋がないので、**片方だけ成功する状態がありうる**。
+版数タグを先に切るのはそのためで、失敗の重さが順序で変わる。
+
+1 行目が失敗したときは、どちらの順序でも結果は同じである。
+何も配られず、`v1` は旧 commit を指したままなので、消費者には前の版が出続ける。
+違うのは 2 行目が失敗したときで、そこだけが順序で変わる。
+
+| 順序 | 1 行目が失敗 | 2 行目が失敗 |
+|---|---|---|
+| 版数タグ → `v1`（本手順） | 何も配られない。番号を選び直す | 配布前の版数タグが 1 つ余る。push し直せば済む |
+| `v1` → 版数タグ | 何も配られない。push し直す | **配ったのに、それを指せる名前が無い** |
+
+右下は実際に起きている。`v1.52.0` を二重に切ろうとして `git tag` が失敗した一方、force-move は成功していた（2026-09-21、DNS 側）。
+`smkwlab/.github` のタグを見れば今でも辿れる。`v1.52.0` が先に存在し、振り直された `v1.53.0` がその次に並んでいる。
+`v1` は動いているので配布そのものは済んでおり、気付かなければ「どの版が配られたか」を後から辿れないまま次へ進む。
+
+このとき「main を指す版数タグがあるか」を数えて確かめるなら、**版数の形に一致するものだけを数えること**。
+`v1` も main を指しているので、そのまま数えると 1 件見つかり、欠けていることが分からない。
+
+```bash
+git tag --points-at origin/main | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$'
+```
+
+`grep -v '^v1$'` でも `v1` は落ちるが、それは**除きたいものを 1 つずつ挙げる**書き方で、
+版数でないタグが他に付いた日に黙って数に入る。残したいものの形で絞るほうが増えない。
 
 3 を省かないこと。
 ローカルの push が成功したことと、狙った内容が `v1` に乗ったことは別である。
