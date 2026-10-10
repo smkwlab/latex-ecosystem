@@ -14,10 +14,10 @@ org とレジストリの関係は、中央の設定にはいっさい保存さ�
    レジストリリポジトリは既定で `<org>/thesis-student-registry` という規約に従い、org/repo 変数 `REGISTRY_REPO` で上書きできます (`student-repo-management/.github/workflows/student-repo-management.yml`)。
    ローカル設定はいっさい関与しません。
 2. **ローカル管理ツール** — ツールごとの設定ファイル (`~/.config/<tool>/config.yml`) から解決され、同じ規約の既定値を使います。
-   [ローカルツールの設定](#local-tool-configuration)を参照。
+   [ローカルツールの設定](#ローカルツールの設定)を参照。
 3. **学生向けのエントリポイント** (`setup.sh`, `aldc`, テンプレートワークフロー) — `smkwlab` を既定値とする環境変数のつまみ (`DEFAULT_ORG`, `TEMPLATE_REPO`, `ALDC_URL`, …) でパラメータ化されています。
-   フォークはこれらを設定して 自分自身を再ホームします（[create-repo フォークの設定](#5-create-repo-fork-configuration)を参照）。
-   テンプレートワークフローは設計上、依然として `smkwlab/.github` を リテラルで参照します（[共有インフラ](#shared-infrastructure-reference-strategy)を参照）。
+   フォークはこれらを設定して 自分自身を再ホームします（[create-repo フォークの設定](#5-create-repo-フォークの設定)を参照）。
+   テンプレートワークフローは設計上、依然として `smkwlab/.github` を リテラルで参照します（[共有インフラ](#共有インフラ-参照戦略)を参照）。
 
 ## そのまま動くもの
 
@@ -50,7 +50,7 @@ org とレジストリの関係は、中央の設定にはいっさい保存さ�
 
 | リポジトリ | 目的 | 備考 |
 |---|---|---|
-| `<org>/thesis-student-registry` (private) | `data/registry.json` を保持 | `registry-manager init --org <org>` で初期化する（設定が既に存在する場合は `--force` を追加。[ローカルツールの設定](#local-tool-configuration)を参照）。非標準の名前を使う場合は後述の `REGISTRY_REPO` 変数が必要。 |
+| `<org>/thesis-student-registry` (private) | `data/registry.json` を保持 | `registry-manager init --org <org>` で初期化する（設定が既に存在する場合は `--force` を追加。[ローカルツールの設定](#ローカルツールの設定)を参照）。非標準の名前を使う場合は後述の `REGISTRY_REPO` 変数が必要。 |
 | `<org>/student-repo-management` | 登録ワークフローと `create-repo` スクリプトをホスト | フォーク/コピー。App シークレットと後述のフォーク設定を保持する。 |
 | `<org>/sotsuron-template`, `<org>/wr-template`, `<org>/ise-report-template` | 学生用ドキュメントテンプレート | **org 内に存在する必要がある** — `create-repo` はこれらを `${ORGANIZATION}/<template>` として解決する。 |
 | `<org>/latex-template`, `<org>/poster-template` | 汎用 LaTeX / ポスターテンプレート | 既定では `smkwlab/...`（共有）。`TEMPLATE_REPO` を自分のコピーに向ける場合にのみ org 内に必要。 |
@@ -146,7 +146,7 @@ GitHub Actions の `uses:`/`container:` 参照には式を含められない た
 **受け入れるトレードオフ。**
 共有利用は、`smkwlab` org が公開されたままで あることへの恒久的な依存を意味し、別の org のテンプレート PR はその org の シークレットで smkwlab 所有の再利用可能コードを実行します（あらゆる公開 再利用可能ワークフローにとって通常の信頼モデル）。
 依存を断ち切る必要がある org — 独立性、エアギャップ、または再利用可能ロジックそのものの org ごとの カスタマイズのため — は、代わりにフォークすべきです。
-[フォークすべきとき](#when-to-fork)を 参照。
+[フォークすべきとき](#フォークすべきとき)を 参照。
 
 **共有参照はすべて org 所有である。**
 上の表の 4 つが、新しい org が smkwlab に依存する全てです。
@@ -172,7 +172,7 @@ GitHub Actions の `uses:`/`container:` 参照には式を含められない た
   `aldc` はこの devcontainer を注入するため、`aldc` も org の `latex-environment` に、aldc の `ALDC_REPOSITORY_OWNER` / `ALDC_REPOSITORY_NAME` 環境変数で向ける（[aldc#32](https://github.com/smkwlab/aldc/issues/32)）。
 - **CI ビルドイメージ** — `latex-build-modified.yml` は `container: ghcr.io/smkwlab/texlive-ja-textlint:2026e` で *同じ* イメージと タグを固定します（PDF ビルドが開発環境を再現するよう、意図的に DevContainer に 一致させている）。
   一方 `latex-build.yml` は `smkwlab/latex-release-action` を 通じて間接的にイメージに到達します。
-  どちらも `smkwlab/.github` にあるため、向け直すには `.github`（およびアクション）もフォークする必要があります — [フォークすべきとき](#when-to-fork)を参照。
+  どちらも `smkwlab/.github` にあるため、向け直すには `.github`（およびアクション）もフォークする必要があります — [フォークすべきとき](#フォークすべきとき)を参照。
 
 <a id="when-to-fork"></a>
 ### フォークすべきとき
@@ -211,9 +211,9 @@ GitHub Actions の `uses:`/`container:` 参照には式を含められない た
 
 org と設定を準備したあと:
 
-1. org を設定した状態で（[ローカルツールの設定](#local-tool-configuration)を 参照）、`registry-manager list` は新しい org のレジストリを読みます — そして 設定が無い場合は、smkwlab にフォールバックせず明示的にエラーになるように なりました。
+1. org を設定した状態で（[ローカルツールの設定](#ローカルツールの設定)を 参照）、`registry-manager list` は新しい org のレジストリを読みます — そして 設定が無い場合は、smkwlab にフォールバックせず明示的にエラーになるように なりました。
 2. `thesis-monitor list` は新しい org のリポジトリのみを報告します（同じく 設定が無ければ明示的にエラーになる保証）。
-3. 学生にフォークから `setup.sh` を実行してもらう（[create-repo フォークの設定](#5-create-repo-fork-configuration)に従って 設定したもの）か、org の `student-repo-management` に直接リポジトリ作成 リクエストの issue を出してもらい、次を確認します: リポジトリが新しい org に 作成されること、ブランチ保護が適用されること（有料プランが必要 — [前提条件](#prerequisites-in-the-new-organization)のプラン注記を参照）、そして新しい org のレジストリの `data/registry.json` にエントリが追加される こと。
+3. 学生にフォークから `setup.sh` を実行してもらう（[create-repo フォークの設定](#5-create-repo-フォークの設定)に従って 設定したもの）か、org の `student-repo-management` に直接リポジトリ作成 リクエストの issue を出してもらい、次を確認します: リポジトリが新しい org に 作成されること、ブランチ保護が適用されること（有料プランが必要 — [前提条件](#新しい-org-における前提条件)のプラン注記を参照）、そして新しい org のレジストリの `data/registry.json` にエントリが追加される こと。
    `setup.sh` はクリエータを対話的コンテナ (`docker run -it`) で実行する ため、実際のターミナルが必要です — ヘッドレス/自動化されたチェックでは、代わりに `create-repo/main.sh` を直接実行してください。
    例:
    `TARGET_ORG=<org> DOC_TYPE=thesis ./main.sh <student-id>`。
