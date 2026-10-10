@@ -148,11 +148,14 @@ GitHub Actions の `uses:`/`container:` 参照には式を含められない た
 依存を断ち切る必要がある org — 独立性、エアギャップ、または再利用可能ロジックそのものの org ごとの カスタマイズのため — は、代わりにフォークすべきです。
 [フォークすべきとき](#when-to-fork)を 参照。
 
-**対象外 — レガシーな `ai-reviewer.yml` 再利用可能ワークフロー。**
-`smkwlab/.github` は `toshi0806/ai-reviewer`（個人アカウント）を固定した レガシーな `ai-reviewer.yml` 再利用可能ワークフローも提供しています。
-これは **展開経路の一部ではありません**: どのテンプレート (`sotsuron` / `wr` / `ise-report` / `sotsuron-report` / `latex` / `poster`) も それを参照せず、`scripts/callers/` はそれ用の呼び出し元を提供しないため、新規作成されるリポジトリと新しい org の展開がそれを拾うことはありません — 現在の AI レビュー経路は `ai-review.yml`（→ `smkwlab/ai-academic-paper-reviewer`）です。
-影響を受けるのは、まだそれを呼び出している既存のリポジトリだけです。
-したがってその廃止（または org 所有のアクションへの向け直し）は、それらの レガシーリポジトリのための smkwlab 内部のクリーンアップ項目であり、マルチ org の懸念ではありません。
+**共有参照はすべて org 所有である。**
+上の表の 4 つが、新しい org が smkwlab に依存する全てです。
+個人アカウントを固定した参照は再利用可能ワークフローにも `scripts/callers/` にも無く、
+したがって信頼する相手は org だけで済みます。
+かつて `toshi0806/ai-reviewer`（個人アカウント）を固定した `ai-reviewer.yml` が
+あり、ここにはそれが展開経路の外である旨の注記を置いていましたが、
+最後の呼び出し元（toshi0806/garoon_crawler#87）とともに smkwlab/.github#220 で
+削除され、例外は無くなりました。
 
 ### DevContainer イメージのメンテナンス
 
