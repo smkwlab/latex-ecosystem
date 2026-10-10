@@ -152,10 +152,6 @@ GitHub Actions の `uses:`/`container:` 参照には式を含められない た
 上の表の 4 つが、新しい org が smkwlab に依存する全てです。
 個人アカウントを固定した参照は再利用可能ワークフローにも `scripts/callers/` にも無く、
 したがって信頼する相手は org だけで済みます。
-かつて `toshi0806/ai-reviewer`（個人アカウント）を固定した `ai-reviewer.yml` が
-あり、ここにはそれが展開経路の外である旨の注記を置いていましたが、
-最後の呼び出し元（toshi0806/garoon_crawler#87）とともに smkwlab/.github#220 で
-削除され、例外は無くなりました。
 
 ### DevContainer イメージのメンテナンス
 
