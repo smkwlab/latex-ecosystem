@@ -225,10 +225,13 @@ LaTeX 系テンプレート（sotsuron / wr / sotsuron-report / poster / latex�
   いる(`list` / `activity` / `pr-stats`)。同じ機能を両ツールに重複させない。
   コマンド所有権の一覧は [docs/TOOL-CLI-CONVENTIONS.md](docs/TOOL-CLI-CONVENTIONS.md)
   を参照。
-- **データフィールド**: レジストリが管理するタイムスタンプは `registry_`
-  prefix を持つ(`registry_created_at`、`registry_updated_at`)。素の
-  `created_at`/`updated_at` はレガシーフィールドである(移行状況は
-  registry-manager のデータ構造仕様を参照)。
+- **データフィールド**: 現行スキーマのタイムスタンプは `created_at`
+  (リポジトリ作成時刻)と `registry_updated_at`(レジストリ最終更新)の 2 つ。
+  registry-manager が書くのはこの 2 つで、`validate` は「少なくとも一方」を
+  要求するため、片方だけのエントリも正常である。レガシーは `updated_at` のみで、
+  `validate` が再流入を警告する。`repository_created_at` / `registry_created_at`
+  は仕様書とコードに名前が残るが実データには存在しない
+  (smkwlab/registry-manager#98)。
 - **`repository_type` の語彙**: `sotsuron`(卒業論文)、`master`(修士論文)、
   `wr`、`ise`(格納値。`ise-report` はエイリアスとして受理)、`latex`
   (latex-template 由来、ブランチ管理 — 学会論文など)、`other`。
