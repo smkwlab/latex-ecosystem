@@ -59,10 +59,11 @@
 3. **WSL の準備（Windows のみ）** — PowerShell で `wsl --install` を実行する。
    **バージョンは指定しない**（`-d Ubuntu-24.04` のように書かない）。指定しなければ、
    その時点で最新の Ubuntu LTS が入る。
-   すでに WSL を使っている場合はそのままでよいが、下のワンライナーが証明書のエラー
+   すでに WSL を使っている場合はそのままでよい。ただし下のワンライナーが証明書のエラー
    （`SSL certificate problem` / `unable to get local issuer certificate`）で失敗したときは、
-   サポートの切れた古いディストリが残っている。入れ直しには gh の再インストールと
-   Docker Desktop の WSL 統合の再設定が伴うので、担当教員に相談する
+   WSL の Ubuntu が古く、サポートが終了している可能性がある。その場合は Ubuntu を
+   新しく入れ直すことになるが、gh の再インストールと Docker Desktop の WSL 統合の
+   再設定も必要になるので、自分で進めずに担当教員に相談する
 4. **Docker Desktop のインストール** — LaTeX 環境の実行に必要
 5. **GitHub CLI (gh) のインストール** — リポジトリ作成スクリプトの実行に必要。
    入っていない場合は [インストール方法](https://github.com/smkwlab/student-repo-management/blob/main/docs/INSTALL-GH.md) を参照する
