@@ -56,9 +56,9 @@
 
 1. **GitHub アカウントの作成** — アカウントを持っていなければ [github.com](https://github.com/) で作成する
 2. **org 招待の受諾** — 所属研究室の organization（例: smkwlab）への招待メールが届いたら受諾する
-3. **Docker Desktop のインストール** — LaTeX 環境の実行に必要
-4. **GitHub CLI (gh) のインストール** — リポジトリ作成スクリプトの実行に必要。
-   入っていない場合は [インストール方法](https://github.com/smkwlab/student-repo-management/blob/main/docs/INSTALL-GH.md) を参照する
+3. **実行環境の準備** — Docker Desktop・GitHub Desktop・GitHub CLI (gh) を入れる。
+   手順と、Windows で必要な WSL の準備は
+   [リポジトリ作成の前提条件](https://github.com/smkwlab/student-repo-management/blob/main/docs/PREREQUISITES.md) を参照する
 
 準備ができたら、ターミナル（macOS のターミナル、または Windows の WSL）で次のワンライナーを実行してリポジトリを作成します（例は卒業論文・修士論文の `thesis`。文書タイプは担当教員の指示に従ってください）。
 

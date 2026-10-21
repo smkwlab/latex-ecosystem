@@ -34,7 +34,7 @@
   - まだメンバーでない場合は、管理者（smkwlab では smkwlabML）に GitHub ユーザ名を伝えて招待を依頼してください
 - GitHub CLI (`gh`) は**必須ではありません**。
   レビュー作業は GitHub の Web UI だけで完結できます
-  - スクリプトによる一括管理を行う場合のみ [INSTALL-GH.md](https://github.com/smkwlab/student-repo-management/blob/main/docs/INSTALL-GH.md)（student-repo-management）を参照
+  - スクリプトによる一括管理を行う場合のみ [リポジトリ作成の前提条件](https://github.com/smkwlab/student-repo-management/blob/main/docs/PREREQUISITES.md)（student-repo-management）を参照
 
 ## Step 1: 学生にリポジトリを作らせる
 
