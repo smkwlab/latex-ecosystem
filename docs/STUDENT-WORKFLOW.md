@@ -62,8 +62,8 @@
    すでに WSL を使っている場合はそのままでよい。ただし下のワンライナーが証明書のエラー
    （`SSL certificate problem` / `unable to get local issuer certificate`）で失敗したときは、
    WSL の Ubuntu が古く、サポートが終了している可能性がある。その場合は Ubuntu を
-   新しく入れ直すことになるが、gh の再インストールと Docker Desktop の WSL 統合の
-   再設定も必要になるので、自分で進めずに担当教員に相談する
+   新しく入れ直すことになるが、入れ直すと中に入れたものは消えるので、自分で進めずに
+   担当教員に相談する
 4. **Docker Desktop のインストール** — LaTeX 環境の実行に必要
 5. **GitHub CLI (gh) のインストール** — リポジトリ作成スクリプトの実行に必要。
    入っていない場合は [インストール方法](https://github.com/smkwlab/student-repo-management/blob/main/docs/INSTALL-GH.md) を参照する
