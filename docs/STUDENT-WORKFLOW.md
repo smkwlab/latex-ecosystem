@@ -56,8 +56,15 @@
 
 1. **GitHub アカウントの作成** — アカウントを持っていなければ [github.com](https://github.com/) で作成する
 2. **org 招待の受諾** — 所属研究室の organization（例: smkwlab）への招待メールが届いたら受諾する
-3. **Docker Desktop のインストール** — LaTeX 環境の実行に必要
-4. **GitHub CLI (gh) のインストール** — リポジトリ作成スクリプトの実行に必要。
+3. **WSL の準備（Windows のみ）** — PowerShell で `wsl --install` を実行する。
+   **バージョンは指定しない**（`-d Ubuntu-24.04` のように書かない）。指定しなければ、
+   その時点で最新の Ubuntu LTS が入る。
+   すでに WSL を使っている場合はそのままでよいが、下のワンライナーが証明書のエラー
+   （`SSL certificate problem` / `unable to get local issuer certificate`）で失敗したときは、
+   サポートの切れた古いディストリが残っている。入れ直しには gh の再インストールと
+   Docker Desktop の WSL 統合の再設定が伴うので、担当教員に相談する
+4. **Docker Desktop のインストール** — LaTeX 環境の実行に必要
+5. **GitHub CLI (gh) のインストール** — リポジトリ作成スクリプトの実行に必要。
    入っていない場合は [インストール方法](https://github.com/smkwlab/student-repo-management/blob/main/docs/INSTALL-GH.md) を参照する
 
 準備ができたら、ターミナル（macOS のターミナル、または Windows の WSL）で次のワンライナーを実行してリポジトリを作成します（例は卒業論文・修士論文の `thesis`。文書タイプは担当教員の指示に従ってください）。
