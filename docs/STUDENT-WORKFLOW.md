@@ -10,9 +10,10 @@
 - GitHub Desktop・ブラウザの具体的な操作 → [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md)（テンプレート共通）
 - テンプレートの使い方・執筆環境・提出方法 → **テンプレートリポジトリの README**（例: [sotsuron-template](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md)、[ise-report-template](https://github.com/smkwlab/ise-report-template/blob/main/.github/README.md)）
 
-> **自分のリポジトリの `README.md`** には、著者情報（氏名・学籍番号・種別・タイトル）と、執筆するファイルの案内が書かれています。
+> **自分のリポジトリの `README.md`** には、著者情報（氏名・学籍番号・種別・所属・年度）と、執筆するファイルの案内が書かれています。
+> 著者情報はリポジトリ作成時に自動で記入されるので、自分で書き換える必要はありません。
+> 文書のタイトルは `README.md` ではなく文書本体に書きます（卒業論文なら `sotsuron.tex` の `\title`）。
 > 環境構築や GitHub Desktop の操作手順は書かれていないので、それらは上記の操作ガイドとテンプレートの README を参照してください。
-> 著者情報はプレースホルダのままなので、`0th-draft` での最初の作業として自分で書き換えてください。
 
 > 本ガイド中の org 名・URL は **smkwlab organization での運用を例**に記述しています。
 > 所属する研究室の運用が異なる場合は、担当教員の指示に従ってください。
@@ -86,12 +87,11 @@ bash <(curl -fsSL https://repo-setup.smkwlab.net) thesis
 本文はまだ書きません。
 
 1. ブランチが `0th-draft` になっていることを確認する
-2. **`README.md` の著者情報を埋める** — 氏名・学籍番号・種別・タイトルがプレースホルダのままなので、自分の情報に書き換える
-3. 文書のメインファイルに章・節の構成を書く（内容は未記入で OK）。
+2. 文書のメインファイルに章・節の構成を書く（内容は未記入で OK）。
    卒業論文の場合は `sotsuron.tex`、修士論文の場合は `thesis.tex` に `\chapter`, `\section` などで書く。
    ファイル名は自分のリポジトリの `README.md` の「執筆するファイル」を参照
-4. PDF（または成果物）を生成して構成を確認する
-5. commit & push して PR を作成する
+3. PDF（または成果物）を生成して構成を確認する
+4. commit & push して PR を作成する
    - タイトル例: `[0th-draft] アウトライン提出`
    - この PR だけは前の稿がないので `base: main` ← `compare: 0th-draft` でよい
 
@@ -184,7 +184,7 @@ PDF やビルドのエラーは使用中のテンプレートの README を参�
 
 - [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) — GitHub Desktop とブラウザの操作手順・FAQ（テンプレート共通）
 - **使用中のテンプレートの README** — テンプレートの使い方・環境構築・提出手順（卒業論文・修士論文の例: [sotsuron-template の README](https://github.com/smkwlab/sotsuron-template/blob/main/.github/README.md)）
-- **自分のリポジトリの `README.md`** — 著者情報（氏名・学籍番号・種別・タイトル）。
-  `0th-draft` で自分で記入する
+- **自分のリポジトリの `README.md`** — 著者情報（氏名・学籍番号・種別・所属・年度）。
+  リポジトリ作成時に自動で記入される
 - [sotsuron-template の WRITING-GUIDE.md](https://github.com/smkwlab/sotsuron-template/blob/main/WRITING-GUIDE.md) — 概要執筆・提出タグ・卒論固有の FAQ（卒業論文・修士論文）
 - [PR-REVIEW-GUIDELINES.md](PR-REVIEW-GUIDELINES.md) — 添削ルールの正典（ブランチ命名・自動化の仕様）
