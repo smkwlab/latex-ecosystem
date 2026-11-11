@@ -175,7 +175,7 @@ PR を作成する前に、毎回次の3点を確認してください。
 - **どの稿で何を書けばよいか分からない** — 「1. 全体像」の表を確認する。
   稿が進むにつれてレビューの観点も深まっていく
 
-操作でつまずいたとき（ブランチが見つからない・切り替えられない、PR の差分に前の稿の内容まで出る、「Sync review suggestions from ...」という PR が自動で作られた、など）は [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) の「よくある質問」を参照してください。
+操作でつまずいたとき（ブランチが見つからない・切り替えられない、ブランチを間違えて commit・push した、PR の差分に前の稿の内容まで出る、「Sync review suggestions from ...」という PR が自動で作られた、など）は [GITHUB-DESKTOP-GUIDE.md](GITHUB-DESKTOP-GUIDE.md) の「よくある質問」を参照してください。
 PDF やビルドのエラーは使用中のテンプレートの README を参照してください。
 
 解決しないときは担当教員に相談してください（smkwlab では smkwlabML でも質問できます）。
